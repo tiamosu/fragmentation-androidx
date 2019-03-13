@@ -7,6 +7,17 @@ import android.os.Parcelable;
  * Created by YoKeyword on 16/6/30.
  */
 public class Chat implements Parcelable {
+    public static final Creator<Chat> CREATOR = new Creator<Chat>() {
+        @Override
+        public Chat createFromParcel(Parcel in) {
+            return new Chat(in);
+        }
+
+        @Override
+        public Chat[] newArray(int size) {
+            return new Chat[size];
+        }
+    };
     public String name;
     public String message;
     public long time;
@@ -34,16 +45,4 @@ public class Chat implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Chat> CREATOR = new Creator<Chat>() {
-        @Override
-        public Chat createFromParcel(Parcel in) {
-            return new Chat(in);
-        }
-
-        @Override
-        public Chat[] newArray(int size) {
-            return new Chat[size];
-        }
-    };
 }

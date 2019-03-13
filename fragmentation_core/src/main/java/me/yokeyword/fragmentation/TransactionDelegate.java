@@ -3,12 +3,6 @@ package me.yokeyword.fragmentation;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentationMagician;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +12,12 @@ import android.view.animation.AnimationUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentationMagician;
 import me.yokeyword.fragmentation.exception.AfterSaveStateTransactionWarning;
 import me.yokeyword.fragmentation.helper.internal.ResultRecord;
 import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
@@ -31,9 +31,6 @@ import me.yokeyword.fragmentation.queue.ActionQueue;
  */
 class TransactionDelegate {
     static final int DEFAULT_POPTO_ANIM = Integer.MAX_VALUE;
-
-    private static final String TAG = "Fragmentation";
-
     static final String FRAGMENTATION_ARG_RESULT_RECORD = "fragment_arg_result_record";
     static final String FRAGMENTATION_ARG_ROOT_STATUS = "fragmentation_arg_root_status";
     static final String FRAGMENTATION_ARG_IS_SHARED_ELEMENT = "fragmentation_arg_is_shared_element";
@@ -42,31 +39,32 @@ class TransactionDelegate {
     static final String FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM = "fragmentation_arg_custom_enter_anim";
     static final String FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM = "fragmentation_arg_custom_exit_anim";
     static final String FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM = "fragmentation_arg_custom_pop_exit_anim";
-
     static final String FRAGMENTATION_STATE_SAVE_ANIMATOR = "fragmentation_state_save_animator";
     static final String FRAGMENTATION_STATE_SAVE_IS_HIDDEN = "fragmentation_state_save_status";
-
-    private static final String FRAGMENTATION_STATE_SAVE_RESULT = "fragmentation_state_save_result";
-
     static final int TYPE_ADD = 0;
     static final int TYPE_ADD_RESULT = 1;
     static final int TYPE_ADD_WITHOUT_HIDE = 2;
     static final int TYPE_ADD_RESULT_WITHOUT_HIDE = 3;
     static final int TYPE_REPLACE = 10;
     static final int TYPE_REPLACE_DONT_BACK = 11;
-
+    private static final String TAG = "Fragmentation";
+    private static final String FRAGMENTATION_STATE_SAVE_RESULT = "fragmentation_state_save_result";
+    ActionQueue mActionQueue;
     private ISupportActivity mSupport;
     private FragmentActivity mActivity;
-
     private Handler mHandler;
-
-    ActionQueue mActionQueue;
 
     TransactionDelegate(ISupportActivity support) {
         this.mSupport = support;
         this.mActivity = (FragmentActivity) support;
         mHandler = new Handler(Looper.getMainLooper());
         mActionQueue = new ActionQueue(mHandler);
+    }
+
+    private static <T> void checkNotNull(T value, String message) {
+        if (value == null) {
+            throw new NullPointerException(message);
+        }
     }
 
     void post(final Runnable runnable) {
@@ -215,7 +213,6 @@ class TransactionDelegate {
 
         dispatchStartTransaction(fm, from, to, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD);
     }
-
 
     /**
      * Remove
@@ -634,7 +631,6 @@ class TransactionDelegate {
         }, animation.getDuration());
     }
 
-
     private void mockStartWithPopAnim(final ISupportFragment from, ISupportFragment to, final Animation exitAnim) {
         final Fragment fromF = (Fragment) from;
         final ViewGroup container = findContainerById(fromF, from.getSupportDelegate().mContainerId);
@@ -698,12 +694,6 @@ class TransactionDelegate {
         }
 
         return null;
-    }
-
-    private static <T> void checkNotNull(T value, String message) {
-        if (value == null) {
-            throw new NullPointerException(message);
-        }
     }
 
     private void handleAfterSaveInStateTransactionException(FragmentManager fm, String action) {

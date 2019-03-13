@@ -6,16 +6,16 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentationMagician;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentationMagician;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 import me.yokeyword.fragmentation.helper.internal.AnimatorHelper;
 import me.yokeyword.fragmentation.helper.internal.ResultRecord;
@@ -23,41 +23,57 @@ import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
 import me.yokeyword.fragmentation.helper.internal.VisibleDelegate;
 
 public class SupportFragmentDelegate {
-    private static final long NOT_FOUND_ANIM_TIME = 300L;
-
     static final int STATUS_UN_ROOT = 0;
     static final int STATUS_ROOT_ANIM_DISABLE = 1;
     static final int STATUS_ROOT_ANIM_ENABLE = 2;
-
-    private int mRootStatus = STATUS_UN_ROOT;
-
-    private boolean mIsSharedElement;
+    private static final long NOT_FOUND_ANIM_TIME = 300L;
+    protected FragmentActivity _mActivity;
     FragmentAnimator mFragmentAnimator;
     AnimatorHelper mAnimHelper;
     boolean mLockAnim;
+    int mContainerId;
+    TransactionRecord mTransactionRecord;
+    Bundle mNewBundle;
+    boolean mAnimByActivity = true;
+    EnterAnimListener mEnterAnimListener;
+    private int mRootStatus = STATUS_UN_ROOT;
+    private boolean mIsSharedElement;
     private int mCustomEnterAnim = Integer.MIN_VALUE, mCustomExitAnim = Integer.MIN_VALUE, mCustomPopExitAnim = Integer.MIN_VALUE;
-
     private Handler mHandler;
     private boolean mFirstCreateView = true;
     private boolean mReplaceMode;
     private boolean mIsHidden = true;
-    int mContainerId;
-
     private TransactionDelegate mTransactionDelegate;
-    TransactionRecord mTransactionRecord;
     // SupportVisible
     private VisibleDelegate mVisibleDelegate;
-    Bundle mNewBundle;
     private Bundle mSaveInstanceState;
-
     private ISupportFragment mSupportF;
     private Fragment mFragment;
-    protected FragmentActivity _mActivity;
     private ISupportActivity mSupport;
-    boolean mAnimByActivity = true;
-    EnterAnimListener mEnterAnimListener;
-
     private boolean mRootViewClickable;
+    private Runnable mNotifyEnterAnimEndRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mFragment == null) return;
+            mSupportF.onEnterAnimationEnd(mSaveInstanceState);
+
+            if (mRootViewClickable) return;
+            final View view = mFragment.getView();
+            if (view == null) return;
+            ISupportFragment preFragment = SupportHelper.getPreFragment(mFragment);
+            if (preFragment == null) return;
+
+            long prePopExitDuration = preFragment.getSupportDelegate().getPopExitAnimDuration();
+            long enterDuration = getEnterAnimDuration();
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    view.setClickable(false);
+                }
+            }, prePopExitDuration - enterDuration);
+        }
+    };
 
     public SupportFragmentDelegate(ISupportFragment support) {
         if (!(support instanceof Fragment))
@@ -394,6 +410,8 @@ public class SupportFragmentDelegate {
         this.mNewBundle = newBundle;
     }
 
+    /**********************************************************************************************/
+
     /**
      * Back Event
      *
@@ -402,8 +420,6 @@ public class SupportFragmentDelegate {
     public boolean onBackPressedSupport() {
         return false;
     }
-
-    /**********************************************************************************************/
 
     /**
      * 隐藏软键盘
@@ -421,7 +437,6 @@ public class SupportFragmentDelegate {
     public void showSoftInput(View view) {
         SupportHelper.showSoftInput(view);
     }
-
 
     /**
      * 加载根Fragment, 即Activity内的第一个Fragment 或 Fragment内的第一个子Fragment
@@ -598,30 +613,6 @@ public class SupportFragmentDelegate {
             });
         }
     }
-
-    private Runnable mNotifyEnterAnimEndRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mFragment == null) return;
-            mSupportF.onEnterAnimationEnd(mSaveInstanceState);
-
-            if (mRootViewClickable) return;
-            final View view = mFragment.getView();
-            if (view == null) return;
-            ISupportFragment preFragment = SupportHelper.getPreFragment(mFragment);
-            if (preFragment == null) return;
-
-            long prePopExitDuration = preFragment.getSupportDelegate().getPopExitAnimDuration();
-            long enterDuration = getEnterAnimDuration();
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setClickable(false);
-                }
-            }, prePopExitDuration - enterDuration);
-        }
-    };
 
     private void compatSharedElements() {
         notifyEnterAnimEnd();

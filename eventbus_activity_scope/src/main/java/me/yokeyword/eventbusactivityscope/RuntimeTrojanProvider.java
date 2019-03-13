@@ -7,9 +7,8 @@ import android.net.Uri;
 
 /**
  * Internal class to initialize EventBusActivityScope.
- * @hide
  *
- * Created by YoKey on 17/10/17.
+ * @hide Created by YoKey on 17/10/17.
  */
 public class RuntimeTrojanProvider extends ContentProvider {
     @Override

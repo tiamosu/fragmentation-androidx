@@ -3,22 +3,23 @@ package me.yokeyword.fragmentation;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.animation.Animation;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 /**
  * Base class for activities that use the support-based
  * {@link ISupportFragment} and
- * {@link android.support.v4.app.Fragment} APIs.
+ * {@link androidx.fragment.app.Fragment} APIs.
  * Created by YoKey on 17/6/22.
  */
 public class SupportFragment extends Fragment implements ISupportFragment {
-    final SupportFragmentDelegate mDelegate = new SupportFragmentDelegate(this);
+    private final SupportFragmentDelegate mDelegate = new SupportFragmentDelegate(this);
     protected FragmentActivity _mActivity;
 
     @Override
@@ -36,7 +37,7 @@ public class SupportFragment extends Fragment implements ISupportFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
         mDelegate.onAttach(activity);
         _mActivity = mDelegate.getActivity();
@@ -60,7 +61,7 @@ public class SupportFragment extends Fragment implements ISupportFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mDelegate.onSaveInstanceState(outState);
     }

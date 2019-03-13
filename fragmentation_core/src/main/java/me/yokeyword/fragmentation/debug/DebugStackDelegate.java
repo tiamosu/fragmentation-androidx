@@ -1,16 +1,11 @@
 package me.yokeyword.fragmentation.debug;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentationMagician;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -23,6 +18,12 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentationMagician;
 import me.yokeyword.fragmentation.Fragmentation;
 import me.yokeyword.fragmentation.R;
 
@@ -47,6 +48,7 @@ public class DebugStackDelegate implements SensorEventListener {
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void onPostCreate(int mode) {
         if (mode != Fragmentation.BUBBLE) return;
         View root = mActivity.findViewById(android.R.id.content);

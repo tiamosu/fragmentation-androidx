@@ -1,10 +1,6 @@
 package me.yokeyword.sample.demo_wechat.ui.fragment.third;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +8,11 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.adapter.HomeAdapter;
 import me.yokeyword.sample.demo_wechat.base.BaseMainFragment;
@@ -40,15 +41,15 @@ public class WechatThirdTabFragment extends BaseMainFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wechat_fragment_tab_third, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        mRecy = view.findViewById(R.id.recy);
+        mToolbar = view.findViewById(R.id.toolbar);
 
         mTitles = getResources().getStringArray(R.array.array_title);
         mContents = getResources().getStringArray(R.array.array_content);
@@ -68,7 +69,9 @@ public class WechatThirdTabFragment extends BaseMainFragment {
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position, View view, RecyclerView.ViewHolder vh) {
-                ((MainFragment) getParentFragment()).startBrotherFragment(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
+                if (getParentFragment() != null) {
+                    ((MainFragment) getParentFragment()).startBrotherFragment(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
+                }
                 // 或者使用EventBus
 //                EventBusActivityScope.getDefault(_mActivity).post(new StartBrotherEvent(DetailFragment.newInstance(mAdapter.getItem(position).getTitle())));
             }

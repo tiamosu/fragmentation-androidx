@@ -1,68 +1,41 @@
 apply plugin: 'com.android.application'
 
-static def gitLatestTag() {
-    try {
-        def cmd = 'git describe --abbrev=0 --tags'
-        def result = cmd.execute().text.trim()
-        return result
-    } catch (Exception e) {
-        return '1.0.0'
-    }
-}
-
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
-
+    compileSdkVersion 28
     defaultConfig {
         applicationId "me.yokeyword.sample"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion 15
+        targetSdkVersion 28
         versionCode 1
-        versionName gitLatestTag()
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    signingConfigs {
-        releaseConfig {
-            storeFile file("./fragmentation.jks")
-            storePassword System.getenv("KEYSTORE_PASS")
-            keyAlias System.getenv("ALIAS_NAME")
-            keyPassword System.getenv("ALIAS_PASS")
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
-
-            signingConfig signingConfigs.releaseConfig
-
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            if (variant.buildType.name == 'release') {
-                outputFileName = "fragmentation.apk"
-            }
-        }
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:appcompat-v7:$rootProject.v4Version"
-    compile "com.android.support:design:$rootProject.v4Version"
-    compile "com.android.support:cardview-v7:$rootProject.v4Version"
-    compile "com.android.support:recyclerview-v7:$rootProject.v4Version"
-    compile project(':fragmentation')
-    compile project(':fragmentation_swipeback')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "com.google.android.material:material:1.1.0-alpha04"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation project(':fragmentation')
+    implementation project(':fragmentation_swipeback')
     // EventBus
-    compile project(':eventbus_activity_scope')
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation project(':eventbus_activity_scope')
+    implementation 'org.greenrobot:eventbus:3.0.0'
     //    apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
 }
 

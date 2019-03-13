@@ -2,6 +2,7 @@ package me.yokeyword.sample.demo_zhihu.base;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import me.yokeyword.fragmentation.SupportFragment;
 import me.yokeyword.sample.demo_zhihu.ui.fragment.first.ZhihuFirstFragment;
 
@@ -13,7 +14,7 @@ public abstract class BaseMainFragment extends SupportFragment {
     protected OnBackToFirstListener _mBackToFirstListener;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnBackToFirstListener) {
             _mBackToFirstListener = (OnBackToFirstListener) context;
@@ -31,8 +32,6 @@ public abstract class BaseMainFragment extends SupportFragment {
 
     /**
      * 处理回退事件
-     *
-     * @return
      */
     @Override
     public boolean onBackPressedSupport() {

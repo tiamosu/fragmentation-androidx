@@ -2,11 +2,6 @@ package me.yokeyword.sample.demo_wechat.ui.fragment.first;
 
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +12,12 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.adapter.ChatAdapter;
@@ -50,16 +51,16 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wechat_fragment_tab_first, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh_layout);
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mRefreshLayout = view.findViewById(R.id.refresh_layout);
+        mRecy = view.findViewById(R.id.recy);
 
         EventBusActivityScope.getDefault(_mActivity).register(this);
 
@@ -76,7 +77,7 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
         final int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0.5f, getResources().getDisplayMetrics());
         mRecy.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 outRect.set(0, 0, 0, space);
             }
         });
@@ -85,14 +86,10 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
 
         mRecy.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 mScrollTotal += dy;
-                if (mScrollTotal <= 0) {
-                    mInAtTop = true;
-                } else {
-                    mInAtTop = false;
-                }
+                mInAtTop = mScrollTotal <= 0;
             }
         });
 
@@ -102,7 +99,7 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
                 // 因为启动的MsgFragment是MainFragment的兄弟Fragment,所以需要MainFragment.start()
 
                 // 也可以像使用getParentFragment()的方式,拿到父Fragment来操作 或者使用 EventBusActivityScope
-              ((MainFragment) getParentFragment()).startBrotherFragment(MsgFragment.newInstance(mAdapter.getMsg(position)));
+                ((MainFragment) getParentFragment()).startBrotherFragment(MsgFragment.newInstance(mAdapter.getMsg(position)));
             }
         });
 

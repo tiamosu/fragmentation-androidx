@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.core.view.ViewCompat;
 
 
 /**
@@ -113,14 +114,6 @@ public class BottomBar extends LinearLayout {
         return mTabs.get(index);
     }
 
-    public interface OnTabSelectedListener {
-        void onTabSelected(int position, int prePosition);
-
-        void onTabUnselected(int position);
-
-        void onTabReselected(int position);
-    }
-
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
@@ -138,37 +131,6 @@ public class BottomBar extends LinearLayout {
         }
         mCurrentPosition = ss.position;
     }
-
-    static class SavedState extends BaseSavedState {
-        private int position;
-
-        public SavedState(Parcel source) {
-            super(source);
-            position = source.readInt();
-        }
-
-        public SavedState(Parcelable superState, int position) {
-            super(superState);
-            this.position = position;
-        }
-
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(position);
-        }
-
-        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-    }
-
 
     public void hide() {
         hide(true);
@@ -220,6 +182,43 @@ public class BottomBar extends LinearLayout {
             } else {
                 ViewCompat.setTranslationY(this, translationY);
             }
+        }
+    }
+
+    public interface OnTabSelectedListener {
+        void onTabSelected(int position, int prePosition);
+
+        void onTabUnselected(int position);
+
+        void onTabReselected(int position);
+    }
+
+    static class SavedState extends BaseSavedState {
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        private int position;
+
+        public SavedState(Parcel source) {
+            super(source);
+            position = source.readInt();
+        }
+
+        public SavedState(Parcelable superState, int position) {
+            super(superState);
+            this.position = position;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(position);
         }
     }
 }

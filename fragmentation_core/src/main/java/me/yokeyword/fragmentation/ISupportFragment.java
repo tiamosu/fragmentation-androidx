@@ -1,12 +1,12 @@
 package me.yokeyword.fragmentation;
 
 import android.os.Bundle;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 /**
@@ -22,11 +22,6 @@ public interface ISupportFragment {
     // ResultCode
     int RESULT_CANCELED = 0;
     int RESULT_OK = -1;
-
-    @IntDef({STANDARD, SINGLETOP, SINGLETASK})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface LaunchMode {
-    }
 
     SupportFragmentDelegate getSupportDelegate();
 
@@ -61,4 +56,9 @@ public interface ISupportFragment {
     void putNewBundle(Bundle newBundle);
 
     boolean onBackPressedSupport();
+
+    @IntDef({STANDARD, SINGLETOP, SINGLETASK})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LaunchMode {
+    }
 }

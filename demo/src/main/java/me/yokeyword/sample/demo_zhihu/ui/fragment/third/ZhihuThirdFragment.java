@@ -1,11 +1,12 @@
 package me.yokeyword.sample.demo_zhihu.ui.fragment.third;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_zhihu.base.BaseMainFragment;
 import me.yokeyword.sample.demo_zhihu.ui.fragment.third.child.ShopFragment;
@@ -26,9 +27,8 @@ public class ZhihuThirdFragment extends BaseMainFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zhihu_fragment_third, container, false);
-        return view;
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.zhihu_fragment_third, container, false);
     }
 
     @Override

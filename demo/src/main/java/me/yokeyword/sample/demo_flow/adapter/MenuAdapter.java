@@ -2,7 +2,6 @@ package me.yokeyword.sample.demo_flow.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.listener.OnItemClickListener;
 
@@ -88,6 +88,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         mLastCheckedPosition = position;
     }
 
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
         View viewLine;
         TextView tvName;
@@ -97,9 +101,5 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
             viewLine = itemView.findViewById(R.id.view_line);
             tvName = (TextView) itemView.findViewById(R.id.tv_name);
         }
-    }
-
-    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
     }
 }

@@ -1,4 +1,3 @@
-
 package me.yokeyword.fragmentation_swipeback;
 
 import android.os.Bundle;
@@ -37,6 +36,7 @@ public class SwipeBackActivity extends SupportActivity implements ISwipeBackActi
 
     /**
      * 是否可滑动
+     *
      * @param enable
      */
     @Override

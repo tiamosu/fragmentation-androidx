@@ -2,23 +2,25 @@ package me.yokeyword.sample.demo_zhihu.ui.fragment.first.child;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
 import me.yokeyword.sample.R;
@@ -67,7 +69,7 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.zhihu_fragment_first_home, container, false);
         EventBusActivityScope.getDefault(_mActivity).register(this);
         initView(view);
@@ -75,10 +77,10 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
-        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh_layout);
-        mFab = (FloatingActionButton) view.findViewById(R.id.fab);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mRecy = view.findViewById(R.id.recy);
+        mRefreshLayout = view.findViewById(R.id.refresh_layout);
+        mFab = view.findViewById(R.id.fab);
 
         mToolbar.setTitle(R.string.home);
 
@@ -126,14 +128,10 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
 
         mRecy.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 mScrollTotal += dy;
-                if (mScrollTotal <= 0) {
-                    mInAtTop = true;
-                } else {
-                    mInAtTop = false;
-                }
+                mInAtTop = mScrollTotal <= 0;
                 if (dy > 5) {
                     mFab.hide();
                 } else if (dy < -5) {

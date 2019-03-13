@@ -1,10 +1,10 @@
 package me.yokeyword.fragmentation;
 
-import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import androidx.annotation.IntDef;
 import me.yokeyword.fragmentation.helper.ExceptionHandler;
 
 /**
@@ -30,9 +30,14 @@ public class Fragmentation {
     private int mode = BUBBLE;
     private ExceptionHandler handler;
 
-    @IntDef({NONE, SHAKE, BUBBLE})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface StackViewMode {
+    Fragmentation(FragmentationBuilder builder) {
+        debug = builder.debug;
+        if (debug) {
+            mode = builder.mode;
+        } else {
+            mode = NONE;
+        }
+        handler = builder.handler;
     }
 
     public static Fragmentation getDefault() {
@@ -46,14 +51,8 @@ public class Fragmentation {
         return INSTANCE;
     }
 
-    Fragmentation(FragmentationBuilder builder) {
-        debug = builder.debug;
-        if (debug) {
-            mode = builder.mode;
-        } else {
-            mode = NONE;
-        }
-        handler = builder.handler;
+    public static FragmentationBuilder builder() {
+        return new FragmentationBuilder();
     }
 
     public boolean isDebug() {
@@ -80,8 +79,9 @@ public class Fragmentation {
         this.mode = mode;
     }
 
-    public static FragmentationBuilder builder() {
-        return new FragmentationBuilder();
+    @IntDef({NONE, SHAKE, BUBBLE})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface StackViewMode {
     }
 
     public static class FragmentationBuilder {
@@ -99,9 +99,9 @@ public class Fragmentation {
 
         /**
          * Sets the mode to display the stack view
-         *
+         * <p>
          * None if debug(false).
-         *
+         * <p>
          * Default:NONE
          */
         public FragmentationBuilder stackViewMode(@StackViewMode int mode) {

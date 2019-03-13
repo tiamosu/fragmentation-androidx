@@ -1,12 +1,13 @@
 package me.yokeyword.sample.demo_wechat.ui.fragment.second;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.base.BaseBackFragment;
 import me.yokeyword.sample.demo_wechat.ui.fragment.CycleFragment;
@@ -23,10 +24,10 @@ public class NewFeatureFragment extends BaseBackFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wechat_fragment_new_feature, container, false);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         initToolbarNav(toolbar);
         toolbar.setTitle("NewFeatures");
 

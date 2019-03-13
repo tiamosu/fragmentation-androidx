@@ -1,9 +1,9 @@
 package me.yokeyword.sample.demo_wechat.adapter;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import me.yokeyword.sample.demo_wechat.ui.fragment.second.FirstPagerFragment;
 import me.yokeyword.sample.demo_wechat.ui.fragment.second.OtherPagerFragment;
 
@@ -19,6 +19,7 @@ public class WechatPagerFragmentAdapter extends FragmentPagerAdapter {
         mTitles = titles;
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {

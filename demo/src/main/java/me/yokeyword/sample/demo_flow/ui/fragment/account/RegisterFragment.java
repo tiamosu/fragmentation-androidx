@@ -2,8 +2,6 @@ package me.yokeyword.sample.demo_flow.ui.fragment.account;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
 
@@ -33,7 +34,7 @@ public class RegisterFragment extends BaseBackFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof LoginFragment.OnLoginSuccessListener) {
             mOnLoginSuccessListener = (LoginFragment.OnLoginSuccessListener) context;
@@ -45,18 +46,18 @@ public class RegisterFragment extends BaseBackFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mEtAccount = (EditText) view.findViewById(R.id.et_account);
-        mEtPassword = (EditText) view.findViewById(R.id.et_password);
-        mEtPasswordConfirm = (EditText) view.findViewById(R.id.et_password_confirm);
-        mBtnRegister = (Button) view.findViewById(R.id.btn_register);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        mEtAccount = view.findViewById(R.id.et_account);
+        mEtPassword = view.findViewById(R.id.et_password);
+        mEtPasswordConfirm = view.findViewById(R.id.et_password_confirm);
+        mBtnRegister = view.findViewById(R.id.btn_register);
 
         showSoftInput(mEtAccount);
 

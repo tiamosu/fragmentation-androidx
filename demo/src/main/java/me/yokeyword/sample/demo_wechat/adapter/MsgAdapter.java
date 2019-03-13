@@ -1,7 +1,6 @@
 package me.yokeyword.sample.demo_wechat.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.entity.Msg;
 import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener;
@@ -35,8 +36,9 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
         notifyItemInserted(mItems.size() - 1);
     }
 
+    @NonNull
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_wechat_msg, parent, false);
         final VH holder = new VH(view);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +53,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(@NonNull VH holder, int position) {
         Msg item = mItems.get(position);
 
         holder.tvMsg.setText(item.message);
@@ -72,8 +74,8 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
 
         public VH(View itemView) {
             super(itemView);
-            imgAvatar = (ImageView) itemView.findViewById(R.id.img_avatar);
-            tvMsg = (TextView) itemView.findViewById(R.id.tv_msg);
+            imgAvatar = itemView.findViewById(R.id.img_avatar);
+            tvMsg = itemView.findViewById(R.id.tv_msg);
         }
     }
 }

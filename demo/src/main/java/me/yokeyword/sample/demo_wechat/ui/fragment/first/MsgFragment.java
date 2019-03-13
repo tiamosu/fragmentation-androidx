@@ -1,10 +1,6 @@
 package me.yokeyword.sample.demo_wechat.ui.fragment.first;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +9,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.adapter.MsgAdapter;
 import me.yokeyword.sample.demo_wechat.base.BaseBackFragment;
@@ -45,22 +46,24 @@ public class MsgFragment extends BaseBackFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mChat = getArguments().getParcelable(ARG_MSG);
+        if (getArguments() != null) {
+            mChat = getArguments().getParcelable(ARG_MSG);
+        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wechat_fragment_tab_first_msg, container, false);
         initView(view);
         return attachToSwipeBack(view);
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mBtnSend = (Button) view.findViewById(R.id.btn_send);
-        mEtSend = (EditText) view.findViewById(R.id.et_send);
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mBtnSend = view.findViewById(R.id.btn_send);
+        mEtSend = view.findViewById(R.id.et_send);
+        mRecy = view.findViewById(R.id.recy);
 
         mToolbar.setTitle(mChat.name);
         initToolbarNav(mToolbar);

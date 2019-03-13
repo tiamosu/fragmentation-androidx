@@ -1,8 +1,6 @@
 package me.yokeyword.sample.demo_zhihu.adapter;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +10,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_zhihu.entity.Article;
 import me.yokeyword.sample.demo_zhihu.listener.OnItemClickListener;
@@ -30,8 +31,9 @@ public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> 
         mInflater = LayoutInflater.from(context);
     }
 
+    @NonNull
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_zhihu_home_first, parent, false);
         final VH holder = new VH(view);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +49,7 @@ public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> 
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(@NonNull VH holder, int position) {
         Article item = mItems.get(position);
 
         // 把每个图片视图设置不同的Transition名称, 防止在一个视图内有多个相同的名称, 在变换的时候造成混乱
@@ -83,8 +85,8 @@ public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> 
 
         public VH(View itemView) {
             super(itemView);
-            tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-            img = (ImageView) itemView.findViewById(R.id.img);
+            tvTitle = itemView.findViewById(R.id.tv_title);
+            img = itemView.findViewById(R.id.img);
         }
     }
 }

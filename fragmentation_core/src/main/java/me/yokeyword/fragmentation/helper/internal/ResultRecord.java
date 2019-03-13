@@ -5,11 +5,21 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * @Hide
- * Result 记录
+ * @Hide Result 记录
  * Created by YoKeyword on 16/6/2.
  */
 public final class ResultRecord implements Parcelable {
+    public static final Creator<ResultRecord> CREATOR = new Creator<ResultRecord>() {
+        @Override
+        public ResultRecord createFromParcel(Parcel in) {
+            return new ResultRecord(in);
+        }
+
+        @Override
+        public ResultRecord[] newArray(int size) {
+            return new ResultRecord[size];
+        }
+    };
     public int requestCode;
     public int resultCode = 0;
     public Bundle resultBundle;
@@ -22,18 +32,6 @@ public final class ResultRecord implements Parcelable {
         resultCode = in.readInt();
         resultBundle = in.readBundle(getClass().getClassLoader());
     }
-
-    public static final Creator<ResultRecord> CREATOR = new Creator<ResultRecord>() {
-        @Override
-        public ResultRecord createFromParcel(Parcel in) {
-            return new ResultRecord(in);
-        }
-
-        @Override
-        public ResultRecord[] newArray(int size) {
-            return new ResultRecord[size];
-        }
-    };
 
     @Override
     public int describeContents() {

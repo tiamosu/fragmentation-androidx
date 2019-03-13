@@ -8,7 +8,19 @@ import me.yokeyword.fragmentation.R;
 /**
  * Created by YoKeyword on 16/2/5.
  */
-public class DefaultVerticalAnimator extends FragmentAnimator implements Parcelable{
+public class DefaultVerticalAnimator extends FragmentAnimator implements Parcelable {
+
+    public static final Creator<DefaultVerticalAnimator> CREATOR = new Creator<DefaultVerticalAnimator>() {
+        @Override
+        public DefaultVerticalAnimator createFromParcel(Parcel in) {
+            return new DefaultVerticalAnimator(in);
+        }
+
+        @Override
+        public DefaultVerticalAnimator[] newArray(int size) {
+            return new DefaultVerticalAnimator[size];
+        }
+    };
 
     public DefaultVerticalAnimator() {
         enter = R.anim.v_fragment_enter;
@@ -30,16 +42,4 @@ public class DefaultVerticalAnimator extends FragmentAnimator implements Parcela
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<DefaultVerticalAnimator> CREATOR = new Creator<DefaultVerticalAnimator>() {
-        @Override
-        public DefaultVerticalAnimator createFromParcel(Parcel in) {
-            return new DefaultVerticalAnimator(in);
-        }
-
-        @Override
-        public DefaultVerticalAnimator[] newArray(int size) {
-            return new DefaultVerticalAnimator[size];
-        }
-    };
 }

@@ -1,15 +1,16 @@
 package me.yokeyword.sample.demo_flow.ui.fragment.discover;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.adapter.DiscoverFragmentAdapter;
 import me.yokeyword.sample.demo_flow.base.BaseMainFragment;
@@ -25,7 +26,7 @@ public class DiscoverFragment extends BaseMainFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, container, false);
 
         initView(view);
@@ -34,9 +35,9 @@ public class DiscoverFragment extends BaseMainFragment {
     }
 
     private void initView(View view) {
-        Toolbar mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        TabLayout mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
-        ViewPager mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        Toolbar mToolbar = view.findViewById(R.id.toolbar);
+        TabLayout mTabLayout = view.findViewById(R.id.tab_layout);
+        ViewPager mViewPager = view.findViewById(R.id.viewPager);
 
         mToolbar.setTitle(R.string.discover);
         initToolbarNav(mToolbar);

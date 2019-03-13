@@ -1,14 +1,16 @@
 package me.yokeyword.sample.demo_wechat.ui.fragment.second;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.adapter.WechatPagerFragmentAdapter;
 import me.yokeyword.sample.demo_wechat.base.BaseMainFragment;
@@ -32,16 +34,16 @@ public class WechatSecondTabFragment extends BaseMainFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wechat_fragment_tab_second, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mTab = (TabLayout) view.findViewById(R.id.tab);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mTab = view.findViewById(R.id.tab);
+        mViewPager = view.findViewById(R.id.viewPager);
 
         mToolbar.setTitle(R.string.discover);
 

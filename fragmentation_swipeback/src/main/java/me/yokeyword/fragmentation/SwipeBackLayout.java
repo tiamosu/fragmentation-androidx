@@ -5,12 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntDef;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentationMagician;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -25,6 +19,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.IntDef;
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentationMagician;
 import me.yokeyword.fragmentation_swipeback.core.ISwipeBackActivity;
 
 /**
@@ -110,10 +110,6 @@ public class SwipeBackLayout extends FrameLayout {
 
     private Context mContext;
 
-    public enum EdgeLevel {
-        MAX, MIN, MED
-    }
-
     public SwipeBackLayout(Context context) {
         this(context, null);
     }
@@ -177,11 +173,6 @@ public class SwipeBackLayout extends FrameLayout {
         }
     }
 
-    @IntDef({EDGE_LEFT, EDGE_RIGHT, EDGE_ALL})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface EdgeOrientation {
-    }
-
     /**
      * Set a drawable used for edge shadow.
      */
@@ -223,35 +214,6 @@ public class SwipeBackLayout extends FrameLayout {
             return;
         }
         mListeners.remove(listener);
-    }
-
-    public interface OnSwipeListener {
-        /**
-         * Invoke when state change
-         *
-         * @param state flag to describe scroll state
-         * @see #STATE_IDLE
-         * @see #STATE_DRAGGING
-         * @see #STATE_SETTLING
-         * @see #STATE_FINISHED
-         */
-        void onDragStateChange(int state);
-
-        /**
-         * Invoke when edge touched
-         *
-         * @param oritentationEdgeFlag edge flag describing the edge being touched
-         * @see #EDGE_LEFT
-         * @see #EDGE_RIGHT
-         */
-        void onEdgeTouch(int oritentationEdgeFlag);
-
-        /**
-         * Invoke when scroll percent over the threshold for the first time
-         *
-         * @param scrollPercent scroll percent of this view
-         */
-        void onDragScrolled(float scrollPercent);
     }
 
     @Override
@@ -414,6 +376,75 @@ public class SwipeBackLayout extends FrameLayout {
         }
     }
 
+    private void onDragFinished() {
+        if (mListeners != null) {
+            for (OnSwipeListener listener : mListeners) {
+                listener.onDragStateChange(STATE_FINISHED);
+            }
+        }
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (!mEnable) return super.onInterceptTouchEvent(ev);
+        try {
+            return mHelper.shouldInterceptTouchEvent(ev);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!mEnable) return super.onTouchEvent(event);
+        try {
+            mHelper.processTouchEvent(event);
+            return true;
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
+        return false;
+    }
+
+    public enum EdgeLevel {
+        MAX, MIN, MED
+    }
+
+    @IntDef({EDGE_LEFT, EDGE_RIGHT, EDGE_ALL})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface EdgeOrientation {
+    }
+
+    public interface OnSwipeListener {
+        /**
+         * Invoke when state change
+         *
+         * @param state flag to describe scroll state
+         * @see #STATE_IDLE
+         * @see #STATE_DRAGGING
+         * @see #STATE_SETTLING
+         * @see #STATE_FINISHED
+         */
+        void onDragStateChange(int state);
+
+        /**
+         * Invoke when edge touched
+         *
+         * @param oritentationEdgeFlag edge flag describing the edge being touched
+         * @see #EDGE_LEFT
+         * @see #EDGE_RIGHT
+         */
+        void onEdgeTouch(int oritentationEdgeFlag);
+
+        /**
+         * Invoke when scroll percent over the threshold for the first time
+         *
+         * @param scrollPercent scroll percent of this view
+         */
+        void onDragScrolled(float scrollPercent);
+    }
+
     private class ViewDragCallback extends ViewDragHelper.Callback {
 
         @Override
@@ -550,36 +581,5 @@ public class SwipeBackLayout extends FrameLayout {
                 mCurrentSwipeOrientation = edgeFlags;
             }
         }
-    }
-
-    private void onDragFinished() {
-        if (mListeners != null) {
-            for (OnSwipeListener listener : mListeners) {
-                listener.onDragStateChange(STATE_FINISHED);
-            }
-        }
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!mEnable) return super.onInterceptTouchEvent(ev);
-        try {
-            return mHelper.shouldInterceptTouchEvent(ev);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (!mEnable) return super.onTouchEvent(event);
-        try {
-            mHelper.processTouchEvent(event);
-            return true;
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-        }
-        return false;
     }
 }

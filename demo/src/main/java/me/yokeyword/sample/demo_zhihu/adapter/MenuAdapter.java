@@ -2,7 +2,6 @@ package me.yokeyword.sample.demo_zhihu.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_zhihu.listener.OnItemClickListener;
 
@@ -41,8 +42,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         mBooleanArray = new SparseBooleanArray(mItems.size());
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_menu, parent, false);
         final MyViewHolder holder = new MyViewHolder(view);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +60,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         if (!mBooleanArray.get(position)) {
             holder.viewLine.setVisibility(View.INVISIBLE);
             holder.itemView.setBackgroundResource(R.color.bg_app);
@@ -88,6 +90,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         mLastCheckedPosition = position;
     }
 
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
         View viewLine;
         TextView tvName;
@@ -95,11 +101,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         public MyViewHolder(View itemView) {
             super(itemView);
             viewLine = itemView.findViewById(R.id.view_line);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name);
+            tvName = itemView.findViewById(R.id.tv_name);
         }
-    }
-
-    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
     }
 }

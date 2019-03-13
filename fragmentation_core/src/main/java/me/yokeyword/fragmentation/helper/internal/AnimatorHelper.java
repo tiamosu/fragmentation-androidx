@@ -1,11 +1,11 @@
 package me.yokeyword.fragmentation.helper.internal;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import me.yokeyword.fragmentation.R;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
@@ -13,9 +13,8 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * @Hide Created by YoKeyword on 16/7/26.
  */
 public final class AnimatorHelper {
-    private Animation noneAnim, noneAnimFixed;
     public Animation enterAnim, exitAnim, popEnterAnim, popExitAnim;
-
+    private Animation noneAnim, noneAnimFixed;
     private Context context;
     private FragmentAnimator fragmentAnimator;
 

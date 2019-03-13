@@ -1,16 +1,16 @@
 package me.yokeyword.fragmentation;
 
 import android.os.Build;
-import android.support.annotation.AnimRes;
-import android.support.annotation.AnimatorRes;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import java.util.ArrayList;
 
+import androidx.annotation.AnimRes;
+import androidx.annotation.AnimatorRes;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
 
 /**
@@ -20,7 +20,6 @@ public abstract class ExtraTransaction {
 
     /**
      * @param tag Optional tag name for the fragment, to later retrieve the
-     *            fragment with {@link SupportHelper#findFragment(FragmentManager, String)}
      *            , pop(String)
      *            or FragmentManager.findFragmentByTag(String).
      */
@@ -54,8 +53,6 @@ public abstract class ExtraTransaction {
      *                      appearing Fragment.
      * @param sharedName    The transitionName for a View in an appearing Fragment to match to the shared
      *                      element.
-     * @see Fragment#setSharedElementReturnTransition(Object)
-     * @see Fragment#setSharedElementEnterTransition(Object)
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public abstract ExtraTransaction addSharedElement(View sharedElement, String sharedName);

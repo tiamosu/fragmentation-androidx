@@ -1,8 +1,6 @@
 package me.yokeyword.sample.demo_flow.ui.fragment.discover;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +8,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.adapter.PagerAdapter;
 import me.yokeyword.sample.demo_flow.base.MySupportFragment;
@@ -55,7 +55,7 @@ public class PagerChildFragment extends MySupportFragment {
     }
 
     private void initView(View view) {
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
+        mRecy = view.findViewById(R.id.recy);
 
         mAdapter = new PagerAdapter(_mActivity);
         LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
@@ -81,9 +81,9 @@ public class PagerChildFragment extends MySupportFragment {
                     if (mFrom == 0) {
                         item = getString(R.string.recommend) + " " + i;
                     } else if (mFrom == 1) {
-                        item = getString(R.string.hot) +" " + i;
+                        item = getString(R.string.hot) + " " + i;
                     } else {
-                        item = getString(R.string.favorite) +" " + i;
+                        item = getString(R.string.favorite) + " " + i;
                     }
                     items.add(item);
                 }

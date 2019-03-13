@@ -3,14 +3,14 @@ package me.yokeyword.sample.demo_zhihu.ui.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.DrawableRes;
+import androidx.core.content.ContextCompat;
 import me.yokeyword.sample.R;
 
 /**
@@ -61,14 +61,14 @@ public class BottomBarTab extends FrameLayout {
         }
     }
 
+    public int getTabPosition() {
+        return mTabPosition;
+    }
+
     public void setTabPosition(int position) {
         mTabPosition = position;
         if (position == 0) {
             setSelected(true);
         }
-    }
-
-    public int getTabPosition() {
-        return mTabPosition;
     }
 }

@@ -1,11 +1,11 @@
 package me.yokeyword.sample.demo_flow.base;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import me.yokeyword.fragmentation.ExtraTransaction;
 import me.yokeyword.fragmentation.ISupportActivity;
 import me.yokeyword.fragmentation.ISupportFragment;
@@ -18,7 +18,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * 展示自定制的MySupportActivity，不继承SupportActivity
  * Created by YoKey on 17/6/24.
  */
-public class MySupportActivity extends AppCompatActivity implements ISupportActivity{
+public class MySupportActivity extends AppCompatActivity implements ISupportActivity {
     final SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
 
     @Override
@@ -126,7 +126,6 @@ public class MySupportActivity extends AppCompatActivity implements ISupportActi
     /****************************************以下为可选方法(Optional methods)******************************************************/
 
     // 选择性拓展其他方法
-
     public void loadRootFragment(int containerId, @NonNull ISupportFragment toFragment) {
         mDelegate.loadRootFragment(containerId, toFragment);
     }

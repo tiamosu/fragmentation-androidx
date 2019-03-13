@@ -1,15 +1,16 @@
 package me.yokeyword.sample.demo_flow.ui.fragment.shop;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.fragmentation.anim.DefaultNoAnimator;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 import me.yokeyword.sample.R;
@@ -52,7 +53,7 @@ public class MenuListFragment extends MySupportFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_menu, container, false);
         initView(view);
         return view;
@@ -64,7 +65,7 @@ public class MenuListFragment extends MySupportFragment {
     }
 
     private void initView(View view) {
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
+        mRecy = view.findViewById(R.id.recy);
     }
 
     @Override

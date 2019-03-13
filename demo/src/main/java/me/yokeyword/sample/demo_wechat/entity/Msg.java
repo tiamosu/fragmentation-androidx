@@ -6,9 +6,10 @@ package me.yokeyword.sample.demo_wechat.entity;
 public class Msg {
     public String message;
 
-    public Msg(){}
+    public Msg() {
+    }
 
-    public Msg(String msg){
+    public Msg(String msg) {
         message = msg;
     }
 }

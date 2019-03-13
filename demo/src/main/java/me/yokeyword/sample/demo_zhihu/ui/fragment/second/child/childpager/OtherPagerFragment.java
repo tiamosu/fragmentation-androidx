@@ -1,12 +1,13 @@
 package me.yokeyword.sample.demo_zhihu.ui.fragment.second.child.childpager;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import me.yokeyword.fragmentation.SupportFragment;
 import me.yokeyword.sample.R;
 
@@ -30,19 +31,21 @@ public class OtherPagerFragment extends SupportFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTitle = getArguments().getString(ARG_TYPE);
+        if (getArguments() != null) {
+            mTitle = getArguments().getString(ARG_TYPE);
+        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.zhihu_fragment_second_pager_other, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
         tvTitle.setText(mTitle);
     }
 }

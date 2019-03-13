@@ -1,15 +1,17 @@
 package me.yokeyword.sample.demo_flow.ui.fragment.home;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
 
@@ -18,11 +20,9 @@ import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
  */
 public class DetailFragment extends BaseBackFragment {
     public static final String TAG = DetailFragment.class.getSimpleName();
-    private static final int REQ_MODIFY_FRAGMENT = 100;
-
-    private static final String ARG_TITLE = "arg_title";
     static final String KEY_RESULT_TITLE = "title";
-
+    private static final int REQ_MODIFY_FRAGMENT = 100;
+    private static final String ARG_TITLE = "arg_title";
     private Toolbar mToolbar;
     private TextView mTvContent;
     private FloatingActionButton mFab;
@@ -48,7 +48,7 @@ public class DetailFragment extends BaseBackFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         initView(view);
 
@@ -56,9 +56,9 @@ public class DetailFragment extends BaseBackFragment {
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mFab = (FloatingActionButton) view.findViewById(R.id.fab);
-        mTvContent = (TextView) view.findViewById(R.id.tv_content);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mFab = view.findViewById(R.id.fab);
+        mTvContent = view.findViewById(R.id.tv_content);
 
         mToolbar.setTitle(mTitle);
 

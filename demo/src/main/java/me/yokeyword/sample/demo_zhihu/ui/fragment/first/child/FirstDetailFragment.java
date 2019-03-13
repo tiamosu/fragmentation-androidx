@@ -1,15 +1,17 @@
 package me.yokeyword.sample.demo_zhihu.ui.fragment.first.child;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_zhihu.base.BaseBackFragment;
 import me.yokeyword.sample.demo_zhihu.entity.Article;
@@ -40,22 +42,24 @@ public class FirstDetailFragment extends BaseBackFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mArticle = getArguments().getParcelable(ARG_ITEM);
+        if (getArguments() != null) {
+            mArticle = getArguments().getParcelable(ARG_ITEM);
+        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.zhihu_fragment_first_detail, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mImgDetail = (ImageView) view.findViewById(R.id.img_detail);
-        mTvTitle = (TextView) view.findViewById(R.id.tv_content);
-        mFab = (FloatingActionButton) view.findViewById(R.id.fab);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mImgDetail = view.findViewById(R.id.img_detail);
+        mTvTitle = view.findViewById(R.id.tv_content);
+        mFab = view.findViewById(R.id.fab);
 
         mToolbar.setTitle("");
         initToolbarNav(mToolbar);

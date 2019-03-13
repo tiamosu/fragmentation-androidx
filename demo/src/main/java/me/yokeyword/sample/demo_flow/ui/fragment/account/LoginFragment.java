@@ -2,8 +2,6 @@ package me.yokeyword.sample.demo_flow.ui.fragment.account;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
 
@@ -34,7 +35,7 @@ public class LoginFragment extends BaseBackFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnLoginSuccessListener) {
             mOnLoginSuccessListener = (OnLoginSuccessListener) context;
@@ -46,7 +47,7 @@ public class LoginFragment extends BaseBackFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         initView(view);
@@ -55,11 +56,11 @@ public class LoginFragment extends BaseBackFragment {
     }
 
     private void initView(View view) {
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mEtAccount = (EditText) view.findViewById(R.id.et_account);
-        mEtPassword = (EditText) view.findViewById(R.id.et_password);
-        mBtnLogin = (Button) view.findViewById(R.id.btn_login);
-        mBtnRegister = (Button) view.findViewById(R.id.btn_register);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        mEtAccount = view.findViewById(R.id.et_account);
+        mEtPassword = view.findViewById(R.id.et_password);
+        mBtnLogin = view.findViewById(R.id.btn_login);
+        mBtnRegister = view.findViewById(R.id.btn_register);
 
         toolbar.setTitle(R.string.login);
         initToolbarNav(toolbar);
@@ -98,13 +99,13 @@ public class LoginFragment extends BaseBackFragment {
         mOnLoginSuccessListener = null;
     }
 
-    public interface OnLoginSuccessListener {
-        void onLoginSuccess(String account);
-    }
-
     @Override
     public void onSupportInvisible() {
         super.onSupportInvisible();
         hideSoftInput();
+    }
+
+    public interface OnLoginSuccessListener {
+        void onLoginSuccess(String account);
     }
 }

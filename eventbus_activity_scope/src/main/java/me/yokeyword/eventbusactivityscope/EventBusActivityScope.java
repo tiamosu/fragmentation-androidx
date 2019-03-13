@@ -21,11 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class EventBusActivityScope {
     private static final String TAG = EventBusActivityScope.class.getSimpleName();
-
+    private static final Map<Activity, LazyEventBusInstance> sActivityEventBusScopePool = new ConcurrentHashMap<>();
     private static AtomicBoolean sInitialized = new AtomicBoolean(false);
     private static volatile EventBus sInvalidEventBus;
-
-    private static final Map<Activity, LazyEventBusInstance> sActivityEventBusScopePool = new ConcurrentHashMap<>();
 
     static void init(Context context) {
         if (sInitialized.getAndSet(true)) {

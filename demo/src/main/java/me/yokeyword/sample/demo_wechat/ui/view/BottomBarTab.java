@@ -1,11 +1,10 @@
 package me.yokeyword.sample.demo_wechat.ui.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -16,11 +15,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
+import androidx.core.content.ContextCompat;
 import me.yokeyword.sample.R;
 
 /**
  * Created by YoKeyword on 16/6/3.
  */
+@SuppressLint("ViewConstructor")
 public class BottomBarTab extends FrameLayout {
     private ImageView mIcon;
     private TextView mTvTitle;
@@ -105,31 +107,14 @@ public class BottomBarTab extends FrameLayout {
         }
     }
 
-    public void setTabPosition(int position) {
-        mTabPosition = position;
-        if (position == 0) {
-            setSelected(true);
-        }
-    }
-
     public int getTabPosition() {
         return mTabPosition;
     }
 
-    /**
-     * 设置未读数量
-     */
-    public void setUnreadCount(int num) {
-        if (num <= 0) {
-            mTvUnreadCount.setText(String.valueOf(0));
-            mTvUnreadCount.setVisibility(GONE);
-        } else {
-            mTvUnreadCount.setVisibility(VISIBLE);
-            if (num > 99) {
-                mTvUnreadCount.setText("99+");
-            } else {
-                mTvUnreadCount.setText(String.valueOf(num));
-            }
+    public void setTabPosition(int position) {
+        mTabPosition = position;
+        if (position == 0) {
+            setSelected(true);
         }
     }
 
@@ -149,6 +134,24 @@ public class BottomBarTab extends FrameLayout {
         } catch (Exception ignored) {
         }
         return count;
+    }
+
+    /**
+     * 设置未读数量
+     */
+    @SuppressLint("SetTextI18n")
+    public void setUnreadCount(int num) {
+        if (num <= 0) {
+            mTvUnreadCount.setText(String.valueOf(0));
+            mTvUnreadCount.setVisibility(GONE);
+        } else {
+            mTvUnreadCount.setVisibility(VISIBLE);
+            if (num > 99) {
+                mTvUnreadCount.setText("99+");
+            } else {
+                mTvUnreadCount.setText(String.valueOf(num));
+            }
+        }
     }
 
     private int dip2px(Context context, float dp) {

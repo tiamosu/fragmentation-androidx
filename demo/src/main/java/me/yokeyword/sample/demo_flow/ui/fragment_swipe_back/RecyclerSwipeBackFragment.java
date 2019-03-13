@@ -1,9 +1,6 @@
 package me.yokeyword.sample.demo_flow.ui.fragment_swipe_back;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +8,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.adapter.PagerAdapter;
 import me.yokeyword.sample.demo_flow.listener.OnItemClickListener;
@@ -25,12 +26,11 @@ public class RecyclerSwipeBackFragment extends BaseSwipeBackFragment {
     private PagerAdapter mAdapter;
 
     public static RecyclerSwipeBackFragment newInstance() {
-        RecyclerSwipeBackFragment fragment = new RecyclerSwipeBackFragment();
-        return fragment;
+        return new RecyclerSwipeBackFragment();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swipe_back_recy, container, false);
 
@@ -40,9 +40,9 @@ public class RecyclerSwipeBackFragment extends BaseSwipeBackFragment {
     }
 
     private void initView(View view) {
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
+        mRecy = view.findViewById(R.id.recy);
 
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        mToolbar = view.findViewById(R.id.toolbar);
         _initToolbar(mToolbar);
 
         mAdapter = new PagerAdapter(_mActivity);

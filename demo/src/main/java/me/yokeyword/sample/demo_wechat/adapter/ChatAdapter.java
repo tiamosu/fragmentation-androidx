@@ -1,7 +1,6 @@
 package me.yokeyword.sample.demo_wechat.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.entity.Chat;
 import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener;
@@ -41,8 +42,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
         notifyItemChanged(index);
     }
 
+    @NonNull
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_wechat_chat, parent, false);
         final VH holder = new VH(view);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +59,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(@NonNull VH holder, int position) {
         Chat item = mItems.get(position);
 
         holder.tvName.setText(item.name);

@@ -1,11 +1,6 @@
 package me.yokeyword.sample.demo_flow.ui.fragment.home;
 
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +10,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.fragmentation.ISupportActivity;
 import me.yokeyword.fragmentation.anim.DefaultHorizontalAnimator;
 import me.yokeyword.fragmentation.anim.DefaultNoAnimator;
@@ -42,7 +43,7 @@ public class HomeFragment extends BaseMainFragment implements Toolbar.OnMenuItem
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         initView(view);
@@ -85,8 +86,8 @@ public class HomeFragment extends BaseMainFragment implements Toolbar.OnMenuItem
     }
 
     private void initView(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mRecy = (RecyclerView) view.findViewById(R.id.recy);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mRecy = view.findViewById(R.id.recy);
 
         mTitles = getResources().getStringArray(R.array.array_title);
         mContents = getResources().getStringArray(R.array.array_content);

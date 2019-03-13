@@ -1,11 +1,12 @@
 package me.yokeyword.sample.demo_wechat.ui.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
 import me.yokeyword.sample.R;
@@ -20,12 +21,10 @@ import me.yokeyword.sample.demo_wechat.ui.view.BottomBarTab;
  * Created by YoKeyword on 16/6/30.
  */
 public class MainFragment extends SupportFragment {
-    private static final int REQ_MSG = 10;
-
     public static final int FIRST = 0;
     public static final int SECOND = 1;
     public static final int THIRD = 2;
-
+    private static final int REQ_MSG = 10;
     private SupportFragment[] mFragments = new SupportFragment[3];
 
     private BottomBar mBottomBar;
@@ -42,7 +41,7 @@ public class MainFragment extends SupportFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wechat_fragment_main, container, false);
         initView(view);
         return view;
@@ -72,7 +71,7 @@ public class MainFragment extends SupportFragment {
     }
 
     private void initView(View view) {
-        mBottomBar = (BottomBar) view.findViewById(R.id.bottomBar);
+        mBottomBar = view.findViewById(R.id.bottomBar);
 
         mBottomBar
                 .addItem(new BottomBarTab(_mActivity, R.drawable.ic_message_white_24dp, getString(R.string.msg)))
