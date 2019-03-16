@@ -1,6 +1,7 @@
 package me.yokeyword.fragmentation;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -93,13 +94,23 @@ public class SupportFragmentDelegate {
         return new ExtraTransaction.ExtraTransactionImpl<>((FragmentActivity) mSupport, mSupportF, mTransactionDelegate, false);
     }
 
-    public void onAttach(Activity activity) {
-        if (activity instanceof ISupportActivity) {
-            this.mSupport = (ISupportActivity) activity;
-            this._mActivity = (FragmentActivity) activity;
+//    public void onAttach(Activity activity) {
+//        if (activity instanceof ISupportActivity) {
+//            this.mSupport = (ISupportActivity) activity;
+//            this._mActivity = (FragmentActivity) activity;
+//            mTransactionDelegate = mSupport.getSupportDelegate().getTransactionDelegate();
+//        } else {
+//            throw new RuntimeException(activity.getClass().getSimpleName() + " must impl ISupportActivity!");
+//        }
+//    }
+
+    public void onAttach(Context context) {
+        if (context instanceof ISupportActivity) {
+            this.mSupport = (ISupportActivity) context;
+            this._mActivity = (FragmentActivity) context;
             mTransactionDelegate = mSupport.getSupportDelegate().getTransactionDelegate();
         } else {
-            throw new RuntimeException(activity.getClass().getSimpleName() + " must impl ISupportActivity!");
+            throw new RuntimeException(context.getClass().getSimpleName() + " must impl ISupportActivity!");
         }
     }
 

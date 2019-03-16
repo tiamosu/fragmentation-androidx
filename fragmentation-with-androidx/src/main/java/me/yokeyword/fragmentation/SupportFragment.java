@@ -1,6 +1,7 @@
 package me.yokeyword.fragmentation;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -36,10 +37,17 @@ public class SupportFragment extends Fragment implements ISupportFragment {
         return mDelegate.extraTransaction();
     }
 
+    //    @Override
+//    public void onAttach(@NonNull Activity activity) {
+//        super.onAttach(activity);
+//        mDelegate.onAttach(activity);
+//        _mActivity = mDelegate.getActivity();
+//    }
+
     @Override
-    public void onAttach(@NonNull Activity activity) {
-        super.onAttach(activity);
-        mDelegate.onAttach(activity);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mDelegate.onAttach(context);
         _mActivity = mDelegate.getActivity();
     }
 

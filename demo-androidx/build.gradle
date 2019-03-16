@@ -31,10 +31,10 @@ dependencies {
     implementation "com.google.android.material:material:1.1.0-alpha04"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.0.0"
-    implementation project(':fragmentation')
-    implementation project(':fragmentation_swipeback')
+    implementation project(':fragmentation-with-androidx')
+    implementation project(':fragmentation-swipeback-androidx')
     // EventBus
-    implementation project(':eventbus_activity_scope')
+    implementation project(':eventbus-activity-scope-androidx')
     implementation 'org.greenrobot:eventbus:3.0.0'
     //    apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
 }

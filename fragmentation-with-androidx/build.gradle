@@ -26,5 +26,5 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
-    compileOnly project(':fragmentation')
+    api project(':fragmentation-core-androidx')
 }
