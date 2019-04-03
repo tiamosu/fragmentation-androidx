@@ -6,3 +6,5 @@ dependencies {
     api project(':fragmentation-core-androidx')
     compileOnly Deps.appcompat
 }
+
+apply from: "${rootDir.path}/config_bintray.gradle"

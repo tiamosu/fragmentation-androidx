@@ -5,3 +5,5 @@ apply {
 dependencies {
     compileOnly Deps.eventbus
 }
+
+apply from: "${rootDir.path}/config_bintray.gradle"
