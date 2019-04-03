@@ -3,7 +3,7 @@ apply {
 }
 
 dependencies {
-    compileOnly Deps.eventbus
+    api Deps.eventbus
 }
 
 apply from: "${rootDir.path}/config_bintray.gradle"

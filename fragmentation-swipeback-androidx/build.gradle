@@ -3,7 +3,7 @@ apply {
 }
 
 dependencies {
-    compileOnly project(':fragmentation-with-androidx')
+    api project(':fragmentation-with-androidx')
     compileOnly Deps.appcompat
 }
 
