@@ -29,6 +29,7 @@ public class SupportFragment extends Fragment implements ISupportFragment {
         return mDelegate;
     }
 
+    @NonNull
     @Override
     public FragmentActivity getContext() {
         return _mActivity;

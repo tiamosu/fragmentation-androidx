@@ -25,6 +25,7 @@ public class SupportActivity extends AppCompatActivity implements ISupportActivi
         return mDelegate;
     }
 
+    @NonNull
     public SupportActivity getContext() {
         return this;
     }
