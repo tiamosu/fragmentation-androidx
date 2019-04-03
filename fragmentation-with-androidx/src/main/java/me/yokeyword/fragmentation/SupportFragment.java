@@ -29,6 +29,11 @@ public class SupportFragment extends Fragment implements ISupportFragment {
         return mDelegate;
     }
 
+    @Override
+    public FragmentActivity getContext() {
+        return _mActivity;
+    }
+
     /**
      * Perform some extra transactions.
      * 额外的事务：自定义Tag，添加SharedElement动画，操作非回退栈Fragment

@@ -25,6 +25,10 @@ public class SupportActivity extends AppCompatActivity implements ISupportActivi
         return mDelegate;
     }
 
+    public SupportActivity getContext() {
+        return this;
+    }
+
     /**
      * Perform some extra transactions.
      * 额外的事务：自定义Tag，添加SharedElement动画，操作非回退栈Fragment
