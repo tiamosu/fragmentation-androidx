@@ -19,6 +19,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * {@link androidx.fragment.app.Fragment} APIs.
  * Created by YoKey on 17/6/22.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class SupportFragment extends Fragment implements ISupportFragment {
     private final SupportFragmentDelegate mDelegate = new SupportFragmentDelegate(this);
     protected FragmentActivity _mActivity;
@@ -36,13 +37,6 @@ public class SupportFragment extends Fragment implements ISupportFragment {
     public ExtraTransaction extraTransaction() {
         return mDelegate.extraTransaction();
     }
-
-    //    @Override
-//    public void onAttach(@NonNull Activity activity) {
-//        super.onAttach(activity);
-//        mDelegate.onAttach(activity);
-//        _mActivity = mDelegate.getActivity();
-//    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -119,6 +113,7 @@ public class SupportFragment extends Fragment implements ISupportFragment {
      *
      * @deprecated Use {@link #post(Runnable)} instead.
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     public void enqueueAction(Runnable runnable) {

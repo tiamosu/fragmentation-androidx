@@ -16,6 +16,7 @@ import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
 /**
  * Created by YoKey on 16/11/24.
  */
+@SuppressWarnings("unused")
 public abstract class ExtraTransaction {
 
     /**

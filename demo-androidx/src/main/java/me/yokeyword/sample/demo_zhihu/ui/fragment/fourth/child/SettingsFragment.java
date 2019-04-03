@@ -14,14 +14,13 @@ import me.yokeyword.sample.R;
 /**
  * Created by YoKeyword on 16/6/6.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class SettingsFragment extends SupportFragment {
     private Toolbar mToolbar;
 
     public static SettingsFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        SettingsFragment fragment = new SettingsFragment();
+        final Bundle args = new Bundle();
+        final SettingsFragment fragment = new SettingsFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -29,7 +28,7 @@ public class SettingsFragment extends SupportFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zhihu_fragment_fourth_settings, container, false);
+        final View view = inflater.inflate(R.layout.zhihu_fragment_fourth_settings, container, false);
         initView(view);
         return view;
     }
@@ -38,12 +37,7 @@ public class SettingsFragment extends SupportFragment {
         mToolbar = view.findViewById(R.id.toolbarSettings);
 
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _mActivity.onBackPressed();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> _mActivity.onBackPressed());
     }
 
     @Override

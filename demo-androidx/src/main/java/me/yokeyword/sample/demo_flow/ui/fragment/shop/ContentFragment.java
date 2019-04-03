@@ -1,6 +1,5 @@
 package me.yokeyword.sample.demo_flow.ui.fragment.shop;
 
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +19,7 @@ import me.yokeyword.sample.demo_flow.ui.fragment.CycleFragment;
 /**
  * Created by YoKeyword on 16/2/9.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ContentFragment extends MySupportFragment {
     private static final String ARG_MENU = "arg_menu";
 
@@ -29,11 +29,9 @@ public class ContentFragment extends MySupportFragment {
     private String mMenu;
 
     public static ContentFragment newInstance(String menu) {
-
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
+        final ContentFragment fragment = new ContentFragment();
         args.putString(ARG_MENU, menu);
-
-        ContentFragment fragment = new ContentFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,7 +40,7 @@ public class ContentFragment extends MySupportFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
+        final Bundle args = getArguments();
         if (args != null) {
             mMenu = args.getString(ARG_MENU);
         }
@@ -56,7 +54,7 @@ public class ContentFragment extends MySupportFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_content, container, false);
+        final View view = inflater.inflate(R.layout.fragment_content, container, false);
         initView(view);
         return view;
     }
@@ -68,13 +66,10 @@ public class ContentFragment extends MySupportFragment {
 
         mTvContent.setText("Content:\n" + mMenu);
 
-        mBtnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 和MsgFragment同级别的跳转 交给MsgFragment处理
-                if (getParentFragment() instanceof ShopFragment) {
-                    ((ShopFragment) getParentFragment()).start(CycleFragment.newInstance(1));
-                }
+        mBtnNext.setOnClickListener(v -> {
+            // 和MsgFragment同级别的跳转 交给MsgFragment处理
+            if (getParentFragment() instanceof ShopFragment) {
+                ((ShopFragment) getParentFragment()).start(CycleFragment.newInstance(1));
             }
         });
     }

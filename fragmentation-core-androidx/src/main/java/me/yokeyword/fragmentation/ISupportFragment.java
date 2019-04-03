@@ -13,6 +13,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * Created by YoKey on 17/6/23.
  */
 
+@SuppressWarnings("unused")
 public interface ISupportFragment {
     // LaunchMode
     int STANDARD = 0;
@@ -57,6 +58,7 @@ public interface ISupportFragment {
 
     boolean onBackPressedSupport();
 
+    @SuppressWarnings("UnnecessaryInterfaceModifier")
     @IntDef({STANDARD, SINGLETOP, SINGLETASK})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LaunchMode {

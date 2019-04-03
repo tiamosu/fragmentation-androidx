@@ -6,6 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by YoKeyword on 16/2/1.
  */
+@SuppressWarnings("unused")
 public class Article implements Parcelable {
     public static final Creator<Article> CREATOR = new Creator<Article>() {
         @Override

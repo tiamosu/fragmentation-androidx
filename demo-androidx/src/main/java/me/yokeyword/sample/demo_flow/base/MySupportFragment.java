@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -19,8 +20,9 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * 展示自定制的MySupportFragment，不继承SupportFragment
  * Created by YoKey on 17/6/24.
  */
-public class MySupportFragment extends Fragment implements ISupportFragment {
-    final SupportFragmentDelegate mDelegate = new SupportFragmentDelegate(this);
+@SuppressWarnings("WeakerAccess")
+public abstract class MySupportFragment extends Fragment implements ISupportFragment {
+    private final SupportFragmentDelegate mDelegate = new SupportFragmentDelegate(this);
     protected FragmentActivity _mActivity;
 
     @Override
@@ -37,8 +39,9 @@ public class MySupportFragment extends Fragment implements ISupportFragment {
         return mDelegate.extraTransaction();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
         mDelegate.onAttach(activity);
         _mActivity = mDelegate.getActivity();
@@ -62,7 +65,7 @@ public class MySupportFragment extends Fragment implements ISupportFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mDelegate.onSaveInstanceState(outState);
     }
@@ -112,6 +115,7 @@ public class MySupportFragment extends Fragment implements ISupportFragment {
      *
      * @deprecated Use {@link #post(Runnable)} instead.
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     public void enqueueAction(Runnable runnable) {

@@ -5,6 +5,7 @@ import me.yokeyword.fragmentation.SwipeBackLayout;
 /**
  * Created by YoKey on 17/6/29.
  */
+@SuppressWarnings("unused")
 public interface ISwipeBackActivity {
 
     SwipeBackLayout getSwipeBackLayout();

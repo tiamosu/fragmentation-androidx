@@ -46,21 +46,21 @@ public class BottomBarTab extends FrameLayout {
 
     private void init(Context context, int icon, CharSequence title) {
         mContext = context;
-        TypedArray typedArray = context.obtainStyledAttributes(new int[]{R.attr.selectableItemBackgroundBorderless});
-        Drawable drawable = typedArray.getDrawable(0);
+        final TypedArray typedArray = context.obtainStyledAttributes(new int[]{R.attr.selectableItemBackgroundBorderless});
+        final Drawable drawable = typedArray.getDrawable(0);
         setBackgroundDrawable(drawable);
         typedArray.recycle();
 
-        LinearLayout lLContainer = new LinearLayout(context);
+        final LinearLayout lLContainer = new LinearLayout(context);
         lLContainer.setOrientation(LinearLayout.VERTICAL);
         lLContainer.setGravity(Gravity.CENTER);
-        LayoutParams paramsContainer = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final LayoutParams paramsContainer = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsContainer.gravity = Gravity.CENTER;
         lLContainer.setLayoutParams(paramsContainer);
 
         mIcon = new ImageView(context);
-        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 27, getResources().getDisplayMetrics());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
+        final int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 27, getResources().getDisplayMetrics());
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
         mIcon.setImageResource(icon);
         mIcon.setLayoutParams(params);
         mIcon.setColorFilter(ContextCompat.getColor(context, R.color.tab_unselect));
@@ -68,7 +68,7 @@ public class BottomBarTab extends FrameLayout {
 
         mTvTitle = new TextView(context);
         mTvTitle.setText(title);
-        LinearLayout.LayoutParams paramsTv = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final LinearLayout.LayoutParams paramsTv = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsTv.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
         mTvTitle.setTextSize(10);
         mTvTitle.setTextColor(ContextCompat.getColor(context, R.color.tab_unselect));
@@ -77,15 +77,15 @@ public class BottomBarTab extends FrameLayout {
 
         addView(lLContainer);
 
-        int min = dip2px(context, 20);
-        int padding = dip2px(context, 5);
+        final int min = dip2px(context, 20);
+        final int padding = dip2px(context, 5);
         mTvUnreadCount = new TextView(context);
         mTvUnreadCount.setBackgroundResource(R.drawable.bg_msg_bubble);
         mTvUnreadCount.setMinWidth(min);
         mTvUnreadCount.setTextColor(Color.WHITE);
         mTvUnreadCount.setPadding(padding, 0, padding, 0);
         mTvUnreadCount.setGravity(Gravity.CENTER);
-        FrameLayout.LayoutParams tvUnReadParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, min);
+        final FrameLayout.LayoutParams tvUnReadParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, min);
         tvUnReadParams.gravity = Gravity.CENTER;
         tvUnReadParams.leftMargin = dip2px(context, 17);
         tvUnReadParams.bottomMargin = dip2px(context, 14);

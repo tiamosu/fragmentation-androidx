@@ -16,9 +16,8 @@ import me.yokeyword.sample.R;
 public class OtherPagerFragment extends SupportFragment {
 
     public static OtherPagerFragment newInstance() {
-
-        Bundle args = new Bundle();
-        OtherPagerFragment fragment = new OtherPagerFragment();
+        final Bundle args = new Bundle();
+        final OtherPagerFragment fragment = new OtherPagerFragment();
         fragment.setArguments(args);
         return fragment;
     }

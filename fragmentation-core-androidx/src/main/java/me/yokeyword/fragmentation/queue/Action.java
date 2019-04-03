@@ -1,15 +1,13 @@
 package me.yokeyword.fragmentation.queue;
 
-
 import androidx.fragment.app.FragmentManager;
 
 /**
  * Created by YoKey on 17/12/28.
  */
-
+@SuppressWarnings("WeakerAccess")
 public abstract class Action {
     public static final long DEFAULT_POP_TIME = 300L;
-
     public static final int ACTION_NORMAL = 0;
     public static final int ACTION_POP = 1;
     public static final int ACTION_POP_MOCK = 2;

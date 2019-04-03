@@ -23,9 +23,7 @@ import me.yokeyword.sample.demo_zhihu.listener.OnItemClickListener;
 public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> {
     private List<Article> mItems = new ArrayList<>();
     private LayoutInflater mInflater;
-
     private OnItemClickListener mClickListener;
-
 
     public FirstHomeAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -34,15 +32,12 @@ public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> 
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_zhihu_home_first, parent, false);
+        final View view = mInflater.inflate(R.layout.item_zhihu_home_first, parent, false);
         final VH holder = new VH(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                if (mClickListener != null) {
-                    mClickListener.onItemClick(position, v, holder);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            final int position = holder.getAdapterPosition();
+            if (mClickListener != null) {
+                mClickListener.onItemClick(position, v, holder);
             }
         });
         return holder;
@@ -50,7 +45,7 @@ public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> 
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
-        Article item = mItems.get(position);
+        final Article item = mItems.get(position);
 
         // 把每个图片视图设置不同的Transition名称, 防止在一个视图内有多个相同的名称, 在变换的时候造成混乱
         // Fragment支持多个View进行变换, 使用适配器时, 需要加以区分
@@ -83,7 +78,7 @@ public class FirstHomeAdapter extends RecyclerView.Adapter<FirstHomeAdapter.VH> 
         public TextView tvTitle;
         public ImageView img;
 
-        public VH(View itemView) {
+        VH(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
             img = itemView.findViewById(R.id.img);

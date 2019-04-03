@@ -16,7 +16,6 @@ import me.yokeyword.fragmentation.anim.DefaultNoAnimator;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_zhihu.adapter.MenuAdapter;
-import me.yokeyword.sample.demo_zhihu.listener.OnItemClickListener;
 import me.yokeyword.sample.demo_zhihu.ui.fragment.third.child.ShopFragment;
 
 /**
@@ -33,11 +32,9 @@ public class MenuListFragment extends SupportFragment {
     private int mCurrentPosition = -1;
 
     public static MenuListFragment newInstance(ArrayList<String> menus) {
-
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
         args.putStringArrayList(ARG_MENUS, menus);
-
-        MenuListFragment fragment = new MenuListFragment();
+        final MenuListFragment fragment = new MenuListFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +43,7 @@ public class MenuListFragment extends SupportFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
+        final Bundle args = getArguments();
         if (args != null) {
             mMenus = args.getStringArrayList(ARG_MENUS);
         }
@@ -55,7 +52,7 @@ public class MenuListFragment extends SupportFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_menu, container, false);
+        final View view = inflater.inflate(R.layout.fragment_list_menu, container, false);
         initView(view);
         return view;
     }
@@ -73,18 +70,13 @@ public class MenuListFragment extends SupportFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mAdapter = new MenuAdapter(_mActivity);
         mRecy.setAdapter(mAdapter);
         mAdapter.setDatas(mMenus);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view, RecyclerView.ViewHolder vh) {
-                showContent(position);
-            }
-        });
+        mAdapter.setOnItemClickListener((position, view, vh) -> showContent(position));
 
         if (savedInstanceState != null) {
             mCurrentPosition = savedInstanceState.getInt(SAVE_STATE_POSITION);
@@ -104,8 +96,7 @@ public class MenuListFragment extends SupportFragment {
 
         mAdapter.setItemChecked(position);
 
-        ContentFragment fragment = ContentFragment.newInstance(mMenus.get(position));
-
+        final ContentFragment fragment = ContentFragment.newInstance(mMenus.get(position));
         if (getParentFragment() != null) {
             ((ShopFragment) getParentFragment()).switchContentFragment(fragment);
         }

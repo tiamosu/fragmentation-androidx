@@ -16,6 +16,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * <p>
  * Created by YoKey on 17/6/20.
  */
+@SuppressWarnings("unused")
 public class SupportActivity extends AppCompatActivity implements ISupportActivity {
     final SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
 
@@ -36,13 +37,13 @@ public class SupportActivity extends AppCompatActivity implements ISupportActivi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDelegate.onCreate(savedInstanceState);
+        mDelegate.onCreate();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDelegate.onPostCreate(savedInstanceState);
+        mDelegate.onPostCreate();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class SupportActivity extends AppCompatActivity implements ISupportActivi
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        return mDelegate.dispatchTouchEvent(ev) || super.dispatchTouchEvent(ev);
+        return mDelegate.dispatchTouchEvent() || super.dispatchTouchEvent(ev);
     }
 
     /**

@@ -36,14 +36,14 @@ public class BottomBarTab extends FrameLayout {
 
     private void init(Context context, int icon) {
         mContext = context;
-        TypedArray typedArray = context.obtainStyledAttributes(new int[]{R.attr.selectableItemBackgroundBorderless});
-        Drawable drawable = typedArray.getDrawable(0);
+        final TypedArray typedArray = context.obtainStyledAttributes(new int[]{R.attr.selectableItemBackgroundBorderless});
+        final Drawable drawable = typedArray.getDrawable(0);
         setBackgroundDrawable(drawable);
         typedArray.recycle();
 
         mIcon = new ImageView(context);
-        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 27, getResources().getDisplayMetrics());
-        LayoutParams params = new LayoutParams(size, size);
+        final int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 27, getResources().getDisplayMetrics());
+        final LayoutParams params = new LayoutParams(size, size);
         params.gravity = Gravity.CENTER;
         mIcon.setImageResource(icon);
         mIcon.setLayoutParams(params);

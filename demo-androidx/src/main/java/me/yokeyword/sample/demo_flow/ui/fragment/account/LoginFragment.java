@@ -19,6 +19,7 @@ import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
 /**
  * Created by YoKeyword on 16/2/14.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class LoginFragment extends BaseBackFragment {
     private EditText mEtAccount, mEtPassword;
     private Button mBtnLogin, mBtnRegister;
@@ -26,10 +27,8 @@ public class LoginFragment extends BaseBackFragment {
     private OnLoginSuccessListener mOnLoginSuccessListener;
 
     public static LoginFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        LoginFragment fragment = new LoginFragment();
+        final Bundle args = new Bundle();
+        final LoginFragment fragment = new LoginFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,15 +47,13 @@ public class LoginFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-
+        final View view = inflater.inflate(R.layout.fragment_login, container, false);
         initView(view);
-
         return view;
     }
 
     private void initView(View view) {
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        final Toolbar toolbar = view.findViewById(R.id.toolbar);
         mEtAccount = view.findViewById(R.id.et_account);
         mEtPassword = view.findViewById(R.id.et_password);
         mBtnLogin = view.findViewById(R.id.btn_login);
@@ -65,32 +62,24 @@ public class LoginFragment extends BaseBackFragment {
         toolbar.setTitle(R.string.login);
         initToolbarNav(toolbar);
 
-        mBtnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String strAccount = mEtAccount.getText().toString();
-                String strPassword = mEtPassword.getText().toString();
-                if (TextUtils.isEmpty(strAccount.trim())) {
-                    Toast.makeText(_mActivity, R.string.error_username, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(strPassword.trim())) {
-                    Toast.makeText(_mActivity, R.string.error_pwd, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // 登录成功
-                mOnLoginSuccessListener.onLoginSuccess(strAccount);
-                pop();
+        mBtnLogin.setOnClickListener(v -> {
+            final String strAccount = mEtAccount.getText().toString();
+            final String strPassword = mEtPassword.getText().toString();
+            if (TextUtils.isEmpty(strAccount.trim())) {
+                Toast.makeText(_mActivity, R.string.error_username, Toast.LENGTH_SHORT).show();
+                return;
             }
+            if (TextUtils.isEmpty(strPassword.trim())) {
+                Toast.makeText(_mActivity, R.string.error_pwd, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 登录成功
+            mOnLoginSuccessListener.onLoginSuccess(strAccount);
+            pop();
         });
 
-        mBtnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(RegisterFragment.newInstance());
-            }
-        });
+        mBtnRegister.setOnClickListener(v -> start(RegisterFragment.newInstance()));
     }
 
     @Override

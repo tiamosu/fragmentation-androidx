@@ -9,6 +9,7 @@ import android.transition.ChangeTransform;
 import android.transition.TransitionSet;
 import android.util.AttributeSet;
 
+@SuppressWarnings("unused")
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class DetailTransition extends TransitionSet {
     public DetailTransition() {

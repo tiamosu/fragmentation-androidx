@@ -45,15 +45,12 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_menu, parent, false);
+        final View view = mInflater.inflate(R.layout.item_menu, parent, false);
         final MyViewHolder holder = new MyViewHolder(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                if (mClickListener != null) {
-                    mClickListener.onItemClick(position, v, holder);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            final int position = holder.getAdapterPosition();
+            if (mClickListener != null) {
+                mClickListener.onItemClick(position, v, holder);
             }
         });
         return holder;
@@ -98,7 +95,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         View viewLine;
         TextView tvName;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             viewLine = itemView.findViewById(R.id.view_line);
             tvName = itemView.findViewById(R.id.tv_name);

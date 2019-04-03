@@ -17,10 +17,8 @@ import me.yokeyword.sample.R;
 public class ViewFragment extends SupportFragment {
 
     public static ViewFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        ViewFragment fragment = new ViewFragment();
+        final Bundle args = new Bundle();
+        final ViewFragment fragment = new ViewFragment();
         fragment.setArguments(args);
         return fragment;
     }

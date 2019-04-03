@@ -23,6 +23,7 @@ import me.yokeyword.sample.demo_wechat.entity.Msg;
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class MsgFragment extends BaseBackFragment {
     private static final String ARG_MSG = "arg_msg";
 
@@ -35,10 +36,9 @@ public class MsgFragment extends BaseBackFragment {
     private MsgAdapter mAdapter;
 
     public static MsgFragment newInstance(Chat msg) {
-
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
         args.putParcelable(ARG_MSG, msg);
-        MsgFragment fragment = new MsgFragment();
+        final MsgFragment fragment = new MsgFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,7 +54,7 @@ public class MsgFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_tab_first_msg, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_tab_first_msg, container, false);
         initView(view);
         return attachToSwipeBack(view);
     }
@@ -81,16 +81,15 @@ public class MsgFragment extends BaseBackFragment {
         mAdapter = new MsgAdapter(_mActivity);
         mRecy.setAdapter(mAdapter);
 
-        mBtnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String str = mEtSend.getText().toString().trim();
-                if (TextUtils.isEmpty(str)) return;
-
-                mAdapter.addMsg(new Msg(str));
-                mEtSend.setText("");
-                mRecy.scrollToPosition(mAdapter.getItemCount() - 1);
+        mBtnSend.setOnClickListener(v -> {
+            final String str = mEtSend.getText().toString().trim();
+            if (TextUtils.isEmpty(str)) {
+                return;
             }
+
+            mAdapter.addMsg(new Msg(str));
+            mEtSend.setText("");
+            mRecy.scrollToPosition(mAdapter.getItemCount() - 1);
         });
 
         mAdapter.addMsg(new Msg(mChat.message));

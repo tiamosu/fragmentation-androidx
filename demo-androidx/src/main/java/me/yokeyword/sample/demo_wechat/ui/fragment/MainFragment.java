@@ -20,21 +20,18 @@ import me.yokeyword.sample.demo_wechat.ui.view.BottomBarTab;
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings("WeakerAccess")
 public class MainFragment extends SupportFragment {
     public static final int FIRST = 0;
     public static final int SECOND = 1;
     public static final int THIRD = 2;
-    private static final int REQ_MSG = 10;
     private SupportFragment[] mFragments = new SupportFragment[3];
 
     private BottomBar mBottomBar;
 
-
     public static MainFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        MainFragment fragment = new MainFragment();
+        final Bundle args = new Bundle();
+        final MainFragment fragment = new MainFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,7 +39,7 @@ public class MainFragment extends SupportFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_main, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_main, container, false);
         initView(view);
         return view;
     }
@@ -50,7 +47,7 @@ public class MainFragment extends SupportFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        SupportFragment firstFragment = findChildFragment(WechatFirstTabFragment.class);
+        final SupportFragment firstFragment = findChildFragment(WechatFirstTabFragment.class);
         if (firstFragment == null) {
             mFragments[FIRST] = WechatFirstTabFragment.newInstance();
             mFragments[SECOND] = WechatSecondTabFragment.newInstance();
@@ -86,7 +83,7 @@ public class MainFragment extends SupportFragment {
             public void onTabSelected(int position, int prePosition) {
                 showHideFragment(mFragments[position], mFragments[prePosition]);
 
-                BottomBarTab tab = mBottomBar.getItem(FIRST);
+                final BottomBarTab tab = mBottomBar.getItem(FIRST);
                 if (position == FIRST) {
                     tab.setUnreadCount(0);
                 } else {
@@ -96,7 +93,6 @@ public class MainFragment extends SupportFragment {
 
             @Override
             public void onTabUnselected(int position) {
-
             }
 
             @Override
@@ -111,9 +107,6 @@ public class MainFragment extends SupportFragment {
     @Override
     public void onFragmentResult(int requestCode, int resultCode, Bundle data) {
         super.onFragmentResult(requestCode, resultCode, data);
-        if (requestCode == REQ_MSG && resultCode == RESULT_OK) {
-
-        }
     }
 
     /**

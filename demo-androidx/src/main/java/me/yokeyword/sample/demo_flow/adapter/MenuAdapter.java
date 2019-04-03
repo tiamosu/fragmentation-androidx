@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.listener.OnItemClickListener;
@@ -41,24 +42,22 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         mBooleanArray = new SparseBooleanArray(mItems.size());
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_menu, parent, false);
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final View view = mInflater.inflate(R.layout.item_menu, parent, false);
         final MyViewHolder holder = new MyViewHolder(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                if (mClickListener != null) {
-                    mClickListener.onItemClick(position, v);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            final int position = holder.getAdapterPosition();
+            if (mClickListener != null) {
+                mClickListener.onItemClick(position, v);
             }
         });
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         if (!mBooleanArray.get(position)) {
             holder.viewLine.setVisibility(View.INVISIBLE);
             holder.itemView.setBackgroundResource(R.color.bg_app);
@@ -96,10 +95,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> 
         View viewLine;
         TextView tvName;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             viewLine = itemView.findViewById(R.id.view_line);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name);
+            tvName = itemView.findViewById(R.id.tv_name);
         }
     }
 }

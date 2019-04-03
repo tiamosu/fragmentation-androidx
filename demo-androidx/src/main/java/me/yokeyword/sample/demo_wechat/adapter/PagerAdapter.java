@@ -36,15 +36,12 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.MyViewHolder
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_pager, parent, false);
+        final View view = mInflater.inflate(R.layout.item_pager, parent, false);
         final MyViewHolder holder = new MyViewHolder(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                if (mClickListener != null) {
-                    mClickListener.onItemClick(position, v, holder);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            final int position = holder.getAdapterPosition();
+            if (mClickListener != null) {
+                mClickListener.onItemClick(position, v, holder);
             }
         });
         return holder;
@@ -52,7 +49,7 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        String item = mItems.get(position);
+        final String item = mItems.get(position);
         holder.tvTitle.setText(item);
     }
 
@@ -68,7 +65,7 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.MyViewHolder
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
         }

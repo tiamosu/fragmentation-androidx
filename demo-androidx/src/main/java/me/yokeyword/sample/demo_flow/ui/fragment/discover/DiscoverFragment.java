@@ -27,17 +27,15 @@ public class DiscoverFragment extends BaseMainFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_discover, container, false);
-
+        final View view = inflater.inflate(R.layout.fragment_discover, container, false);
         initView(view);
-
         return view;
     }
 
     private void initView(View view) {
-        Toolbar mToolbar = view.findViewById(R.id.toolbar);
-        TabLayout mTabLayout = view.findViewById(R.id.tab_layout);
-        ViewPager mViewPager = view.findViewById(R.id.viewPager);
+        final Toolbar mToolbar = view.findViewById(R.id.toolbar);
+        final TabLayout mTabLayout = view.findViewById(R.id.tab_layout);
+        final ViewPager mViewPager = view.findViewById(R.id.viewPager);
 
         mToolbar.setTitle(R.string.discover);
         initToolbarNav(mToolbar);

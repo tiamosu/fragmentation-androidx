@@ -17,10 +17,8 @@ import me.yokeyword.sample.demo_zhihu.ui.fragment.first.child.FirstHomeFragment;
 public class ZhihuFirstFragment extends BaseMainFragment {
 
     public static ZhihuFirstFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        ZhihuFirstFragment fragment = new ZhihuFirstFragment();
+        final Bundle args = new Bundle();
+        final ZhihuFirstFragment fragment = new ZhihuFirstFragment();
         fragment.setArguments(args);
         return fragment;
     }

@@ -14,14 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.adapter.PagerAdapter;
-import me.yokeyword.sample.demo_flow.listener.OnItemClickListener;
 
-
+@SuppressWarnings("FieldCanBeLocal")
 public class RecyclerSwipeBackFragment extends BaseSwipeBackFragment {
-    private static final String ARG_FROM = "arg_from";
-
     private Toolbar mToolbar;
-
     private RecyclerView mRecy;
     private PagerAdapter mAdapter;
 
@@ -32,10 +28,8 @@ public class RecyclerSwipeBackFragment extends BaseSwipeBackFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_swipe_back_recy, container, false);
-
+        final View view = inflater.inflate(R.layout.fragment_swipe_back_recy, container, false);
         initView(view);
-
         return attachToSwipeBack(view);
     }
 
@@ -46,19 +40,14 @@ public class RecyclerSwipeBackFragment extends BaseSwipeBackFragment {
         _initToolbar(mToolbar);
 
         mAdapter = new PagerAdapter(_mActivity);
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view) {
-                start(FirstSwipeBackFragment.newInstance());
-            }
-        });
+        mAdapter.setOnItemClickListener((position, view1) -> start(FirstSwipeBackFragment.newInstance()));
 
         // Init Datas
-        List<String> items = new ArrayList<>();
+        final List<String> items = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             String item;
             item = getString(R.string.favorite) + " " + i;

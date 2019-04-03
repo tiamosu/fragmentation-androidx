@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import me.yokeyword.sample.demo_wechat.ui.fragment.second.FirstPagerFragment;
 import me.yokeyword.sample.demo_wechat.ui.fragment.second.OtherPagerFragment;
 
-
 /**
  * Created by YoKeyword on 16/6/5.
  */

@@ -20,12 +20,12 @@ import me.yokeyword.fragmentation.SupportFragment;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.adapter.PagerAdapter;
 import me.yokeyword.sample.demo_wechat.event.TabSelectedEvent;
-import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener;
 import me.yokeyword.sample.demo_wechat.ui.fragment.MainFragment;
 
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class FirstPagerFragment extends SupportFragment implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecy;
@@ -35,10 +35,8 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     private int mScrollTotal;
 
     public static FirstPagerFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        FirstPagerFragment fragment = new FirstPagerFragment();
+        final Bundle args = new Bundle();
+        final FirstPagerFragment fragment = new FirstPagerFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +44,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_tab_second_pager_first, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_tab_second_pager_first, container, false);
         initView(view);
         return view;
     }
@@ -61,7 +59,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
 
         mAdapter = new PagerAdapter(_mActivity);
         mRecy.setHasFixedSize(true);
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
@@ -74,22 +72,19 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
             }
         });
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view, RecyclerView.ViewHolder holder) {
-                // 通知MainFragment跳转至NewFeatureFragment
-                if (getParentFragment() != null) {
-                    if (getParentFragment().getParentFragment() != null) {
-                        ((MainFragment) getParentFragment().getParentFragment()).startBrotherFragment(NewFeatureFragment.newInstance());
-                    }
+        mAdapter.setOnItemClickListener((position, view1, holder) -> {
+            // 通知MainFragment跳转至NewFeatureFragment
+            if (getParentFragment() != null) {
+                if (getParentFragment().getParentFragment() != null) {
+                    ((MainFragment) getParentFragment().getParentFragment()).startBrotherFragment(NewFeatureFragment.newInstance());
                 }
             }
         });
 
         // Init Datas
-        List<String> items = new ArrayList<>();
+        final List<String> items = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            String item = "New features";
+            final String item = "New features";
             items.add(item);
         }
         mAdapter.setDatas(items);
@@ -97,12 +92,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.setRefreshing(false);
-            }
-        }, 2500);
+        mRefreshLayout.postDelayed(() -> mRefreshLayout.setRefreshing(false), 2500);
     }
 
     /**
@@ -110,8 +100,9 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
      */
     @Subscribe
     public void onTabSelectedEvent(TabSelectedEvent event) {
-        if (event.position != MainFragment.SECOND) return;
-
+        if (event.position != MainFragment.SECOND) {
+            return;
+        }
         if (mInAtTop) {
             mRefreshLayout.setRefreshing(true);
             onRefresh();

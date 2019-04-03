@@ -1,6 +1,5 @@
 package me.yokeyword.fragmentation;
 
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -10,6 +9,7 @@ import me.yokeyword.fragmentation.helper.ExceptionHandler;
 /**
  * Created by YoKey on 17/2/5.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Fragmentation {
     /**
      * Dont display stack view.
@@ -27,7 +27,7 @@ public class Fragmentation {
     static volatile Fragmentation INSTANCE;
 
     private boolean debug;
-    private int mode = BUBBLE;
+    private int mode;
     private ExceptionHandler handler;
 
     Fragmentation(FragmentationBuilder builder) {
@@ -84,6 +84,7 @@ public class Fragmentation {
     @interface StackViewMode {
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class FragmentationBuilder {
         private boolean debug;
         private int mode;

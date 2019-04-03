@@ -26,12 +26,9 @@ import me.yokeyword.sample.demo_flow.base.BaseMainFragment;
 import me.yokeyword.sample.demo_flow.entity.Article;
 import me.yokeyword.sample.demo_flow.listener.OnItemClickListener;
 
-
+@SuppressWarnings("FieldCanBeLocal")
 public class HomeFragment extends BaseMainFragment implements Toolbar.OnMenuItemClickListener {
-    private static final String TAG = "Fragmentation";
-
     private String[] mTitles;
-
     private String[] mContents;
 
     private Toolbar mToolbar;
@@ -58,26 +55,23 @@ public class HomeFragment extends BaseMainFragment implements Toolbar.OnMenuItem
             case R.id.action_anim:
                 final PopupMenu popupMenu = new PopupMenu(_mActivity, mToolbar, GravityCompat.END);
                 popupMenu.inflate(R.menu.home_pop);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_anim_veritical:
-                                ((ISupportActivity) _mActivity).setFragmentAnimator(new DefaultVerticalAnimator());
-                                Toast.makeText(_mActivity, R.string.anim_v, Toast.LENGTH_SHORT).show();
-                                break;
-                            case R.id.action_anim_horizontal:
-                                ((ISupportActivity) _mActivity).setFragmentAnimator(new DefaultHorizontalAnimator());
-                                Toast.makeText(_mActivity, R.string.anim_h, Toast.LENGTH_SHORT).show();
-                                break;
-                            case R.id.action_anim_none:
-                                ((ISupportActivity) _mActivity).setFragmentAnimator(new DefaultNoAnimator());
-                                Toast.makeText(_mActivity, R.string.anim_none, Toast.LENGTH_SHORT).show();
-                                break;
-                        }
-                        popupMenu.dismiss();
-                        return true;
+                popupMenu.setOnMenuItemClickListener(item1 -> {
+                    switch (item1.getItemId()) {
+                        case R.id.action_anim_veritical:
+                            ((ISupportActivity) _mActivity).setFragmentAnimator(new DefaultVerticalAnimator());
+                            Toast.makeText(_mActivity, R.string.anim_v, Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.id.action_anim_horizontal:
+                            ((ISupportActivity) _mActivity).setFragmentAnimator(new DefaultHorizontalAnimator());
+                            Toast.makeText(_mActivity, R.string.anim_h, Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.id.action_anim_none:
+                            ((ISupportActivity) _mActivity).setFragmentAnimator(new DefaultNoAnimator());
+                            Toast.makeText(_mActivity, R.string.anim_none, Toast.LENGTH_SHORT).show();
+                            break;
                     }
+                    popupMenu.dismiss();
+                    return true;
                 });
                 popupMenu.show();
                 break;
@@ -98,22 +92,18 @@ public class HomeFragment extends BaseMainFragment implements Toolbar.OnMenuItem
         mToolbar.setOnMenuItemClickListener(this);
 
         mAdapter = new HomeAdapter(_mActivity);
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view) {
-                start(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
-            }
-        });
+        mAdapter.setOnItemClickListener((position, view1) ->
+                start(DetailFragment.newInstance(mAdapter.getItem(position).getTitle())));
 
         // Init Datas
-        List<Article> articleList = new ArrayList<>();
+        final List<Article> articleList = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
             int index = (int) (Math.random() * 3);
-            Article article = new Article(mTitles[index], mContents[index]);
+            final Article article = new Article(mTitles[index], mContents[index]);
             articleList.add(article);
         }
         mAdapter.setDatas(articleList);

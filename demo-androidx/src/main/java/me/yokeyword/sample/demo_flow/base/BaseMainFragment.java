@@ -2,13 +2,14 @@ package me.yokeyword.sample.demo_flow.base;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import me.yokeyword.sample.R;
-
 
 /**
  * Created by YoKeyword on 16/2/3.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class BaseMainFragment extends MySupportFragment {
 
     protected OnFragmentOpenDrawerListener mOpenDraweListener;
@@ -27,13 +28,10 @@ public class BaseMainFragment extends MySupportFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentOpenDrawerListener) {
             mOpenDraweListener = (OnFragmentOpenDrawerListener) context;
-        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentOpenDrawerListener");
         }
     }
 

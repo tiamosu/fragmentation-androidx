@@ -1,6 +1,6 @@
 package me.yokeyword.sample.demo_zhihu.adapter;
 
-
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -18,6 +18,7 @@ public class ZhihuPagerFragmentAdapter extends FragmentPagerAdapter {
         mTitles = titles;
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {

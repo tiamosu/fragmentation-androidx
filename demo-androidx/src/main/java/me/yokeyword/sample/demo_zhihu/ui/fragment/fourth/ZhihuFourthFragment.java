@@ -16,15 +16,14 @@ import me.yokeyword.sample.demo_zhihu.ui.fragment.fourth.child.MeFragment;
 /**
  * Created by YoKeyword on 16/6/3.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ZhihuFourthFragment extends BaseMainFragment {
     private Toolbar mToolbar;
     private View mView;
 
     public static ZhihuFourthFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        ZhihuFourthFragment fragment = new ZhihuFourthFragment();
+        final Bundle args = new Bundle();
+        final ZhihuFourthFragment fragment = new ZhihuFourthFragment();
         fragment.setArguments(args);
         return fragment;
     }

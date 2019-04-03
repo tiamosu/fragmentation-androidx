@@ -24,12 +24,12 @@ import me.yokeyword.sample.demo_wechat.adapter.ChatAdapter;
 import me.yokeyword.sample.demo_wechat.base.BaseMainFragment;
 import me.yokeyword.sample.demo_wechat.entity.Chat;
 import me.yokeyword.sample.demo_wechat.event.TabSelectedEvent;
-import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener;
 import me.yokeyword.sample.demo_wechat.ui.fragment.MainFragment;
 
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRefreshLayout.OnRefreshListener {
     private Toolbar mToolbar;
     private SwipeRefreshLayout mRefreshLayout;
@@ -41,10 +41,8 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
     private ChatAdapter mAdapter;
 
     public static WechatFirstTabFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        WechatFirstTabFragment fragment = new WechatFirstTabFragment();
+        final Bundle args = new Bundle();
+        final WechatFirstTabFragment fragment = new WechatFirstTabFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,7 +50,7 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_tab_first, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_tab_first, container, false);
         initView(view);
         return view;
     }
@@ -93,29 +91,27 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
             }
         });
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view, RecyclerView.ViewHolder vh) {
-                // 因为启动的MsgFragment是MainFragment的兄弟Fragment,所以需要MainFragment.start()
+        mAdapter.setOnItemClickListener((position, view, vh) -> {
+            // 因为启动的MsgFragment是MainFragment的兄弟Fragment,所以需要MainFragment.start()
 
-                // 也可以像使用getParentFragment()的方式,拿到父Fragment来操作 或者使用 EventBusActivityScope
+            // 也可以像使用getParentFragment()的方式,拿到父Fragment来操作 或者使用 EventBusActivityScope
+            if (getParentFragment() != null) {
                 ((MainFragment) getParentFragment()).startBrotherFragment(MsgFragment.newInstance(mAdapter.getMsg(position)));
             }
         });
 
-        List<Chat> chatList = initDatas();
+        final List<Chat> chatList = initDatas();
         mAdapter.setDatas(chatList);
     }
 
     private List<Chat> initDatas() {
-        List<Chat> msgList = new ArrayList<>();
-
-        String[] name = new String[]{"Jake", "Eric", "Kenny", "Helen", "Carr"};
-        String[] chats = new String[]{"message1", "message2", "message3", "message4", "message5"};
+        final List<Chat> msgList = new ArrayList<>();
+        final String[] name = new String[]{"Jake", "Eric", "Kenny", "Helen", "Carr"};
+        final String[] chats = new String[]{"message1", "message2", "message3", "message4", "message5"};
 
         for (int i = 0; i < 15; i++) {
-            int index = (int) (Math.random() * 5);
-            Chat chat = new Chat();
+            final int index = (int) (Math.random() * 5);
+            final Chat chat = new Chat();
             chat.name = name[index];
             chat.message = chats[index];
             msgList.add(chat);
@@ -125,22 +121,17 @@ public class WechatFirstTabFragment extends BaseMainFragment implements SwipeRef
 
     @Override
     public void onRefresh() {
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.setRefreshing(false);
-            }
-        }, 2500);
+        mRefreshLayout.postDelayed(() -> mRefreshLayout.setRefreshing(false), 2500);
     }
-
 
     /**
      * Reselected Tab
      */
     @Subscribe
     public void onTabSelectedEvent(TabSelectedEvent event) {
-        if (event.position != MainFragment.FIRST) return;
-
+        if (event.position != MainFragment.FIRST) {
+            return;
+        }
         if (mInAtTop) {
             mRefreshLayout.setRefreshing(true);
             onRefresh();

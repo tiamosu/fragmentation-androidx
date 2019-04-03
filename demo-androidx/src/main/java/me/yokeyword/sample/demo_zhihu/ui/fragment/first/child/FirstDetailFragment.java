@@ -20,6 +20,7 @@ import me.yokeyword.sample.demo_zhihu.ui.fragment.CycleFragment;
 /**
  * Created by YoKeyword on 16/6/5.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class FirstDetailFragment extends BaseBackFragment {
     private static final String ARG_ITEM = "arg_item";
 
@@ -31,10 +32,9 @@ public class FirstDetailFragment extends BaseBackFragment {
     private FloatingActionButton mFab;
 
     public static FirstDetailFragment newInstance(Article article) {
-
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
         args.putParcelable(ARG_ITEM, article);
-        FirstDetailFragment fragment = new FirstDetailFragment();
+        final FirstDetailFragment fragment = new FirstDetailFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,7 +50,7 @@ public class FirstDetailFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zhihu_fragment_first_detail, container, false);
+        final View view = inflater.inflate(R.layout.zhihu_fragment_first_detail, container, false);
         initView(view);
         return view;
     }
@@ -66,11 +66,6 @@ public class FirstDetailFragment extends BaseBackFragment {
         mImgDetail.setImageResource(mArticle.getImgRes());
         mTvTitle.setText(mArticle.getTitle());
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(CycleFragment.newInstance(1));
-            }
-        });
+        mFab.setOnClickListener(v -> start(CycleFragment.newInstance(1)));
     }
 }

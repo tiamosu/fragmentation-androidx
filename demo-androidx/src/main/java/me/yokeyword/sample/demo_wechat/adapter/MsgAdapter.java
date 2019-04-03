@@ -19,6 +19,7 @@ import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener;
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
     private Context mContext;
     private LayoutInflater mInflater;
@@ -39,14 +40,11 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_wechat_msg, parent, false);
+        final View view = mInflater.inflate(R.layout.item_wechat_msg, parent, false);
         final VH holder = new VH(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickListener != null) {
-                    mClickListener.onItemClick(holder.getAdapterPosition(), v, holder);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            if (mClickListener != null) {
+                mClickListener.onItemClick(holder.getAdapterPosition(), v, holder);
             }
         });
         return holder;
@@ -54,8 +52,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
-        Msg item = mItems.get(position);
-
+        final Msg item = mItems.get(position);
         holder.tvMsg.setText(item.message);
     }
 
@@ -72,7 +69,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.VH> {
         private ImageView imgAvatar;
         private TextView tvMsg;
 
-        public VH(View itemView) {
+        VH(View itemView) {
             super(itemView);
             imgAvatar = itemView.findViewById(R.id.img_avatar);
             tvMsg = itemView.findViewById(R.id.tv_msg);

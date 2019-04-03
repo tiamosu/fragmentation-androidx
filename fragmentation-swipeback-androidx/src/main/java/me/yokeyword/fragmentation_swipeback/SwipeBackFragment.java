@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.yokeyword.fragmentation.SupportFragment;
 import me.yokeyword.fragmentation.SwipeBackLayout;
@@ -17,7 +18,7 @@ import me.yokeyword.fragmentation_swipeback.core.SwipeBackFragmentDelegate;
  * Created by YoKey on 16/4/19.
  */
 public class SwipeBackFragment extends SupportFragment implements ISwipeBackFragment {
-    final SwipeBackFragmentDelegate mDelegate = new SwipeBackFragmentDelegate(this);
+    private final SwipeBackFragmentDelegate mDelegate = new SwipeBackFragmentDelegate(this);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class SwipeBackFragment extends SupportFragment implements ISwipeBackFrag
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mDelegate.onViewCreated(view, savedInstanceState);
     }
@@ -42,6 +43,7 @@ public class SwipeBackFragment extends SupportFragment implements ISwipeBackFrag
         mDelegate.onHiddenChanged(hidden);
     }
 
+    @Override
     public SwipeBackLayout getSwipeBackLayout() {
         return mDelegate.getSwipeBackLayout();
     }
@@ -51,6 +53,7 @@ public class SwipeBackFragment extends SupportFragment implements ISwipeBackFrag
      *
      * @param enable
      */
+    @Override
     public void setSwipeBackEnable(boolean enable) {
         mDelegate.setSwipeBackEnable(enable);
     }
@@ -68,6 +71,7 @@ public class SwipeBackFragment extends SupportFragment implements ISwipeBackFrag
     /**
      * Set the offset of the parallax slip.
      */
+    @Override
     public void setParallaxOffset(@FloatRange(from = 0.0f, to = 1.0f) float offset) {
         mDelegate.setParallaxOffset(offset);
     }

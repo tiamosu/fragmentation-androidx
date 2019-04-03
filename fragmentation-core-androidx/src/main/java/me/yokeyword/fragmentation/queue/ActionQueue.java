@@ -23,8 +23,9 @@ public class ActionQueue {
     }
 
     public void enqueue(final Action action) {
-        if (isThrottleBACK(action)) return;
-
+        if (isThrottleBACK(action)) {
+            return;
+        }
         if (action.action == Action.ACTION_LOAD && mQueue.isEmpty()
                 && Thread.currentThread() == Looper.getMainLooper().getThread()) {
             action.run();
@@ -47,9 +48,11 @@ public class ActionQueue {
     }
 
     private void handleAction() {
-        if (mQueue.isEmpty()) return;
+        if (mQueue.isEmpty()) {
+            return;
+        }
 
-        Action action = mQueue.peek();
+        final Action action = mQueue.peek();
         action.run();
 
         executeNextAction(action);
@@ -57,7 +60,7 @@ public class ActionQueue {
 
     private void executeNextAction(Action action) {
         if (action.action == Action.ACTION_POP) {
-            ISupportFragment top = SupportHelper.getBackStackTopFragment(action.fragmentManager);
+            final ISupportFragment top = SupportHelper.getBackStackTopFragment(action.fragmentManager);
             action.duration = top == null ? Action.DEFAULT_POP_TIME : top.getSupportDelegate().getExitAnimDuration();
         }
 
@@ -72,10 +75,8 @@ public class ActionQueue {
 
     private boolean isThrottleBACK(Action action) {
         if (action.action == Action.ACTION_BACK) {
-            Action head = mQueue.peek();
-            if (head != null && head.action == Action.ACTION_POP) {
-                return true;
-            }
+            final Action head = mQueue.peek();
+            return head != null && head.action == Action.ACTION_POP;
         }
         return false;
     }

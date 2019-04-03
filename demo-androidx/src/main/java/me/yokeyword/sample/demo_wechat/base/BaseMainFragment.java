@@ -16,8 +16,6 @@ public abstract class BaseMainFragment extends SupportFragment {
 
     /**
      * 处理回退事件
-     *
-     * @return
      */
     @Override
     public boolean onBackPressedSupport() {

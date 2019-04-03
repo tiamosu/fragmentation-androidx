@@ -25,34 +25,24 @@ public class NewFeatureFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_new_feature, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_new_feature, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        final Toolbar toolbar = view.findViewById(R.id.toolbar);
         initToolbarNav(toolbar);
         toolbar.setTitle("NewFeatures");
 
         // 自定义动画启动一个Fragment，并且不隐藏自己
-        view.findViewById(R.id.btn_start_dont_hide).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                extraTransaction()
-                        .setCustomAnimations(R.anim.v_fragment_enter, 0, 0, R.anim.v_fragment_exit)
-                        .startDontHideSelf(ViewFragment.newInstance());
-            }
-        });
+        view.findViewById(R.id.btn_start_dont_hide).setOnClickListener(v -> extraTransaction()
+                .setCustomAnimations(R.anim.v_fragment_enter, 0, 0, R.anim.v_fragment_exit)
+                .startDontHideSelf(ViewFragment.newInstance()));
 
         // 自定义动画启动一个Fragment
-        view.findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                extraTransaction()
+        view.findViewById(R.id.btn_start).setOnClickListener(v -> extraTransaction()
 //                        .setTag("CustomTag")
 //                        . ...
-                        .setCustomAnimations(R.anim.v_fragment_enter, R.anim.v_fragment_pop_exit,
-                                R.anim.v_fragment_pop_enter, R.anim.v_fragment_exit)
-                        .start(CycleFragment.newInstance(0));
-            }
-        });
+                .setCustomAnimations(R.anim.v_fragment_enter, R.anim.v_fragment_pop_exit,
+                        R.anim.v_fragment_pop_enter, R.anim.v_fragment_exit)
+                .start(CycleFragment.newInstance(0)));
 
         return attachToSwipeBack(view);
     }

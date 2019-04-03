@@ -12,14 +12,15 @@ import me.yokeyword.fragmentation.SwipeBackLayout;
 /**
  * Created by YoKey on 17/6/29.
  */
-
+@SuppressWarnings("unused")
 public class SwipeBackActivityDelegate {
     private FragmentActivity mActivity;
     private SwipeBackLayout mSwipeBackLayout;
 
     public SwipeBackActivityDelegate(ISwipeBackActivity swipeBackActivity) {
-        if (!(swipeBackActivity instanceof FragmentActivity) || !(swipeBackActivity instanceof ISupportActivity))
+        if (!(swipeBackActivity instanceof FragmentActivity) || !(swipeBackActivity instanceof ISupportActivity)) {
             throw new RuntimeException("Must extends FragmentActivity/AppCompatActivity and implements ISupportActivity");
+        }
         mActivity = (FragmentActivity) swipeBackActivity;
     }
 
@@ -60,7 +61,8 @@ public class SwipeBackActivityDelegate {
         mActivity.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mActivity.getWindow().getDecorView().setBackgroundColor(Color.TRANSPARENT);
         mSwipeBackLayout = new SwipeBackLayout(mActivity);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mSwipeBackLayout.setLayoutParams(params);
     }
 }

@@ -18,7 +18,8 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * 展示自定制的MySupportActivity，不继承SupportActivity
  * Created by YoKey on 17/6/24.
  */
-public class MySupportActivity extends AppCompatActivity implements ISupportActivity {
+@SuppressWarnings("unused")
+public abstract class MySupportActivity extends AppCompatActivity implements ISupportActivity {
     final SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
 
     @Override
@@ -38,13 +39,13 @@ public class MySupportActivity extends AppCompatActivity implements ISupportActi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDelegate.onCreate(savedInstanceState);
+        mDelegate.onCreate();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDelegate.onPostCreate(savedInstanceState);
+        mDelegate.onPostCreate();
     }
 
     @Override
@@ -58,7 +59,7 @@ public class MySupportActivity extends AppCompatActivity implements ISupportActi
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        return mDelegate.dispatchTouchEvent(ev) || super.dispatchTouchEvent(ev);
+        return mDelegate.dispatchTouchEvent() || super.dispatchTouchEvent(ev);
     }
 
     /**

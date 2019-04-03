@@ -17,10 +17,8 @@ import me.yokeyword.sample.demo_zhihu.ui.fragment.second.child.ViewPagerFragment
 public class ZhihuSecondFragment extends BaseMainFragment {
 
     public static ZhihuSecondFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        ZhihuSecondFragment fragment = new ZhihuSecondFragment();
+        final Bundle args = new Bundle();
+        final ZhihuSecondFragment fragment = new ZhihuSecondFragment();
         fragment.setArguments(args);
         return fragment;
     }

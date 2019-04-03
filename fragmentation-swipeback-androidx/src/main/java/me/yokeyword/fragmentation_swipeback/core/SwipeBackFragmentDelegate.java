@@ -14,15 +14,16 @@ import me.yokeyword.fragmentation.SwipeBackLayout;
 /**
  * Created by YoKey on 17/6/29.
  */
-
+@SuppressWarnings("unused")
 public class SwipeBackFragmentDelegate {
     private Fragment mFragment;
     private ISupportFragment mSupport;
     private SwipeBackLayout mSwipeBackLayout;
 
     public SwipeBackFragmentDelegate(ISwipeBackFragment swipeBackFragment) {
-        if (!(swipeBackFragment instanceof Fragment) || !(swipeBackFragment instanceof ISupportFragment))
+        if (!(swipeBackFragment instanceof Fragment) || !(swipeBackFragment instanceof ISupportFragment)) {
             throw new RuntimeException("Must extends Fragment and implements ISupportFragment!");
+        }
         mFragment = (Fragment) swipeBackFragment;
         mSupport = (ISupportFragment) swipeBackFragment;
     }
@@ -33,7 +34,7 @@ public class SwipeBackFragmentDelegate {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         if (view instanceof SwipeBackLayout) {
-            View childView = ((SwipeBackLayout) view).getChildAt(0);
+            final View childView = ((SwipeBackLayout) view).getChildAt(0);
             mSupport.getSupportDelegate().setBackground(childView);
         } else {
             mSupport.getSupportDelegate().setBackground(view);
@@ -79,10 +80,13 @@ public class SwipeBackFragmentDelegate {
     }
 
     private void onFragmentCreate() {
-        if (mFragment.getContext() == null) return;
+        if (mFragment.getContext() == null) {
+            return;
+        }
 
         mSwipeBackLayout = new SwipeBackLayout(mFragment.getContext());
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mSwipeBackLayout.setLayoutParams(params);
         mSwipeBackLayout.setBackgroundColor(Color.TRANSPARENT);
     }

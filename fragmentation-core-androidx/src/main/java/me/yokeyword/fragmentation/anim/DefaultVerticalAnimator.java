@@ -29,7 +29,7 @@ public class DefaultVerticalAnimator extends FragmentAnimator implements Parcela
         popExit = R.anim.v_fragment_pop_exit;
     }
 
-    protected DefaultVerticalAnimator(Parcel in) {
+    private DefaultVerticalAnimator(Parcel in) {
         super(in);
     }
 

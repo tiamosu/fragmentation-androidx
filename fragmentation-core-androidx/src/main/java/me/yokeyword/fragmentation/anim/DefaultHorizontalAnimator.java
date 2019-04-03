@@ -29,7 +29,7 @@ public class DefaultHorizontalAnimator extends FragmentAnimator implements Parce
         popExit = R.anim.h_fragment_pop_exit;
     }
 
-    protected DefaultHorizontalAnimator(Parcel in) {
+    private DefaultHorizontalAnimator(Parcel in) {
         super(in);
     }
 

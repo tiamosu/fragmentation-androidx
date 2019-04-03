@@ -12,6 +12,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
 /**
  * @Hide Created by YoKeyword on 16/7/26.
  */
+@SuppressWarnings("UnusedReturnValue")
 public final class AnimatorHelper {
     public Animation enterAnim, exitAnim, popEnterAnim, popExitAnim;
     private Animation noneAnim, noneAnimFixed;
@@ -50,7 +51,7 @@ public final class AnimatorHelper {
     public Animation compatChildFragmentExitAnim(Fragment fragment) {
         if ((fragment.getTag() != null && fragment.getTag().startsWith("android:switcher:") && fragment.getUserVisibleHint()) ||
                 (fragment.getParentFragment() != null && fragment.getParentFragment().isRemoving() && !fragment.isHidden())) {
-            Animation animation = new Animation() {
+            final Animation animation = new Animation() {
             };
             animation.setDuration(exitAnim.getDuration());
             return animation;

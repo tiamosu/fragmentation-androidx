@@ -16,10 +16,8 @@ import me.yokeyword.sample.R;
 public class AvatarFragment extends SupportFragment {
 
     public static AvatarFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        AvatarFragment fragment = new AvatarFragment();
+        final Bundle args = new Bundle();
+        final AvatarFragment fragment = new AvatarFragment();
         fragment.setArguments(args);
         return fragment;
     }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,10 +30,10 @@ import me.yokeyword.sample.demo_flow.ui.fragment.shop.ShopFragment;
  * 流程式demo  tip: 多使用右上角的"查看栈视图"
  * Created by YoKeyword on 16/1/29.
  */
-public class MainActivity extends MySupportActivity
-        implements NavigationView.OnNavigationItemSelectedListener, BaseMainFragment.OnFragmentOpenDrawerListener
-        , LoginFragment.OnLoginSuccessListener {
-    public static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends MySupportActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        BaseMainFragment.OnFragmentOpenDrawerListener,
+        LoginFragment.OnLoginSuccessListener {
 
     // 再点一次退出程序时间设置
     private static final long WAIT_TIME = 2000L;
@@ -50,7 +49,7 @@ public class MainActivity extends MySupportActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MySupportFragment fragment = findFragment(HomeFragment.class);
+        final MySupportFragment fragment = findFragment(HomeFragment.class);
         if (fragment == null) {
             loadRootFragment(R.id.fl_container, HomeFragment.newInstance());
         }
@@ -72,7 +71,7 @@ public class MainActivity extends MySupportActivity
 
     private void initView() {
         mDrawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //        mDrawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -81,7 +80,7 @@ public class MainActivity extends MySupportActivity
         mNavigationView.setNavigationItemSelectedListener(this);
         mNavigationView.setCheckedItem(R.id.nav_home);
 
-        LinearLayoutCompat llNavHeader = (LinearLayoutCompat) mNavigationView.getHeaderView(0);
+        final LinearLayoutCompat llNavHeader = (LinearLayoutCompat) mNavigationView.getHeaderView(0);
         mTvName = llNavHeader.findViewById(R.id.tv_name);
         mImgNav = llNavHeader.findViewById(R.id.img_nav);
         llNavHeader.setOnClickListener(v -> {
@@ -95,7 +94,7 @@ public class MainActivity extends MySupportActivity
         if (mDrawer.isDrawerOpen(GravityCompat.START)) {
             mDrawer.closeDrawer(GravityCompat.START);
         } else {
-            ISupportFragment topFragment = getTopFragment();
+            final ISupportFragment topFragment = getTopFragment();
 
             // 主页的Fragment
             if (topFragment instanceof BaseMainFragment) {
@@ -136,15 +135,13 @@ public class MainActivity extends MySupportActivity
             MySupportFragment myHome = (MySupportFragment) topFragment;
 
             if (id == R.id.nav_home) {
-
-                HomeFragment fragment = findFragment(HomeFragment.class);
-                Bundle newBundle = new Bundle();
+                final HomeFragment fragment = findFragment(HomeFragment.class);
+                final Bundle newBundle = new Bundle();
                 newBundle.putString("from", "From:" + topFragment.getClass().getSimpleName());
                 fragment.putNewBundle(newBundle);
-
                 myHome.start(fragment, SupportFragment.SINGLETASK);
             } else if (id == R.id.nav_discover) {
-                DiscoverFragment fragment = findFragment(DiscoverFragment.class);
+                final DiscoverFragment fragment = findFragment(DiscoverFragment.class);
                 if (fragment == null) {
                     myHome.startWithPopTo(DiscoverFragment.newInstance(), HomeFragment.class, false);
                 } else {
@@ -152,7 +149,7 @@ public class MainActivity extends MySupportActivity
                     myHome.start(fragment, SupportFragment.SINGLETASK);
                 }
             } else if (id == R.id.nav_shop) {
-                ShopFragment fragment = findFragment(ShopFragment.class);
+                final ShopFragment fragment = findFragment(ShopFragment.class);
                 if (fragment == null) {
                     myHome.startWithPopTo(ShopFragment.newInstance(), HomeFragment.class, false);
                 } else {

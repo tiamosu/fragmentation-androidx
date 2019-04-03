@@ -18,16 +18,15 @@ import me.yokeyword.sample.demo_wechat.base.BaseMainFragment;
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class WechatSecondTabFragment extends BaseMainFragment {
     private TabLayout mTab;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
 
     public static WechatSecondTabFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        WechatSecondTabFragment fragment = new WechatSecondTabFragment();
+        final Bundle args = new Bundle();
+        final WechatSecondTabFragment fragment = new WechatSecondTabFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -35,7 +34,7 @@ public class WechatSecondTabFragment extends BaseMainFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_tab_second, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_tab_second, container, false);
         initView(view);
         return view;
     }

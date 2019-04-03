@@ -20,15 +20,13 @@ import me.yokeyword.sample.demo_zhihu.ui.fragment.third.child.child.MenuListFrag
 /**
  * Created by YoKeyword on 16/2/4.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ShopFragment extends SupportFragment {
-    public static final String TAG = ShopFragment.class.getSimpleName();
-
     private Toolbar mToolbar;
 
     public static ShopFragment newInstance() {
-        Bundle args = new Bundle();
-
-        ShopFragment fragment = new ShopFragment();
+        final Bundle args = new Bundle();
+        final ShopFragment fragment = new ShopFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -36,19 +34,18 @@ public class ShopFragment extends SupportFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_shop, container, false);
-        initView(view, savedInstanceState);
+        final View view = inflater.inflate(R.layout.fragment_shop, container, false);
+        initView(view);
         return view;
     }
 
-    private void initView(View view, Bundle savedInstanceState) {
+    private void initView(View view) {
         mToolbar = view.findViewById(R.id.toolbar);
-
         mToolbar.setTitle(R.string.shop);
 
         if (findChildFragment(MenuListFragment.class) == null) {
-            ArrayList<String> listMenus = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.array_menu)));
-            MenuListFragment menuListFragment = MenuListFragment.newInstance(listMenus);
+            final ArrayList<String> listMenus = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.array_menu)));
+            final MenuListFragment menuListFragment = MenuListFragment.newInstance(listMenus);
             loadRootFragment(R.id.fl_list_container, menuListFragment);
             // false:  不加入回退栈;  false: 不显示动画
             loadRootFragment(R.id.fl_content_container, ContentFragment.newInstance(listMenus.get(0)), false, false);
@@ -66,7 +63,7 @@ public class ShopFragment extends SupportFragment {
      * 替换加载 内容Fragment
      */
     public void switchContentFragment(ContentFragment fragment) {
-        SupportFragment contentFragment = findChildFragment(ContentFragment.class);
+        final SupportFragment contentFragment = findChildFragment(ContentFragment.class);
         if (contentFragment != null) {
             contentFragment.replaceFragment(fragment, false);
         }

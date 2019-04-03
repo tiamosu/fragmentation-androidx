@@ -1,5 +1,6 @@
 package me.yokeyword.fragmentation;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.fragment.app.Fragment;
@@ -32,6 +34,7 @@ import me.yokeyword.fragmentation_swipeback.core.ISwipeBackActivity;
  * <p>
  * Created by YoKey on 16/4/19.
  */
+@SuppressWarnings("unused")
 public class SwipeBackLayout extends FrameLayout {
     /**
      * Edge flag indicating that the left edge should be affected.
@@ -218,8 +221,8 @@ public class SwipeBackLayout extends FrameLayout {
 
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-        boolean isDrawView = child == mContentView;
-        boolean drawChild = super.drawChild(canvas, child, drawingTime);
+        final boolean isDrawView = child == mContentView;
+        final boolean drawChild = super.drawChild(canvas, child, drawingTime);
         if (isDrawView && mScrimOpacity > 0 && mHelper.getViewDragState() != ViewDragHelper.STATE_IDLE) {
             drawShadow(canvas, child);
             drawScrim(canvas, child);
@@ -315,14 +318,14 @@ public class SwipeBackLayout extends FrameLayout {
 
     public void attachToActivity(FragmentActivity activity) {
         mActivity = activity;
-        TypedArray a = activity.getTheme().obtainStyledAttributes(new int[]{
+        final TypedArray a = activity.getTheme().obtainStyledAttributes(new int[]{
                 android.R.attr.windowBackground
         });
         int background = a.getResourceId(0, 0);
         a.recycle();
 
-        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
+        final ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+        final ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
         decorChild.setBackgroundResource(background);
         decor.removeView(decorChild);
         addView(decorChild);
@@ -353,10 +356,10 @@ public class SwipeBackLayout extends FrameLayout {
 
     private void validateEdgeLevel(int widthPixel, EdgeLevel edgeLevel) {
         try {
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            final DisplayMetrics metrics = new DisplayMetrics();
+            final WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             windowManager.getDefaultDisplay().getMetrics(metrics);
-            Field mEdgeSize = mHelper.getClass().getDeclaredField("mEdgeSize");
+            final Field mEdgeSize = mHelper.getClass().getDeclaredField("mEdgeSize");
             mEdgeSize.setAccessible(true);
             if (widthPixel >= 0) {
                 mEdgeSize.setInt(mHelper, widthPixel);
@@ -386,23 +389,28 @@ public class SwipeBackLayout extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!mEnable) return super.onInterceptTouchEvent(ev);
+        if (!mEnable) {
+            return super.onInterceptTouchEvent(ev);
+        }
         try {
             return mHelper.shouldInterceptTouchEvent(ev);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!mEnable) return super.onTouchEvent(event);
+        if (!mEnable) {
+            return super.onTouchEvent(event);
+        }
         try {
             mHelper.processTouchEvent(event);
             return true;
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -411,6 +419,7 @@ public class SwipeBackLayout extends FrameLayout {
         MAX, MIN, MED
     }
 
+    @SuppressWarnings("WeakerAccess")
     @IntDef({EDGE_LEFT, EDGE_RIGHT, EDGE_ALL})
     @Retention(RetentionPolicy.SOURCE)
     public @interface EdgeOrientation {
@@ -447,8 +456,9 @@ public class SwipeBackLayout extends FrameLayout {
 
     private class ViewDragCallback extends ViewDragHelper.Callback {
 
+        @SuppressWarnings("SuspiciousMethodCalls")
         @Override
-        public boolean tryCaptureView(View child, int pointerId) {
+        public boolean tryCaptureView(@NonNull View child, int pointerId) {
             boolean dragEnable = mHelper.isEdgeTouched(mEdgeFlag, pointerId);
             if (dragEnable) {
                 if (mHelper.isEdgeTouched(EDGE_LEFT, pointerId)) {
@@ -465,11 +475,12 @@ public class SwipeBackLayout extends FrameLayout {
 
                 if (mPreFragment == null) {
                     if (mFragment != null) {
-                        List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(((Fragment) mFragment).getFragmentManager());
+                        final List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(
+                                ((Fragment) mFragment).getFragmentManager());
                         if (fragmentList != null && fragmentList.size() > 1) {
-                            int index = fragmentList.indexOf(mFragment);
+                            final int index = fragmentList.indexOf(mFragment);
                             for (int i = index - 1; i >= 0; i--) {
-                                Fragment fragment = fragmentList.get(i);
+                                final Fragment fragment = fragmentList.get(i);
                                 if (fragment != null && fragment.getView() != null) {
                                     fragment.getView().setVisibility(VISIBLE);
                                     mPreFragment = fragment;
@@ -479,7 +490,7 @@ public class SwipeBackLayout extends FrameLayout {
                         }
                     }
                 } else {
-                    View preView = mPreFragment.getView();
+                    final View preView = mPreFragment.getView();
                     if (preView != null && preView.getVisibility() != VISIBLE) {
                         preView.setVisibility(VISIBLE);
                     }
@@ -489,7 +500,7 @@ public class SwipeBackLayout extends FrameLayout {
         }
 
         @Override
-        public int clampViewPositionHorizontal(View child, int left, int dx) {
+        public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
             int ret = 0;
             if ((mCurrentSwipeOrientation & EDGE_LEFT) != 0) {
                 ret = Math.min(child.getWidth(), Math.max(left, 0));
@@ -500,7 +511,7 @@ public class SwipeBackLayout extends FrameLayout {
         }
 
         @Override
-        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+        public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
 
             if ((mCurrentSwipeOrientation & EDGE_LEFT) != 0) {
@@ -520,7 +531,9 @@ public class SwipeBackLayout extends FrameLayout {
 
             if (mScrollPercent > 1) {
                 if (mFragment != null) {
-                    if (mCallOnDestroyView) return;
+                    if (mCallOnDestroyView) {
+                        return;
+                    }
 
                     if (!((Fragment) mFragment).isDetached()) {
                         onDragFinished();
@@ -537,7 +550,7 @@ public class SwipeBackLayout extends FrameLayout {
         }
 
         @Override
-        public int getViewHorizontalDragRange(View child) {
+        public int getViewHorizontalDragRange(@NonNull View child) {
             if (mFragment != null) {
                 return 1;
             }
@@ -548,7 +561,7 @@ public class SwipeBackLayout extends FrameLayout {
         }
 
         @Override
-        public void onViewReleased(View releasedChild, float xvel, float yvel) {
+        public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
             final int childWidth = releasedChild.getWidth();
 
             int left = 0, top = 0;

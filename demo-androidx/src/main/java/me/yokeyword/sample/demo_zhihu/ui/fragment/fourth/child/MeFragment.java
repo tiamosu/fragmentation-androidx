@@ -15,14 +15,13 @@ import me.yokeyword.sample.demo_zhihu.ui.fragment.fourth.ZhihuFourthFragment;
 /**
  * Created by YoKeyword on 16/6/6.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class MeFragment extends SupportFragment {
     private TextView mTvBtnSettings;
 
     public static MeFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        MeFragment fragment = new MeFragment();
+        final  Bundle args = new Bundle();
+        final  MeFragment fragment = new MeFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -30,19 +29,14 @@ public class MeFragment extends SupportFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zhihu_fragment_fourth_me, container, false);
+        final  View view = inflater.inflate(R.layout.zhihu_fragment_fourth_me, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
         mTvBtnSettings = view.findViewById(R.id.tv_btn_settings);
-        mTvBtnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(SettingsFragment.newInstance());
-            }
-        });
+        mTvBtnSettings.setOnClickListener(v -> start(SettingsFragment.newInstance()));
     }
 
     @Override

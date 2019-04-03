@@ -9,6 +9,7 @@ import androidx.annotation.AnimRes;
  * Fragment动画实体类
  * Created by YoKeyword on 16/2/4.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class FragmentAnimator implements Parcelable {
     public static final Creator<FragmentAnimator> CREATOR = new Creator<FragmentAnimator>() {
         @Override
@@ -21,6 +22,7 @@ public class FragmentAnimator implements Parcelable {
             return new FragmentAnimator[size];
         }
     };
+
     @AnimRes
     protected int enter;
     @AnimRes

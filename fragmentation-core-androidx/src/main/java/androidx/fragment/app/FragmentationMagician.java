@@ -1,6 +1,5 @@
 package androidx.fragment.app;
 
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,12 +11,13 @@ import java.util.List;
  * <p>
  * Created by YoKey on 16/1/22.
  */
+@SuppressWarnings("unused")
 public class FragmentationMagician {
     private static boolean sSupportLessThan25dot4 = false;
     private static boolean sSupportGreaterThan27dot1dot0 = false;
 
     static {
-        Field[] fields = FragmentManagerImpl.class.getDeclaredFields();
+        final Field[] fields = FragmentManagerImpl.class.getDeclaredFields();
         for (Field field : fields) {
             if (field.getName().equals("mStopped")) { //  > v27.1.0
                 sSupportGreaterThan27dot1dot0 = true;
@@ -34,10 +34,11 @@ public class FragmentationMagician {
     }
 
     public static boolean isExecutingActions(FragmentManager fragmentManager) {
-        if (!(fragmentManager instanceof FragmentManagerImpl))
+        if (!(fragmentManager instanceof FragmentManagerImpl)) {
             return false;
+        }
         try {
-            FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
+            final FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
             return fragmentManagerImpl.mExecutingActions;
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,15 +52,20 @@ public class FragmentationMagician {
      */
     @SuppressWarnings("unchecked")
     public static void reorderIndices(FragmentManager fragmentManager) {
-        if (!sSupportLessThan25dot4) return;
-        if (!(fragmentManager instanceof FragmentManagerImpl))
+        if (!sSupportLessThan25dot4) {
             return;
+        }
+        if (!(fragmentManager instanceof FragmentManagerImpl)) {
+            return;
+        }
         try {
-            FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
-            Object object = getValue(fragmentManagerImpl);
-            if (object == null) return;
+            final FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
+            final Object object = getValue(fragmentManagerImpl);
+            if (object == null) {
+                return;
+            }
 
-            ArrayList<Integer> arrayList = (ArrayList<Integer>) object;
+            final ArrayList<Integer> arrayList = (ArrayList<Integer>) object;
             if (arrayList.size() > 1) {
                 Collections.sort(arrayList, Collections.reverseOrder());
             }
@@ -69,10 +75,11 @@ public class FragmentationMagician {
     }
 
     public static boolean isStateSaved(FragmentManager fragmentManager) {
-        if (!(fragmentManager instanceof FragmentManagerImpl))
+        if (!(fragmentManager instanceof FragmentManagerImpl)) {
             return false;
+        }
         try {
-            FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
+            final FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
             return fragmentManagerImpl.mStateSaved;
         } catch (Exception e) {
             e.printStackTrace();
@@ -140,14 +147,17 @@ public class FragmentationMagician {
      */
     @SuppressWarnings("unchecked")
     public static List<Fragment> getActiveFragments(FragmentManager fragmentManager) {
-        if (!(fragmentManager instanceof FragmentManagerImpl))
+        if (!(fragmentManager instanceof FragmentManagerImpl)) {
             return Collections.EMPTY_LIST;
+        }
         // For pre-25.4.0
-        if (sSupportLessThan25dot4) return fragmentManager.getFragments();
+        if (sSupportLessThan25dot4) {
+            return fragmentManager.getFragments();
+        }
 
         // For compat 25.4.0+
         try {
-            FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
+            final FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
             // Since v4-25.4.0，mActive: ArrayList -> SparseArray
             return getActiveList(fragmentManagerImpl.mActive);
         } catch (Exception e) {
@@ -162,16 +172,15 @@ public class FragmentationMagician {
             return Collections.EMPTY_LIST;
         }
         final int count = active.size();
-        ArrayList<Fragment> fragments = new ArrayList<>(count);
+        final ArrayList<Fragment> fragments = new ArrayList<>(count);
         fragments.addAll(active.values());
         return fragments;
     }
 
     private static Object getValue(Object object) {
-        Field field;
-        Class<?> clazz = object.getClass();
+        final Class<?> clazz = object.getClass();
         try {
-            field = clazz.getDeclaredField("mAvailIndices");
+            final Field field = clazz.getDeclaredField("mAvailIndices");
             field.setAccessible(true);
             return field.get(object);
         } catch (Exception ignored) {
@@ -180,9 +189,11 @@ public class FragmentationMagician {
     }
 
     private static void hookStateSaved(FragmentManager fragmentManager, Runnable runnable) {
-        if (!(fragmentManager instanceof FragmentManagerImpl)) return;
+        if (!(fragmentManager instanceof FragmentManagerImpl)) {
+            return;
+        }
 
-        FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
+        final FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
         if (isStateSaved(fragmentManager)) {
             fragmentManagerImpl.mStateSaved = false;
             compatRunAction(fragmentManagerImpl, runnable);

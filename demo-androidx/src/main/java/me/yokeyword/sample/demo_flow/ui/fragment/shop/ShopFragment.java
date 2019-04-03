@@ -19,15 +19,13 @@ import me.yokeyword.sample.demo_flow.base.MySupportFragment;
 /**
  * Created by YoKeyword on 16/2/4.
  */
+@SuppressWarnings({"FieldCanBeLocal", "WeakerAccess"})
 public class ShopFragment extends BaseMainFragment {
-    public static final String TAG = ShopFragment.class.getSimpleName();
-
     private Toolbar mToolbar;
 
     public static ShopFragment newInstance() {
-        Bundle args = new Bundle();
-
-        ShopFragment fragment = new ShopFragment();
+        final Bundle args = new Bundle();
+        final ShopFragment fragment = new ShopFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -35,12 +33,12 @@ public class ShopFragment extends BaseMainFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_shop, container, false);
-        initView(view, savedInstanceState);
+        final View view = inflater.inflate(R.layout.fragment_shop, container, false);
+        initView(view);
         return view;
     }
 
-    private void initView(View view, Bundle savedInstanceState) {
+    private void initView(View view) {
         mToolbar = view.findViewById(R.id.toolbar);
 
         mToolbar.setTitle(R.string.shop);
@@ -64,8 +62,6 @@ public class ShopFragment extends BaseMainFragment {
 
     /**
      * 替换加载 内容Fragment
-     *
-     * @param fragment
      */
     public void switchContentFragment(ContentFragment fragment) {
         MySupportFragment contentFragment = findChildFragment(ContentFragment.class);

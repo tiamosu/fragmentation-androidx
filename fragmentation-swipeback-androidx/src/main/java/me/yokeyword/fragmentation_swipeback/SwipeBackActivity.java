@@ -7,7 +7,6 @@ import me.yokeyword.fragmentation.SwipeBackLayout;
 import me.yokeyword.fragmentation_swipeback.core.ISwipeBackActivity;
 import me.yokeyword.fragmentation_swipeback.core.SwipeBackActivityDelegate;
 
-
 /**
  * You can also refer to {@link SwipeBackActivity} to implement YourSwipeBackActivity
  * (extends Activity and impl {@link me.yokeyword.fragmentation.ISupportActivity})

@@ -17,12 +17,12 @@ import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_wechat.adapter.HomeAdapter;
 import me.yokeyword.sample.demo_wechat.base.BaseMainFragment;
 import me.yokeyword.sample.demo_wechat.entity.Article;
-import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener;
 import me.yokeyword.sample.demo_wechat.ui.fragment.MainFragment;
 
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class WechatThirdTabFragment extends BaseMainFragment {
     private RecyclerView mRecy;
     private Toolbar mToolbar;
@@ -31,10 +31,8 @@ public class WechatThirdTabFragment extends BaseMainFragment {
     private String[] mContents;
 
     public static WechatThirdTabFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        WechatThirdTabFragment fragment = new WechatThirdTabFragment();
+        final Bundle args = new Bundle();
+        final WechatThirdTabFragment fragment = new WechatThirdTabFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,7 +40,7 @@ public class WechatThirdTabFragment extends BaseMainFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wechat_fragment_tab_third, container, false);
+        final View view = inflater.inflate(R.layout.wechat_fragment_tab_third, container, false);
         initView(view);
         return view;
     }
@@ -62,25 +60,22 @@ public class WechatThirdTabFragment extends BaseMainFragment {
     public void onLazyInitView(@Nullable Bundle savedInstanceState) {
         super.onLazyInitView(savedInstanceState);
         mAdapter = new HomeAdapter(_mActivity);
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view, RecyclerView.ViewHolder vh) {
-                if (getParentFragment() != null) {
-                    ((MainFragment) getParentFragment()).startBrotherFragment(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
-                }
-                // 或者使用EventBus
-//                EventBusActivityScope.getDefault(_mActivity).post(new StartBrotherEvent(DetailFragment.newInstance(mAdapter.getItem(position).getTitle())));
+        mAdapter.setOnItemClickListener((position, view, vh) -> {
+            if (getParentFragment() != null) {
+                ((MainFragment) getParentFragment()).startBrotherFragment(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
             }
+            // 或者使用EventBus
+//                EventBusActivityScope.getDefault(_mActivity).post(new StartBrotherEvent(DetailFragment.newInstance(mAdapter.getItem(position).getTitle())));
         });
 
         // Init Datas
-        List<Article> articleList = new ArrayList<>();
+        final List<Article> articleList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Article article = new Article(mTitles[i], mContents[i]);
+            final Article article = new Article(mTitles[i], mContents[i]);
             articleList.add(article);
         }
         mAdapter.setDatas(articleList);

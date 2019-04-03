@@ -32,7 +32,6 @@ public class MainActivity extends SupportActivity implements BaseMainFragment.On
     public static final int FOURTH = 3;
 
     private SupportFragment[] mFragments = new SupportFragment[4];
-
     private BottomBar mBottomBar;
 
     @Override
@@ -40,7 +39,7 @@ public class MainActivity extends SupportActivity implements BaseMainFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihu_activity_main);
 
-        SupportFragment firstFragment = findFragment(ZhihuFirstFragment.class);
+        final SupportFragment firstFragment = findFragment(ZhihuFirstFragment.class);
         if (firstFragment == null) {
             mFragments[FIRST] = ZhihuFirstFragment.newInstance();
             mFragments[SECOND] = ZhihuSecondFragment.newInstance();
@@ -87,7 +86,7 @@ public class MainActivity extends SupportActivity implements BaseMainFragment.On
             @Override
             public void onTabReselected(int position) {
                 final SupportFragment currentFragment = mFragments[position];
-                int count = currentFragment.getChildFragmentManager().getBackStackEntryCount();
+                final int count = currentFragment.getChildFragmentManager().getBackStackEntryCount();
 
                 // 如果不在该类别Fragment的主页,则回到主页;
                 if (count > 1) {

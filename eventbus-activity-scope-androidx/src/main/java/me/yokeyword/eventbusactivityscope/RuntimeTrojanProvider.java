@@ -10,6 +10,7 @@ import android.net.Uri;
  *
  * @hide Created by YoKey on 17/10/17.
  */
+@SuppressWarnings("NullableProblems")
 public class RuntimeTrojanProvider extends ContentProvider {
     @Override
     public boolean onCreate() {

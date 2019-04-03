@@ -29,11 +29,11 @@ import me.yokeyword.sample.demo_zhihu.adapter.FirstHomeAdapter;
 import me.yokeyword.sample.demo_zhihu.entity.Article;
 import me.yokeyword.sample.demo_zhihu.event.TabSelectedEvent;
 import me.yokeyword.sample.demo_zhihu.helper.DetailTransition;
-import me.yokeyword.sample.demo_zhihu.listener.OnItemClickListener;
 
 /**
  * Created by YoKeyword on 16/6/5.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLayout.OnRefreshListener {
     private Toolbar mToolbar;
     private RecyclerView mRecy;
@@ -59,10 +59,8 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
 
 
     public static FirstHomeFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        FirstHomeFragment fragment = new FirstHomeFragment();
+        final Bundle args = new Bundle();
+        final FirstHomeFragment fragment = new FirstHomeFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,7 +68,7 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zhihu_fragment_first_home, container, false);
+        final View view = inflater.inflate(R.layout.zhihu_fragment_first_home, container, false);
         EventBusActivityScope.getDefault(_mActivity).register(this);
         initView(view);
         return view;
@@ -88,40 +86,37 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
         mRefreshLayout.setOnRefreshListener(this);
 
         mAdapter = new FirstHomeAdapter(_mActivity);
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view, RecyclerView.ViewHolder vh) {
-                FirstDetailFragment fragment = FirstDetailFragment.newInstance(mAdapter.getItem(position));
+        mAdapter.setOnItemClickListener((position, view1, vh) -> {
+            final FirstDetailFragment fragment = FirstDetailFragment.newInstance(mAdapter.getItem(position));
 
-                // 这里是使用SharedElement的用例
-                // LOLLIPOP(5.0)系统的 SharedElement支持有 系统BUG， 这里判断大于 > LOLLIPOP
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                    setExitTransition(new Fade());
-                    fragment.setEnterTransition(new Fade());
-                    fragment.setSharedElementReturnTransition(new DetailTransition());
-                    fragment.setSharedElementEnterTransition(new DetailTransition());
+            // 这里是使用SharedElement的用例
+            // LOLLIPOP(5.0)系统的 SharedElement支持有 系统BUG， 这里判断大于 > LOLLIPOP
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                setExitTransition(new Fade());
+                fragment.setEnterTransition(new Fade());
+                fragment.setSharedElementReturnTransition(new DetailTransition());
+                fragment.setSharedElementEnterTransition(new DetailTransition());
 
-                    // 25.1.0以下的support包,Material过渡动画只有在进栈时有,返回时没有;
-                    // 25.1.0+的support包，SharedElement正常
-                    extraTransaction()
-                            .addSharedElement(((FirstHomeAdapter.VH) vh).img, getString(R.string.image_transition))
-                            .addSharedElement(((FirstHomeAdapter.VH) vh).tvTitle, "tv")
-                            .start(fragment);
-                } else {
-                    start(fragment);
-                }
+                // 25.1.0以下的support包,Material过渡动画只有在进栈时有,返回时没有;
+                // 25.1.0+的support包，SharedElement正常
+                extraTransaction()
+                        .addSharedElement(((FirstHomeAdapter.VH) vh).img, getString(R.string.image_transition))
+                        .addSharedElement(((FirstHomeAdapter.VH) vh).tvTitle, "tv")
+                        .start(fragment);
+            } else {
+                start(fragment);
             }
         });
 
         // Init Datas
-        List<Article> articleList = new ArrayList<>();
+        final List<Article> articleList = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            int index = i % 5;
-            Article article = new Article(mTitles[index], mImgRes[index]);
+            final int index = i % 5;
+            final Article article = new Article(mTitles[index], mImgRes[index]);
             articleList.add(article);
         }
         mAdapter.setDatas(articleList);
@@ -140,22 +135,12 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
             }
         });
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(_mActivity, "Action", Toast.LENGTH_SHORT).show();
-            }
-        });
+        mFab.setOnClickListener(v -> Toast.makeText(_mActivity, "Action", Toast.LENGTH_SHORT).show());
     }
 
     @Override
     public void onRefresh() {
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.setRefreshing(false);
-            }
-        }, 2000);
+        mRefreshLayout.postDelayed(() -> mRefreshLayout.setRefreshing(false), 2000);
     }
 
     private void scrollToTop() {
@@ -167,8 +152,9 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
      */
     @Subscribe
     public void onTabSelectedEvent(TabSelectedEvent event) {
-        if (event.position != MainActivity.FIRST) return;
-
+        if (event.position != MainActivity.FIRST) {
+            return;
+        }
         if (mInAtTop) {
             mRefreshLayout.setRefreshing(true);
             onRefresh();

@@ -8,7 +8,7 @@ import me.yokeyword.fragmentation.SwipeBackLayout;
 /**
  * Created by YoKey on 17/6/29.
  */
-
+@SuppressWarnings("unused")
 public interface ISwipeBackFragment {
 
     View attachToSwipeBack(View view);

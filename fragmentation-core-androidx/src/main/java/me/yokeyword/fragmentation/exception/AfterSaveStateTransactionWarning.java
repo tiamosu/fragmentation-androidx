@@ -38,5 +38,4 @@ public class AfterSaveStateTransactionWarning extends RuntimeException {
         super("Warning: Perform this " + action + " action after onSaveInstanceState!");
         Log.w("Fragmentation", getMessage());
     }
-
 }

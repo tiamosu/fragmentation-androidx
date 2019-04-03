@@ -19,7 +19,6 @@ import me.yokeyword.sample.demo_zhihu.base.BaseBackFragment;
  * Created by YoKeyword on 16/2/3.
  */
 public class DetailFragment extends BaseBackFragment {
-    public static final String TAG = DetailFragment.class.getSimpleName();
     static final String KEY_RESULT_TITLE = "title";
     private static final int REQ_MODIFY_FRAGMENT = 100;
     private static final String ARG_TITLE = "arg_title";
@@ -29,8 +28,8 @@ public class DetailFragment extends BaseBackFragment {
     private String mTitle;
 
     public static DetailFragment newInstance(String title) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle bundle = new Bundle();
+        final DetailFragment fragment = new DetailFragment();
+        final Bundle bundle = new Bundle();
         bundle.putString(ARG_TITLE, title);
         fragment.setArguments(bundle);
         return fragment;
@@ -40,7 +39,7 @@ public class DetailFragment extends BaseBackFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle bundle = getArguments();
+        final Bundle bundle = getArguments();
         if (bundle != null) {
             mTitle = bundle.getString(ARG_TITLE);
         }
@@ -49,9 +48,8 @@ public class DetailFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        final View view = inflater.inflate(R.layout.fragment_detail, container, false);
         initView(view);
-
         return view;
     }
 
@@ -81,12 +79,7 @@ public class DetailFragment extends BaseBackFragment {
     private void initDelayView() {
         mTvContent.setText(R.string.large_text);
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startForResult(ModifyDetailFragment.newInstance(mTitle), REQ_MODIFY_FRAGMENT);
-            }
-        });
+        mFab.setOnClickListener(v -> startForResult(ModifyDetailFragment.newInstance(mTitle), REQ_MODIFY_FRAGMENT));
     }
 
     @Override
@@ -96,7 +89,9 @@ public class DetailFragment extends BaseBackFragment {
             mTitle = data.getString(KEY_RESULT_TITLE);
             mToolbar.setTitle(mTitle);
             // 保存被改变的 title
-            getArguments().putString(ARG_TITLE, mTitle);
+            if (getArguments() != null) {
+                getArguments().putString(ARG_TITLE, mTitle);
+            }
             Toast.makeText(_mActivity, R.string.modify_title, Toast.LENGTH_SHORT).show();
         }
     }

@@ -27,7 +27,7 @@ public class DefaultNoAnimator extends FragmentAnimator implements Parcelable {
         popExit = 0;
     }
 
-    protected DefaultNoAnimator(Parcel in) {
+    private DefaultNoAnimator(Parcel in) {
         super(in);
     }
 

@@ -19,16 +19,15 @@ import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
 /**
  * Created by YoKeyword on 16/2/14.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class RegisterFragment extends BaseBackFragment {
     private EditText mEtAccount, mEtPassword, mEtPasswordConfirm;
     private Button mBtnRegister;
     private LoginFragment.OnLoginSuccessListener mOnLoginSuccessListener;
 
     public static RegisterFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        RegisterFragment fragment = new RegisterFragment();
+        final Bundle args = new Bundle();
+        final RegisterFragment fragment = new RegisterFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,13 +46,13 @@ public class RegisterFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_register, container, false);
+        final View view = inflater.inflate(R.layout.fragment_register, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        final Toolbar toolbar = view.findViewById(R.id.toolbar);
         mEtAccount = view.findViewById(R.id.et_account);
         mEtPassword = view.findViewById(R.id.et_password);
         mEtPasswordConfirm = view.findViewById(R.id.et_password_confirm);
@@ -64,25 +63,22 @@ public class RegisterFragment extends BaseBackFragment {
         toolbar.setTitle(R.string.register);
         initToolbarNav(toolbar);
 
-        mBtnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String strAccount = mEtAccount.getText().toString();
-                String strPassword = mEtPassword.getText().toString();
-                String strPasswordConfirm = mEtPasswordConfirm.getText().toString();
-                if (TextUtils.isEmpty(strAccount.trim())) {
-                    Toast.makeText(_mActivity, R.string.error_username, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(strPassword.trim()) || TextUtils.isEmpty(strPasswordConfirm.trim())) {
-                    Toast.makeText(_mActivity, R.string.error_pwd, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // 注册成功
-                mOnLoginSuccessListener.onLoginSuccess(strAccount);
-                popTo(LoginFragment.class, true);
+        mBtnRegister.setOnClickListener(v -> {
+            final String strAccount = mEtAccount.getText().toString();
+            final String strPassword = mEtPassword.getText().toString();
+            final String strPasswordConfirm = mEtPasswordConfirm.getText().toString();
+            if (TextUtils.isEmpty(strAccount.trim())) {
+                Toast.makeText(_mActivity, R.string.error_username, Toast.LENGTH_SHORT).show();
+                return;
             }
+            if (TextUtils.isEmpty(strPassword.trim()) || TextUtils.isEmpty(strPasswordConfirm.trim())) {
+                Toast.makeText(_mActivity, R.string.error_pwd, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 注册成功
+            mOnLoginSuccessListener.onLoginSuccess(strAccount);
+            popTo(LoginFragment.class, true);
         });
     }
 

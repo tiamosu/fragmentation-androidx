@@ -61,7 +61,9 @@ public class EventBusActivityScope {
 
                     @Override
                     public void onActivityDestroyed(final Activity activity) {
-                        if (!sActivityEventBusScopePool.containsKey(activity)) return;
+                        if (!sActivityEventBusScopePool.containsKey(activity)) {
+                            return;
+                        }
 
                         mainHandler.post(new Runnable() { // Make sure Fragment's onDestroy() has been called.
                             @Override

@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentationMagician;
 /**
  * Created by YoKey on 17/6/13.
  */
-
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SupportHelper {
     private static final long SHOW_SPACE = 200L;
 
@@ -25,7 +25,9 @@ public class SupportHelper {
      * 显示软键盘
      */
     public static void showSoftInput(final View view) {
-        if (view == null || view.getContext() == null) return;
+        if (view == null || view.getContext() == null) {
+            return;
+        }
         final InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         view.requestFocus();
         view.postDelayed(new Runnable() {
@@ -40,8 +42,10 @@ public class SupportHelper {
      * 隐藏软键盘
      */
     public static void hideSoftInput(View view) {
-        if (view == null || view.getContext() == null) return;
-        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (view == null || view.getContext() == null) {
+            return;
+        }
+        final InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
@@ -67,15 +71,18 @@ public class SupportHelper {
     }
 
     public static ISupportFragment getTopFragment(FragmentManager fragmentManager, int containerId) {
-        List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
-        if (fragmentList == null) return null;
+        final List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
+        if (fragmentList == null) {
+            return null;
+        }
 
         for (int i = fragmentList.size() - 1; i >= 0; i--) {
-            Fragment fragment = fragmentList.get(i);
+            final Fragment fragment = fragmentList.get(i);
             if (fragment instanceof ISupportFragment) {
-                ISupportFragment iFragment = (ISupportFragment) fragment;
-                if (containerId == 0) return iFragment;
-
+                final ISupportFragment iFragment = (ISupportFragment) fragment;
+                if (containerId == 0) {
+                    return iFragment;
+                }
                 if (containerId == iFragment.getSupportDelegate().mContainerId) {
                     return iFragment;
                 }
@@ -90,15 +97,19 @@ public class SupportHelper {
      * @param fragment 目标Fragment
      */
     public static ISupportFragment getPreFragment(Fragment fragment) {
-        FragmentManager fragmentManager = fragment.getFragmentManager();
-        if (fragmentManager == null) return null;
+        final FragmentManager fragmentManager = fragment.getFragmentManager();
+        if (fragmentManager == null) {
+            return null;
+        }
 
-        List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
-        if (fragmentList == null) return null;
+        final List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
+        if (fragmentList == null) {
+            return null;
+        }
 
-        int index = fragmentList.indexOf(fragment);
+        final int index = fragmentList.indexOf(fragment);
         for (int i = index - 1; i >= 0; i--) {
-            Fragment preFragment = fragmentList.get(i);
+            final Fragment preFragment = fragmentList.get(i);
             if (preFragment instanceof ISupportFragment) {
                 return (ISupportFragment) preFragment;
             }
@@ -137,13 +148,14 @@ public class SupportHelper {
         Fragment fragment = null;
 
         if (toFragmentTag == null) {
-            List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
-            if (fragmentList == null) return null;
+            final List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
+            if (fragmentList == null) {
+                return null;
+            }
 
-            int sizeChildFrgList = fragmentList.size();
-
+            final int sizeChildFrgList = fragmentList.size();
             for (int i = sizeChildFrgList - 1; i >= 0; i--) {
-                Fragment brotherFragment = fragmentList.get(i);
+                final Fragment brotherFragment = fragmentList.get(i);
                 if (brotherFragment instanceof ISupportFragment && brotherFragment.getClass().getName().equals(fragmentClass.getName())) {
                     fragment = brotherFragment;
                     break;
@@ -151,18 +163,20 @@ public class SupportHelper {
             }
         } else {
             fragment = fragmentManager.findFragmentByTag(toFragmentTag);
-            if (fragment == null) return null;
+            if (fragment == null) {
+                return null;
+            }
         }
         return (T) fragment;
     }
 
     private static ISupportFragment getActiveFragment(FragmentManager fragmentManager, ISupportFragment parentFragment) {
-        List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
+        final List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fragmentManager);
         if (fragmentList == null) {
             return parentFragment;
         }
         for (int i = fragmentList.size() - 1; i >= 0; i--) {
-            Fragment fragment = fragmentList.get(i);
+            final Fragment fragment = fragmentList.get(i);
             if (fragment instanceof ISupportFragment) {
                 if (fragment.isResumed() && !fragment.isHidden() && fragment.getUserVisibleHint()) {
                     return getActiveFragment(fragment.getChildFragmentManager(), (ISupportFragment) fragment);
@@ -183,14 +197,15 @@ public class SupportHelper {
      * Get the topFragment from BackStack
      */
     public static ISupportFragment getBackStackTopFragment(FragmentManager fragmentManager, int containerId) {
-        int count = fragmentManager.getBackStackEntryCount();
-
+        final int count = fragmentManager.getBackStackEntryCount();
         for (int i = count - 1; i >= 0; i--) {
-            FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(i);
-            Fragment fragment = fragmentManager.findFragmentByTag(entry.getName());
+            final FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(i);
+            final Fragment fragment = fragmentManager.findFragmentByTag(entry.getName());
             if (fragment instanceof ISupportFragment) {
-                ISupportFragment supportFragment = (ISupportFragment) fragment;
-                if (containerId == 0) return supportFragment;
+                final ISupportFragment supportFragment = (ISupportFragment) fragment;
+                if (containerId == 0) {
+                    return supportFragment;
+                }
 
                 if (containerId == supportFragment.getSupportDelegate().mContainerId) {
                     return supportFragment;
@@ -202,17 +217,15 @@ public class SupportHelper {
 
     @SuppressWarnings("unchecked")
     static <T extends ISupportFragment> T findBackStackFragment(Class<T> fragmentClass, String toFragmentTag, FragmentManager fragmentManager) {
-        int count = fragmentManager.getBackStackEntryCount();
-
+        final int count = fragmentManager.getBackStackEntryCount();
         if (toFragmentTag == null) {
             toFragmentTag = fragmentClass.getName();
         }
 
         for (int i = count - 1; i >= 0; i--) {
-            FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(i);
-
+            final FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(i);
             if (toFragmentTag.equals(entry.getName())) {
-                Fragment fragment = fragmentManager.findFragmentByTag(entry.getName());
+                final Fragment fragment = fragmentManager.findFragmentByTag(entry.getName());
                 if (fragment instanceof ISupportFragment) {
                     return (T) fragment;
                 }
@@ -222,14 +235,14 @@ public class SupportHelper {
     }
 
     static List<Fragment> getWillPopFragments(FragmentManager fm, String targetTag, boolean includeTarget) {
-        Fragment target = fm.findFragmentByTag(targetTag);
-        List<Fragment> willPopFragments = new ArrayList<>();
+        final Fragment target = fm.findFragmentByTag(targetTag);
+        final List<Fragment> willPopFragments = new ArrayList<>();
+        final List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fm);
+        if (fragmentList == null) {
+            return willPopFragments;
+        }
 
-        List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fm);
-        if (fragmentList == null) return willPopFragments;
-
-        int size = fragmentList.size();
-
+        final int size = fragmentList.size();
         int startIndex = -1;
         for (int i = size - 1; i >= 0; i--) {
             if (target == fragmentList.get(i)) {
@@ -242,10 +255,12 @@ public class SupportHelper {
             }
         }
 
-        if (startIndex == -1) return willPopFragments;
+        if (startIndex == -1) {
+            return willPopFragments;
+        }
 
         for (int i = size - 1; i >= startIndex; i--) {
-            Fragment fragment = fragmentList.get(i);
+            final Fragment fragment = fragmentList.get(i);
             if (fragment != null && fragment.getView() != null) {
                 willPopFragments.add(fragment);
             }

@@ -13,14 +13,13 @@ import me.yokeyword.sample.R;
 /**
  * Created by YoKeyword on 16/4/19.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class FirstSwipeBackFragment extends BaseSwipeBackFragment {
     private Toolbar mToolbar;
 
     public static FirstSwipeBackFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        FirstSwipeBackFragment fragment = new FirstSwipeBackFragment();
+        final Bundle args = new Bundle();
+        final FirstSwipeBackFragment fragment = new FirstSwipeBackFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -28,18 +27,13 @@ public class FirstSwipeBackFragment extends BaseSwipeBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_swipe_back_first, container, false);
+        final View view = inflater.inflate(R.layout.fragment_swipe_back_first, container, false);
 
         mToolbar = view.findViewById(R.id.toolbar);
         mToolbar.setTitle("SwipeBackActivity's Fragment");
         _initToolbar(mToolbar);
 
-        view.findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(RecyclerSwipeBackFragment.newInstance());
-            }
-        });
+        view.findViewById(R.id.btn).setOnClickListener(v -> start(RecyclerSwipeBackFragment.newInstance()));
 
         return attachToSwipeBack(view);
     }

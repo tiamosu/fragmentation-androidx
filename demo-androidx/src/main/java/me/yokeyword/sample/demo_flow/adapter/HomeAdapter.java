@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.yokeyword.sample.R;
 import me.yokeyword.sample.demo_flow.entity.Article;
@@ -33,25 +34,23 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
         mItems.addAll(items);
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_home, parent, false);
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final View view = mInflater.inflate(R.layout.item_home, parent, false);
         final MyViewHolder holder = new MyViewHolder(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                if (mClickListener != null) {
-                    mClickListener.onItemClick(position, v);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            final int position = holder.getAdapterPosition();
+            if (mClickListener != null) {
+                mClickListener.onItemClick(position, v);
             }
         });
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        Article item = mItems.get(position);
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        final Article item = mItems.get(position);
         holder.tvTitle.setText(item.getTitle());
         holder.tvContent.setText(item.getContent());
     }
@@ -72,10 +71,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle, tvContent;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
-            tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-            tvContent = (TextView) itemView.findViewById(R.id.tv_content);
+            tvTitle = itemView.findViewById(R.id.tv_title);
+            tvContent = itemView.findViewById(R.id.tv_content);
         }
     }
 }

@@ -27,7 +27,7 @@ public final class ResultRecord implements Parcelable {
     public ResultRecord() {
     }
 
-    protected ResultRecord(Parcel in) {
+    private ResultRecord(Parcel in) {
         requestCode = in.readInt();
         resultCode = in.readInt();
         resultBundle = in.readBundle(getClass().getClassLoader());

@@ -23,6 +23,7 @@ import me.yokeyword.fragmentation.helper.internal.ResultRecord;
 import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
 import me.yokeyword.fragmentation.helper.internal.VisibleDelegate;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SupportFragmentDelegate {
     static final int STATUS_UN_ROOT = 0;
     static final int STATUS_ROOT_ANIM_DISABLE = 1;
@@ -55,19 +56,27 @@ public class SupportFragmentDelegate {
     private Runnable mNotifyEnterAnimEndRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mFragment == null) return;
+            if (mFragment == null) {
+                return;
+            }
             mSupportF.onEnterAnimationEnd(mSaveInstanceState);
 
-            if (mRootViewClickable) return;
+            if (mRootViewClickable) {
+                return;
+            }
             final View view = mFragment.getView();
-            if (view == null) return;
-            ISupportFragment preFragment = SupportHelper.getPreFragment(mFragment);
-            if (preFragment == null) return;
+            if (view == null) {
+                return;
+            }
+            final ISupportFragment preFragment = SupportHelper.getPreFragment(mFragment);
+            if (preFragment == null) {
+                return;
+            }
 
             long prePopExitDuration = preFragment.getSupportDelegate().getPopExitAnimDuration();
             long enterDuration = getEnterAnimDuration();
 
-            mHandler.postDelayed(new Runnable() {
+            getHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     view.setClickable(false);
@@ -77,8 +86,9 @@ public class SupportFragmentDelegate {
     };
 
     public SupportFragmentDelegate(ISupportFragment support) {
-        if (!(support instanceof Fragment))
+        if (!(support instanceof Fragment)) {
             throw new RuntimeException("Must extends Fragment");
+        }
         this.mSupportF = support;
         this.mFragment = (Fragment) support;
     }
@@ -88,21 +98,12 @@ public class SupportFragmentDelegate {
      * 额外的事务：自定义Tag，添加SharedElement动画，操作非回退栈Fragment
      */
     public ExtraTransaction extraTransaction() {
-        if (mTransactionDelegate == null)
+        if (mTransactionDelegate == null) {
             throw new RuntimeException(mFragment.getClass().getSimpleName() + " not attach!");
+        }
 
         return new ExtraTransaction.ExtraTransactionImpl<>((FragmentActivity) mSupport, mSupportF, mTransactionDelegate, false);
     }
-
-//    public void onAttach(Activity activity) {
-//        if (activity instanceof ISupportActivity) {
-//            this.mSupport = (ISupportActivity) activity;
-//            this._mActivity = (FragmentActivity) activity;
-//            mTransactionDelegate = mSupport.getSupportDelegate().getTransactionDelegate();
-//        } else {
-//            throw new RuntimeException(activity.getClass().getSimpleName() + " must impl ISupportActivity!");
-//        }
-//    }
 
     public void onAttach(Context context) {
         if (context instanceof ISupportActivity) {
@@ -117,7 +118,7 @@ public class SupportFragmentDelegate {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         getVisibleDelegate().onCreate(savedInstanceState);
 
-        Bundle bundle = mFragment.getArguments();
+        final Bundle bundle = mFragment.getArguments();
         if (bundle != null) {
             mRootStatus = bundle.getInt(TransactionDelegate.FRAGMENTATION_ARG_ROOT_STATUS, STATUS_UN_ROOT);
             mIsSharedElement = bundle.getBoolean(TransactionDelegate.FRAGMENTATION_ARG_IS_SHARED_ELEMENT, false);
@@ -147,15 +148,16 @@ public class SupportFragmentDelegate {
         mAnimHelper = new AnimatorHelper(_mActivity.getApplicationContext(), mFragmentAnimator);
 
         final Animation enter = getEnterAnim();
-        if (enter == null) return;
+        if (enter == null) {
+            return;
+        }
 
         getEnterAnim().setAnimationListener(new Animation.AnimationListener() {
-
             @Override
             public void onAnimationStart(Animation animation) {
                 mSupport.getSupportDelegate().mFragmentClickable = false;  // 开启防抖动
 
-                mHandler.postDelayed(new Runnable() {
+                getHandler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mSupport.getSupportDelegate().mFragmentClickable = true;
@@ -174,6 +176,7 @@ public class SupportFragmentDelegate {
         });
     }
 
+    @SuppressWarnings("unused")
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if ((mSupport.getSupportDelegate().mPopMultipleNoAnim || mLockAnim)) {
             if (transit == FragmentTransaction.TRANSIT_FRAGMENT_CLOSE && enter) {
@@ -183,7 +186,7 @@ public class SupportFragmentDelegate {
         }
         if (transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
             if (enter) {
-                Animation enterAnim;
+                final Animation enterAnim;
                 if (mRootStatus == STATUS_ROOT_ANIM_DISABLE) {
                     enterAnim = mAnimHelper.getNoneAnim();
                 } else {
@@ -204,7 +207,6 @@ public class SupportFragmentDelegate {
             if (!enter) {
                 return mAnimHelper.compatChildFragmentExitAnim(mFragment);
             }
-
             return null;
         }
     }
@@ -217,9 +219,9 @@ public class SupportFragmentDelegate {
     }
 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getVisibleDelegate().onActivityCreated(savedInstanceState);
+        getVisibleDelegate().onActivityCreated();
 
-        View view = mFragment.getView();
+        final View view = mFragment.getView();
         if (view != null) {
             mRootViewClickable = view.isClickable();
             view.setClickable(true);
@@ -347,8 +349,9 @@ public class SupportFragmentDelegate {
      * @return FragmentAnimator
      */
     public FragmentAnimator getFragmentAnimator() {
-        if (mSupport == null)
+        if (mSupport == null) {
             throw new RuntimeException("Fragment has not been attached to Activity!");
+        }
 
         if (mFragmentAnimator == null) {
             mFragmentAnimator = mSupportF.onCreateFragmentAnimator();
@@ -378,12 +381,12 @@ public class SupportFragmentDelegate {
      * @see #startForResult(ISupportFragment, int)
      */
     public void setFragmentResult(int resultCode, Bundle bundle) {
-        Bundle args = mFragment.getArguments();
+        final Bundle args = mFragment.getArguments();
         if (args == null || !args.containsKey(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD)) {
             return;
         }
 
-        ResultRecord resultRecord = args.getParcelable(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD);
+        final ResultRecord resultRecord = args.getParcelable(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD);
         if (resultRecord != null) {
             resultRecord.resultCode = resultCode;
             resultRecord.resultBundle = bundle;
@@ -436,9 +439,11 @@ public class SupportFragmentDelegate {
      * 隐藏软键盘
      */
     public void hideSoftInput() {
-        Activity activity = mFragment.getActivity();
-        if (activity == null) return;
-        View view = activity.getWindow().getDecorView();
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        final View view = activity.getWindow().getDecorView();
         SupportHelper.hideSoftInput(view);
     }
 
@@ -599,7 +604,14 @@ public class SupportFragmentDelegate {
 
     private void processRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            FragmentTransaction ft = mFragment.getFragmentManager().beginTransaction();
+            FragmentTransaction ft = null;
+            FragmentManager manager;
+            if ((manager = mFragment.getFragmentManager()) != null) {
+                ft = manager.beginTransaction();
+            }
+            if (ft == null) {
+                return;
+            }
             if (mIsHidden) {
                 ft.hide(mFragment);
             } else {
@@ -646,10 +658,10 @@ public class SupportFragmentDelegate {
     }
 
     private int getWindowBackground() {
-        TypedArray a = _mActivity.getTheme().obtainStyledAttributes(new int[]{
+        final TypedArray a = _mActivity.getTheme().obtainStyledAttributes(new int[]{
                 android.R.attr.windowBackground
         });
-        int background = a.getResourceId(0, 0);
+        final int background = a.getResourceId(0, 0);
         a.recycle();
         return background;
     }
@@ -693,7 +705,7 @@ public class SupportFragmentDelegate {
     }
 
     private long getEnterAnimDuration() {
-        Animation enter = getEnterAnim();
+        final Animation enter = getEnterAnim();
         if (enter != null) {
             return enter.getDuration();
         }

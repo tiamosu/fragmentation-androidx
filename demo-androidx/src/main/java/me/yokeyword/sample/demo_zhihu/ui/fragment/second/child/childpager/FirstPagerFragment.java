@@ -22,12 +22,12 @@ import me.yokeyword.sample.demo_zhihu.MainActivity;
 import me.yokeyword.sample.demo_zhihu.adapter.HomeAdapter;
 import me.yokeyword.sample.demo_zhihu.entity.Article;
 import me.yokeyword.sample.demo_zhihu.event.TabSelectedEvent;
-import me.yokeyword.sample.demo_zhihu.listener.OnItemClickListener;
 import me.yokeyword.sample.demo_zhihu.ui.fragment.second.child.DetailFragment;
 
 /**
  * Created by YoKeyword on 16/6/3.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class FirstPagerFragment extends SupportFragment implements SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView mRecy;
     private SwipeRefreshLayout mRefreshLayout;
@@ -38,10 +38,8 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     private String[] mContents;
 
     public static FirstPagerFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        FirstPagerFragment fragment = new FirstPagerFragment();
+        final Bundle args = new Bundle();
+        final FirstPagerFragment fragment = new FirstPagerFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,7 +47,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zhihu_fragment_second_pager_first, container, false);
+        final View view = inflater.inflate(R.layout.zhihu_fragment_second_pager_first, container, false);
         EventBusActivityScope.getDefault(_mActivity).register(this);
         initView(view);
         return view;
@@ -66,24 +64,23 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
         mRefreshLayout.setOnRefreshListener(this);
 
         mAdapter = new HomeAdapter(_mActivity);
-        LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View view, RecyclerView.ViewHolder vh) {
-                // 这里的DetailFragment在flow包里
-                // 这里是父Fragment启动,要注意 栈层级
+        mAdapter.setOnItemClickListener((position, view1, vh) -> {
+            // 这里的DetailFragment在flow包里
+            // 这里是父Fragment启动,要注意 栈层级
+            if (getParentFragment() != null) {
                 ((SupportFragment) getParentFragment()).start(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
             }
         });
 
         // Init Datas
-        List<Article> articleList = new ArrayList<>();
+        final List<Article> articleList = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
-            int index = (int) (Math.random() * 3);
-            Article article = new Article(mTitles[index], mContents[index]);
+            final int index = (int) (Math.random() * 3);
+            final Article article = new Article(mTitles[index], mContents[index]);
             articleList.add(article);
         }
         mAdapter.setDatas(articleList);
@@ -100,12 +97,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.setRefreshing(false);
-            }
-        }, 2000);
+        mRefreshLayout.postDelayed(() -> mRefreshLayout.setRefreshing(false), 2000);
     }
 
     private void scrollToTop() {
@@ -117,8 +109,9 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
      */
     @Subscribe
     public void onTabSelectedEvent(TabSelectedEvent event) {
-        if (event.position != MainActivity.SECOND) return;
-
+        if (event.position != MainActivity.SECOND) {
+            return;
+        }
         if (mAtTop) {
             mRefreshLayout.setRefreshing(true);
             onRefresh();

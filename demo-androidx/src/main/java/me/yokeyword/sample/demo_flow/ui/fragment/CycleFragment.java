@@ -16,6 +16,7 @@ import me.yokeyword.sample.demo_flow.base.BaseBackFragment;
 /**
  * Created by YoKeyword on 16/2/7.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class CycleFragment extends BaseBackFragment {
     private static final String ARG_NUMBER = "arg_number";
 
@@ -26,8 +27,8 @@ public class CycleFragment extends BaseBackFragment {
     private int mNumber;
 
     public static CycleFragment newInstance(int number) {
-        CycleFragment fragment = new CycleFragment();
-        Bundle args = new Bundle();
+        final CycleFragment fragment = new CycleFragment();
+        final Bundle args = new Bundle();
         args.putInt(ARG_NUMBER, number);
         fragment.setArguments(args);
         return fragment;
@@ -36,7 +37,7 @@ public class CycleFragment extends BaseBackFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
+        final Bundle args = getArguments();
         if (args != null) {
             mNumber = args.getInt(ARG_NUMBER);
         }
@@ -45,7 +46,7 @@ public class CycleFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cycle, container, false);
+        final View view = inflater.inflate(R.layout.fragment_cycle, container, false);
         initView(view);
         return view;
     }
@@ -56,23 +57,12 @@ public class CycleFragment extends BaseBackFragment {
         mBtnNext = view.findViewById(R.id.btn_next);
         mBtnNextWithFinish = view.findViewById(R.id.btn_next_with_finish);
 
-        String title = "CyclerFragment " + mNumber;
-
+        final String title = "CyclerFragment " + mNumber;
         mToolbar.setTitle(title);
         initToolbarNav(mToolbar);
 
         mTvName.setText(title);
-        mBtnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(CycleFragment.newInstance(mNumber + 1));
-            }
-        });
-        mBtnNextWithFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startWithPop(CycleFragment.newInstance(mNumber + 1));
-            }
-        });
+        mBtnNext.setOnClickListener(v -> start(CycleFragment.newInstance(mNumber + 1)));
+        mBtnNextWithFinish.setOnClickListener(v -> startWithPop(CycleFragment.newInstance(mNumber + 1)));
     }
 }

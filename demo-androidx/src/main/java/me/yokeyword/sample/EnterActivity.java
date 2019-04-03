@@ -22,7 +22,7 @@ public class EnterActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolBar = findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
 
         findViewById(R.id.btn_flow).setOnClickListener(v ->

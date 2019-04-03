@@ -5,19 +5,16 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 
-import androidx.core.view.ViewCompat;
-
-
 /**
  * Created by YoKeyword on 16/6/3.
  */
+@SuppressWarnings("unused")
 public class BottomBar extends LinearLayout {
     private static final int TRANSLATE_DURATION_MILLIS = 200;
 
@@ -25,7 +22,6 @@ public class BottomBar extends LinearLayout {
     private boolean mVisible = true;
 
     private LinearLayout mTabLayout;
-
     private LayoutParams mTabParams;
     private int mCurrentPosition = 0;
     private OnTabSelectedListener mListener;
@@ -40,10 +36,10 @@ public class BottomBar extends LinearLayout {
 
     public BottomBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        init(context);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void init(Context context) {
         setOrientation(VERTICAL);
 
 //        ImageView shadowView = new ImageView(context);
@@ -60,21 +56,19 @@ public class BottomBar extends LinearLayout {
     }
 
     public BottomBar addItem(final BottomBarTab tab) {
-        tab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener == null) return;
-
-                int pos = tab.getTabPosition();
-                if (mCurrentPosition == pos) {
-                    mListener.onTabReselected(pos);
-                } else {
-                    mListener.onTabSelected(pos, mCurrentPosition);
-                    tab.setSelected(true);
-                    mListener.onTabUnselected(mCurrentPosition);
-                    mTabLayout.getChildAt(mCurrentPosition).setSelected(false);
-                    mCurrentPosition = pos;
-                }
+        tab.setOnClickListener(v -> {
+            if (mListener == null) {
+                return;
+            }
+            final int pos = tab.getTabPosition();
+            if (mCurrentPosition == pos) {
+                mListener.onTabReselected(pos);
+            } else {
+                mListener.onTabSelected(pos, mCurrentPosition);
+                tab.setSelected(true);
+                mListener.onTabUnselected(mCurrentPosition);
+                mTabLayout.getChildAt(mCurrentPosition).setSelected(false);
+                mCurrentPosition = pos;
             }
         });
         tab.setTabPosition(mTabLayout.getChildCount());
@@ -88,23 +82,18 @@ public class BottomBar extends LinearLayout {
     }
 
     public void setCurrentItem(final int position) {
-        mTabLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mTabLayout.getChildAt(position).performClick();
-            }
-        });
+        mTabLayout.post(() -> mTabLayout.getChildAt(position).performClick());
     }
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
+        final Parcelable superState = super.onSaveInstanceState();
         return new SavedState(superState, mCurrentPosition);
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        SavedState ss = (SavedState) state;
+        final SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
 
         if (mCurrentPosition != ss.position) {
@@ -143,13 +132,13 @@ public class BottomBar extends LinearLayout {
             mVisible = visible;
             int height = getHeight();
             if (height == 0 && !force) {
-                ViewTreeObserver vto = getViewTreeObserver();
+                final ViewTreeObserver vto = getViewTreeObserver();
                 if (vto.isAlive()) {
                     // view树完成测量并且分配空间而绘制过程还没有开始的时候播放动画。
                     vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                         @Override
                         public boolean onPreDraw() {
-                            ViewTreeObserver currentVto = getViewTreeObserver();
+                            final ViewTreeObserver currentVto = getViewTreeObserver();
                             if (currentVto.isAlive()) {
                                 currentVto.removeOnPreDrawListener(this);
                             }
@@ -166,7 +155,7 @@ public class BottomBar extends LinearLayout {
                         .setDuration(TRANSLATE_DURATION_MILLIS)
                         .translationY(translationY);
             } else {
-                ViewCompat.setTranslationY(this, translationY);
+                setTranslationY(translationY);
             }
         }
     }
@@ -179,12 +168,15 @@ public class BottomBar extends LinearLayout {
         void onTabReselected(int position);
     }
 
+    @SuppressWarnings("WeakerAccess")
     static class SavedState extends BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            @Override
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }
 
+            @Override
             public SavedState[] newArray(int size) {
                 return new SavedState[size];
             }

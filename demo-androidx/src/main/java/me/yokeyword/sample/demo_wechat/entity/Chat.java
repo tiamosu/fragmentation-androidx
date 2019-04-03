@@ -6,6 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by YoKeyword on 16/6/30.
  */
+@SuppressWarnings("WeakerAccess")
 public class Chat implements Parcelable {
     public static final Creator<Chat> CREATOR = new Creator<Chat>() {
         @Override
@@ -26,7 +27,7 @@ public class Chat implements Parcelable {
     public Chat() {
     }
 
-    protected Chat(Parcel in) {
+    private Chat(Parcel in) {
         name = in.readString();
         message = in.readString();
         time = in.readLong();

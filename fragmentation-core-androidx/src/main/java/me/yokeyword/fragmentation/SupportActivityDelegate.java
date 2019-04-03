@@ -1,10 +1,6 @@
 package me.yokeyword.fragmentation;
 
-import android.os.Bundle;
-import android.view.MotionEvent;
-
 import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -15,6 +11,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
 import me.yokeyword.fragmentation.debug.DebugStackDelegate;
 import me.yokeyword.fragmentation.queue.Action;
 
+@SuppressWarnings("WeakerAccess")
 public class SupportActivityDelegate {
     boolean mPopMultipleNoAnim = false;
     boolean mFragmentClickable = true;
@@ -26,8 +23,9 @@ public class SupportActivityDelegate {
     private DebugStackDelegate mDebugStackDelegate;
 
     public SupportActivityDelegate(ISupportActivity support) {
-        if (!(support instanceof FragmentActivity))
+        if (!(support instanceof FragmentActivity)) {
             throw new RuntimeException("Must extends FragmentActivity/AppCompatActivity");
+        }
         this.mSupport = support;
         this.mActivity = (FragmentActivity) support;
     }
@@ -40,7 +38,7 @@ public class SupportActivityDelegate {
         return new ExtraTransaction.ExtraTransactionImpl<>((FragmentActivity) mSupport, getTopFragment(), getTransactionDelegate(), true);
     }
 
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate() {
         mTransactionDelegate = getTransactionDelegate();
         mDebugStackDelegate = new DebugStackDelegate(mActivity);
 
@@ -55,7 +53,7 @@ public class SupportActivityDelegate {
         return mTransactionDelegate;
     }
 
-    public void onPostCreate(@Nullable Bundle savedInstanceState) {
+    public void onPostCreate() {
         mDebugStackDelegate.onPostCreate(Fragmentation.getDefault().getMode());
     }
 
@@ -77,8 +75,8 @@ public class SupportActivityDelegate {
 
         for (Fragment fragment : FragmentationMagician.getActiveFragments(getSupportFragmentManager())) {
             if (fragment instanceof ISupportFragment) {
-                ISupportFragment iF = (ISupportFragment) fragment;
-                SupportFragmentDelegate delegate = iF.getSupportDelegate();
+                final ISupportFragment iF = (ISupportFragment) fragment;
+                final SupportFragmentDelegate delegate = iF.getSupportDelegate();
                 if (delegate.mAnimByActivity) {
                     delegate.mFragmentAnimator = fragmentAnimator.copy();
                     if (delegate.mAnimHelper != null) {
@@ -152,8 +150,10 @@ public class SupportActivityDelegate {
                 }
 
                 // 获取activeFragment:即从栈顶开始 状态为show的那个Fragment
-                ISupportFragment activeFragment = SupportHelper.getActiveFragment(getSupportFragmentManager());
-                if (mTransactionDelegate.dispatchBackPressedEvent(activeFragment)) return;
+                final ISupportFragment activeFragment = SupportHelper.getActiveFragment(getSupportFragmentManager());
+                if (mTransactionDelegate.dispatchBackPressedEvent(activeFragment)) {
+                    return;
+                }
 
                 mSupport.onBackPressedSupport();
             }
@@ -176,7 +176,7 @@ public class SupportActivityDelegate {
         mDebugStackDelegate.onDestroy();
     }
 
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent() {
         // 防抖动(防止点击速度过快)
         return !mFragmentClickable;
     }

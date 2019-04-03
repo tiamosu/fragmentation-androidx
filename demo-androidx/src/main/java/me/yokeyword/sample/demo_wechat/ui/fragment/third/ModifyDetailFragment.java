@@ -18,6 +18,7 @@ import me.yokeyword.sample.demo_wechat.ui.fragment.CycleFragment;
 /**
  * Created by YoKeyword on 16/2/7.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ModifyDetailFragment extends BaseBackFragment {
     private static final String ARG_TITLE = "arg_title";
 
@@ -28,8 +29,8 @@ public class ModifyDetailFragment extends BaseBackFragment {
     private String mTitle;
 
     public static ModifyDetailFragment newInstance(String title) {
-        Bundle args = new Bundle();
-        ModifyDetailFragment fragment = new ModifyDetailFragment();
+        final Bundle args = new Bundle();
+        final ModifyDetailFragment fragment = new ModifyDetailFragment();
         args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
@@ -39,7 +40,7 @@ public class ModifyDetailFragment extends BaseBackFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
+        final Bundle args = getArguments();
         if (args != null) {
             mTitle = args.getString(ARG_TITLE);
         }
@@ -48,7 +49,7 @@ public class ModifyDetailFragment extends BaseBackFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_modify_detail, container, false);
+        final View view = inflater.inflate(R.layout.fragment_modify_detail, container, false);
         initView(view);
         return attachToSwipeBack(view);
     }
@@ -67,22 +68,15 @@ public class ModifyDetailFragment extends BaseBackFragment {
         // 显示 软键盘
 //        showSoftInput(mEtModiyTitle);
 
-        mBtnModify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString(DetailFragment.KEY_RESULT_TITLE, mEtModiyTitle.getText().toString());
-                setFragmentResult(RESULT_OK, bundle);
+        mBtnModify.setOnClickListener(v -> {
+            final Bundle bundle = new Bundle();
+            bundle.putString(DetailFragment.KEY_RESULT_TITLE, mEtModiyTitle.getText().toString());
+            setFragmentResult(RESULT_OK, bundle);
 
-                Toast.makeText(_mActivity, R.string.modify_success, Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(_mActivity, R.string.modify_success, Toast.LENGTH_SHORT).show();
         });
-        mBtnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(CycleFragment.newInstance(1));
-            }
-        });
+
+        mBtnNext.setOnClickListener(v -> start(CycleFragment.newInstance(1)));
     }
 
     @Override
