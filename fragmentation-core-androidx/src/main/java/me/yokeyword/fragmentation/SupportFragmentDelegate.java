@@ -603,15 +603,10 @@ public class SupportFragmentDelegate {
     }
 
     private void processRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            FragmentTransaction ft = null;
-            FragmentManager manager;
-            if ((manager = mFragment.getFragmentManager()) != null) {
-                ft = manager.beginTransaction();
-            }
-            if (ft == null) {
-                return;
-            }
+        FragmentManager fragmentManager;
+        if (savedInstanceState != null
+                && (fragmentManager = mFragment.getFragmentManager()) != null) {
+            final FragmentTransaction ft = fragmentManager.beginTransaction();
             if (mIsHidden) {
                 ft.hide(mFragment);
             } else {

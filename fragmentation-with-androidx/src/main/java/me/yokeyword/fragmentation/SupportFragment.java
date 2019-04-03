@@ -141,7 +141,6 @@ public class SupportFragment extends Fragment implements ISupportFragment {
         mDelegate.onEnterAnimationEnd(savedInstanceState);
     }
 
-
     /**
      * Lazy initial，Called when fragment is first called.
      * <p>

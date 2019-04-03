@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("all")
 
 object Android {
     const val compileSdkVersion = 28
@@ -21,9 +21,9 @@ object Publish {
 }
 
 object Deps {
-    const val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha03"
+    const val appcompat = "androidx.appcompat:appcompat:1.0.2"
     const val constraintlayout = "androidx.constraintlayout:constraintlayout:1.1.3"
-    const val material = "com.google.android.material:material:1.1.0-alpha05"
+    const val material = "com.google.android.material:material:1.0.0"
     const val cardview = "androidx.cardview:cardview:1.0.0"
     const val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
     const val eventbus = "org.greenrobot:eventbus:3.1.1"
