@@ -1,19 +1,6 @@
 # 用androidx彻底替换了原Fragmentation的support依赖
 ### 本项目fork自([YoKeyword/Fragmentation](https://github.com/YoKeyword/Fragmentation))
 
-## Download
-
-Gradle:
-```groovy
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        //添加maven地址
-        maven { url 'https://dl.bintray.com/weixia/maven' }
-    }
-}
-```
 
 ### fragmentation-core-androidx
 [ ![Download](https://api.bintray.com/packages/weixia/maven/fragmentation-core-androidx/images/download.svg) ](https://bintray.com/weixia/maven/fragmentation-core-androidx/_latestVersion)
