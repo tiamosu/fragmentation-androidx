@@ -60,7 +60,8 @@ public abstract class ExtraTransaction {
 
     public abstract void loadRootFragment(int containerId, ISupportFragment toFragment);
 
-    public abstract void loadRootFragment(int containerId, ISupportFragment toFragment, boolean addToBackStack, boolean allowAnim);
+    public abstract void loadRootFragment(int containerId, ISupportFragment toFragment,
+                                          boolean addToBackStack, boolean allowAnim);
 
     public abstract void start(ISupportFragment toFragment);
 
@@ -76,7 +77,8 @@ public abstract class ExtraTransaction {
 
     public abstract void startWithPop(ISupportFragment toFragment);
 
-    public abstract void startWithPopTo(ISupportFragment toFragment, String targetFragmentTag, boolean includeTargetFragment);
+    public abstract void startWithPopTo(ISupportFragment toFragment, String targetFragmentTag,
+                                        boolean includeTargetFragment);
 
     public abstract void replace(ISupportFragment toFragment);
 
@@ -88,11 +90,13 @@ public abstract class ExtraTransaction {
      */
     public abstract void popTo(String targetFragmentTag, boolean includeTargetFragment);
 
-    public abstract void popTo(String targetFragmentTag, boolean includeTargetFragment, Runnable afterPopTransactionRunnable, int popAnim);
+    public abstract void popTo(String targetFragmentTag, boolean includeTargetFragment,
+                               Runnable afterPopTransactionRunnable, int popAnim);
 
     public abstract void popToChild(String targetFragmentTag, boolean includeTargetFragment);
 
-    public abstract void popToChild(String targetFragmentTag, boolean includeTargetFragment, Runnable afterPopTransactionRunnable, int popAnim);
+    public abstract void popToChild(String targetFragmentTag, boolean includeTargetFragment,
+                                    Runnable afterPopTransactionRunnable, int popAnim);
 
     /**
      * Don't add this extraTransaction to the back stack.
@@ -124,7 +128,8 @@ public abstract class ExtraTransaction {
     /**
      * Impl
      */
-    final static class ExtraTransactionImpl<T extends ISupportFragment> extends ExtraTransaction implements DontAddToBackStackTransaction {
+    final static class ExtraTransactionImpl<T extends ISupportFragment> extends ExtraTransaction
+            implements DontAddToBackStackTransaction {
         private FragmentActivity mActivity;
         private T mSupportF;
         private Fragment mFragment;
@@ -132,7 +137,8 @@ public abstract class ExtraTransaction {
         private boolean mFromActivity;
         private TransactionRecord mRecord;
 
-        ExtraTransactionImpl(FragmentActivity activity, T supportF, TransactionDelegate transactionDelegate, boolean fromActivity) {
+        ExtraTransactionImpl(FragmentActivity activity, T supportF,
+                             TransactionDelegate transactionDelegate, boolean fromActivity) {
             this.mActivity = activity;
             this.mSupportF = supportF;
             this.mFragment = (Fragment) supportF;
@@ -184,9 +190,11 @@ public abstract class ExtraTransaction {
         }
 
         @Override
-        public void loadRootFragment(int containerId, ISupportFragment toFragment, boolean addToBackStack, boolean allowAnim) {
+        public void loadRootFragment(int containerId, ISupportFragment toFragment,
+                                     boolean addToBackStack, boolean allowAnim) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.loadRootTransaction(getFragmentManager(), containerId, toFragment, addToBackStack, allowAnim);
+            mTransactionDelegate.loadRootTransaction(getFragmentManager(), containerId, toFragment,
+                    addToBackStack, allowAnim);
         }
 
         @Override
@@ -202,32 +210,39 @@ public abstract class ExtraTransaction {
 
         @Override
         public void popTo(String targetFragmentTag, boolean includeTargetFragment) {
-            popTo(targetFragmentTag, includeTargetFragment, null, TransactionDelegate.DEFAULT_POPTO_ANIM);
+            popTo(targetFragmentTag, includeTargetFragment, null,
+                    TransactionDelegate.DEFAULT_POPTO_ANIM);
         }
 
         @Override
-        public void popTo(String targetFragmentTag, boolean includeTargetFragment, Runnable afterPopTransactionRunnable, int popAnim) {
-            mTransactionDelegate.popTo(targetFragmentTag, includeTargetFragment, afterPopTransactionRunnable, getFragmentManager(), popAnim);
+        public void popTo(String targetFragmentTag, boolean includeTargetFragment,
+                          Runnable afterPopTransactionRunnable, int popAnim) {
+            mTransactionDelegate.popTo(targetFragmentTag, includeTargetFragment,
+                    afterPopTransactionRunnable, getFragmentManager(), popAnim);
         }
 
         @Override
         public void popToChild(String targetFragmentTag, boolean includeTargetFragment) {
-            popToChild(targetFragmentTag, includeTargetFragment, null, TransactionDelegate.DEFAULT_POPTO_ANIM);
+            popToChild(targetFragmentTag, includeTargetFragment, null,
+                    TransactionDelegate.DEFAULT_POPTO_ANIM);
         }
 
         @Override
-        public void popToChild(String targetFragmentTag, boolean includeTargetFragment, Runnable afterPopTransactionRunnable, int popAnim) {
+        public void popToChild(String targetFragmentTag, boolean includeTargetFragment,
+                               Runnable afterPopTransactionRunnable, int popAnim) {
             if (mFromActivity) {
                 popTo(targetFragmentTag, includeTargetFragment, afterPopTransactionRunnable, popAnim);
             } else {
-                mTransactionDelegate.popTo(targetFragmentTag, includeTargetFragment, afterPopTransactionRunnable, mFragment.getChildFragmentManager(), popAnim);
+                mTransactionDelegate.popTo(targetFragmentTag, includeTargetFragment,
+                        afterPopTransactionRunnable, mFragment.getChildFragmentManager(), popAnim);
             }
         }
 
         @Override
         public void add(ISupportFragment toFragment) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF,
+                    toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE);
         }
 
         @Override
@@ -238,31 +253,36 @@ public abstract class ExtraTransaction {
         @Override
         public void startDontHideSelf(ISupportFragment toFragment) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF,
+                    toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE);
         }
 
         @Override
         public void startDontHideSelf(ISupportFragment toFragment, @ISupportFragment.LaunchMode int launchMode) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF,
+                    toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE);
         }
 
         @Override
         public void start(ISupportFragment toFragment, @ISupportFragment.LaunchMode int launchMode) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment,
+                    0, launchMode, TransactionDelegate.TYPE_ADD);
         }
 
         @Override
         public void startForResult(ISupportFragment toFragment, int requestCode) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment,
+                    requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT);
         }
 
         @Override
         public void startForResultDontHideSelf(ISupportFragment toFragment, int requestCode) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT_WITHOUT_HIDE);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment,
+                    requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT_WITHOUT_HIDE);
         }
 
         @Override
@@ -274,13 +294,15 @@ public abstract class ExtraTransaction {
         @Override
         public void startWithPopTo(ISupportFragment toFragment, String targetFragmentTag, boolean includeTargetFragment) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.startWithPopTo(getFragmentManager(), mSupportF, toFragment, targetFragmentTag, includeTargetFragment);
+            mTransactionDelegate.startWithPopTo(getFragmentManager(), mSupportF, toFragment,
+                    targetFragmentTag, includeTargetFragment);
         }
 
         @Override
         public void replace(ISupportFragment toFragment) {
             toFragment.getSupportDelegate().mTransactionRecord = mRecord;
-            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF, toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_REPLACE);
+            mTransactionDelegate.dispatchStartTransaction(getFragmentManager(), mSupportF,
+                    toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_REPLACE);
         }
 
         private FragmentManager getFragmentManager() {

@@ -727,8 +727,8 @@ class TransactionDelegate {
         final boolean stateSaved = FragmentationMagician.isStateSaved(fm);
         if (stateSaved) {
             AfterSaveStateTransactionWarning e = new AfterSaveStateTransactionWarning(action);
-            if (Fragmentation.getDefault().getHandler() != null) {
-                Fragmentation.getDefault().getHandler().onException(e);
+            if (Fragmentation.getDefault().getExceptionHandler() != null) {
+                Fragmentation.getDefault().getExceptionHandler().onException(e);
             }
         }
     }

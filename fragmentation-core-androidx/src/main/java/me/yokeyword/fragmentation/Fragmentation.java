@@ -26,18 +26,18 @@ public class Fragmentation {
 
     static volatile Fragmentation INSTANCE;
 
-    private boolean debug;
-    private int mode;
-    private ExceptionHandler handler;
+    private boolean mDebug;
+    private int mMode;
+    private ExceptionHandler mExceptionHandler;
 
     Fragmentation(FragmentationBuilder builder) {
-        debug = builder.debug;
-        if (debug) {
-            mode = builder.mode;
+        mDebug = builder.debug;
+        if (mDebug) {
+            mMode = builder.mode;
         } else {
-            mode = NONE;
+            mMode = NONE;
         }
-        handler = builder.handler;
+        mExceptionHandler = builder.handler;
     }
 
     public static Fragmentation getDefault() {
@@ -56,27 +56,27 @@ public class Fragmentation {
     }
 
     public boolean isDebug() {
-        return debug;
+        return mDebug;
     }
 
     public void setDebug(boolean debug) {
-        this.debug = debug;
+        this.mDebug = debug;
     }
 
-    public ExceptionHandler getHandler() {
-        return handler;
+    public ExceptionHandler getExceptionHandler() {
+        return mExceptionHandler;
     }
 
-    public void setHandler(ExceptionHandler handler) {
-        this.handler = handler;
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.mExceptionHandler = exceptionHandler;
     }
 
     public int getMode() {
-        return mode;
+        return mMode;
     }
 
     public void setMode(@StackViewMode int mode) {
-        this.mode = mode;
+        this.mMode = mode;
     }
 
     @IntDef({NONE, SHAKE, BUBBLE})
