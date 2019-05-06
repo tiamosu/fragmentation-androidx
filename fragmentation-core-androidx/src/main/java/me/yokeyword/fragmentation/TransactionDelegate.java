@@ -85,8 +85,8 @@ class TransactionDelegate {
                 String toFragmentTag = to.getClass().getName();
                 final TransactionRecord transactionRecord = to.getSupportDelegate().mTransactionRecord;
                 if (transactionRecord != null) {
-                    if (transactionRecord.tag != null) {
-                        toFragmentTag = transactionRecord.tag;
+                    if (transactionRecord.mTag != null) {
+                        toFragmentTag = transactionRecord.mTag;
                     }
                 }
 
@@ -375,12 +375,12 @@ class TransactionDelegate {
         ArrayList<TransactionRecord.SharedElement> sharedElementList = null;
         final TransactionRecord transactionRecord = to.getSupportDelegate().mTransactionRecord;
         if (transactionRecord != null) {
-            if (transactionRecord.tag != null) {
-                toFragmentTag = transactionRecord.tag;
+            if (transactionRecord.mTag != null) {
+                toFragmentTag = transactionRecord.mTag;
             }
-            dontAddToBackStack = transactionRecord.dontAddToBackStack;
-            if (transactionRecord.sharedElementList != null) {
-                sharedElementList = transactionRecord.sharedElementList;
+            dontAddToBackStack = transactionRecord.mDontAddToBackStack;
+            if (transactionRecord.mSharedElementList != null) {
+                sharedElementList = transactionRecord.mSharedElementList;
                 // Compat SharedElement
                 FragmentationMagician.reorderIndices(fm);
             }
@@ -421,12 +421,12 @@ class TransactionDelegate {
         if (sharedElementList == null) {
             if (addMode) { // Replace mode forbidden animation, the replace animations exist overlapping Bug on support-v4.
                 final TransactionRecord record = to.getSupportDelegate().mTransactionRecord;
-                if (record != null && record.targetFragmentEnter != Integer.MIN_VALUE) {
-                    ft.setCustomAnimations(record.targetFragmentEnter, record.currentFragmentPopExit,
-                            record.currentFragmentPopEnter, record.targetFragmentExit);
-                    args.putInt(FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM, record.targetFragmentEnter);
-                    args.putInt(FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM, record.targetFragmentExit);
-                    args.putInt(FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM, record.currentFragmentPopExit);
+                if (record != null && record.mTargetFragmentEnter != Integer.MIN_VALUE) {
+                    ft.setCustomAnimations(record.mTargetFragmentEnter, record.mCurrentFragmentPopExit,
+                            record.mCurrentFragmentPopEnter, record.mTargetFragmentExit);
+                    args.putInt(FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM, record.mTargetFragmentEnter);
+                    args.putInt(FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM, record.mTargetFragmentExit);
+                    args.putInt(FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM, record.mCurrentFragmentPopExit);
                 } else {
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 }
@@ -436,7 +436,7 @@ class TransactionDelegate {
         } else {
             args.putBoolean(FRAGMENTATION_ARG_IS_SHARED_ELEMENT, true);
             for (TransactionRecord.SharedElement item : sharedElementList) {
-                ft.addSharedElement(item.sharedElement, item.sharedName);
+                ft.addSharedElement(item.mSharedElement, item.mSharedName);
             }
         }
         if (from == null) {

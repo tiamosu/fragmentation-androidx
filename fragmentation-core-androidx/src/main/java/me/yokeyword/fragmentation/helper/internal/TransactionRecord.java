@@ -8,21 +8,21 @@ import java.util.ArrayList;
  * @hide Created by YoKey on 16/11/25.
  */
 public final class TransactionRecord {
-    public String tag;
-    public int targetFragmentEnter = Integer.MIN_VALUE;
-    public int currentFragmentPopExit = Integer.MIN_VALUE;
-    public int currentFragmentPopEnter = Integer.MIN_VALUE;
-    public int targetFragmentExit = Integer.MIN_VALUE;
-    public boolean dontAddToBackStack = false;
-    public ArrayList<SharedElement> sharedElementList;
+    public String mTag;
+    public int mTargetFragmentEnter = Integer.MIN_VALUE;
+    public int mCurrentFragmentPopExit = Integer.MIN_VALUE;
+    public int mCurrentFragmentPopEnter = Integer.MIN_VALUE;
+    public int mTargetFragmentExit = Integer.MIN_VALUE;
+    public boolean mDontAddToBackStack = false;
+    public ArrayList<SharedElement> mSharedElementList;
 
     public static class SharedElement {
-        public View sharedElement;
-        public String sharedName;
+        public View mSharedElement;
+        public String mSharedName;
 
         public SharedElement(View sharedElement, String sharedName) {
-            this.sharedElement = sharedElement;
-            this.sharedName = sharedName;
+            this.mSharedElement = sharedElement;
+            this.mSharedName = sharedName;
         }
     }
 }

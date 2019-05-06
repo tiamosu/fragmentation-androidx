@@ -143,17 +143,17 @@ public abstract class ExtraTransaction {
 
         @Override
         public ExtraTransaction setTag(String tag) {
-            mRecord.tag = tag;
+            mRecord.mTag = tag;
             return this;
         }
 
         @Override
         public ExtraTransaction setCustomAnimations(@AnimRes int targetFragmentEnter
                 , @AnimRes int currentFragmentPopExit) {
-            mRecord.targetFragmentEnter = targetFragmentEnter;
-            mRecord.currentFragmentPopExit = currentFragmentPopExit;
-            mRecord.currentFragmentPopEnter = 0;
-            mRecord.targetFragmentExit = 0;
+            mRecord.mTargetFragmentEnter = targetFragmentEnter;
+            mRecord.mCurrentFragmentPopExit = currentFragmentPopExit;
+            mRecord.mCurrentFragmentPopEnter = 0;
+            mRecord.mTargetFragmentExit = 0;
             return this;
         }
 
@@ -162,19 +162,19 @@ public abstract class ExtraTransaction {
                                                     @AnimRes int currentFragmentPopExit,
                                                     @AnimRes int currentFragmentPopEnter,
                                                     @AnimRes int targetFragmentExit) {
-            mRecord.targetFragmentEnter = targetFragmentEnter;
-            mRecord.currentFragmentPopExit = currentFragmentPopExit;
-            mRecord.currentFragmentPopEnter = currentFragmentPopEnter;
-            mRecord.targetFragmentExit = targetFragmentExit;
+            mRecord.mTargetFragmentEnter = targetFragmentEnter;
+            mRecord.mCurrentFragmentPopExit = currentFragmentPopExit;
+            mRecord.mCurrentFragmentPopEnter = currentFragmentPopEnter;
+            mRecord.mTargetFragmentExit = targetFragmentExit;
             return this;
         }
 
         @Override
         public ExtraTransaction addSharedElement(View sharedElement, String sharedName) {
-            if (mRecord.sharedElementList == null) {
-                mRecord.sharedElementList = new ArrayList<>();
+            if (mRecord.mSharedElementList == null) {
+                mRecord.mSharedElementList = new ArrayList<>();
             }
-            mRecord.sharedElementList.add(new TransactionRecord.SharedElement(sharedElement, sharedName));
+            mRecord.mSharedElementList.add(new TransactionRecord.SharedElement(sharedElement, sharedName));
             return this;
         }
 
@@ -191,7 +191,7 @@ public abstract class ExtraTransaction {
 
         @Override
         public DontAddToBackStackTransaction dontAddToBackStack() {
-            mRecord.dontAddToBackStack = true;
+            mRecord.mDontAddToBackStack = true;
             return this;
         }
 
