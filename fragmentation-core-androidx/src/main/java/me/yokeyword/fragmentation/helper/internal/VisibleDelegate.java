@@ -170,11 +170,12 @@ public class VisibleDelegate {
             }
             final FragmentManager fragmentManager = mFragment.getChildFragmentManager();
             final List<Fragment> childFragments = FragmentationMagician.getActiveFragments(fragmentManager);
-            if (childFragments != null) {
-                for (Fragment child : childFragments) {
-                    if (child instanceof ISupportFragment && !child.isHidden() && child.getUserVisibleHint()) {
-                        ((ISupportFragment) child).getSupportDelegate().getVisibleDelegate().dispatchSupportVisible(visible);
-                    }
+            if (childFragments == null) {
+                return;
+            }
+            for (Fragment child : childFragments) {
+                if (child instanceof ISupportFragment && !child.isHidden() && child.getUserVisibleHint()) {
+                    ((ISupportFragment) child).getSupportDelegate().getVisibleDelegate().dispatchSupportVisible(visible);
                 }
             }
         }

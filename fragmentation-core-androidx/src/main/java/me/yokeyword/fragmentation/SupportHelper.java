@@ -121,7 +121,6 @@ public class SupportHelper {
      * Same as fragmentManager.findFragmentByTag(fragmentClass.getName());
      * find Fragment from FragmentStack
      */
-    @SuppressWarnings("unchecked")
     public static <T extends ISupportFragment> T findFragment(FragmentManager fragmentManager, Class<T> fragmentClass) {
         return findStackFragment(fragmentClass, null, fragmentManager);
     }
@@ -131,7 +130,6 @@ public class SupportHelper {
      * <p>
      * find Fragment from FragmentStack
      */
-    @SuppressWarnings("unchecked")
     public static <T extends ISupportFragment> T findFragment(FragmentManager fragmentManager, String fragmentTag) {
         return findStackFragment(null, fragmentTag, fragmentManager);
     }

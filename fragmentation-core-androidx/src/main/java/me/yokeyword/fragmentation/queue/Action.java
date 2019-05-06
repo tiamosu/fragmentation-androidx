@@ -14,20 +14,20 @@ public abstract class Action {
     public static final int ACTION_BACK = 3;
     public static final int ACTION_LOAD = 4;
 
-    public FragmentManager fragmentManager;
-    public int action = ACTION_NORMAL;
-    public long duration = 0;
+    public FragmentManager mFragmentManager;
+    public int mAction = ACTION_NORMAL;
+    public long mDuration = 0;
 
     public Action() {
     }
 
     public Action(int action) {
-        this.action = action;
+        this.mAction = action;
     }
 
     public Action(int action, FragmentManager fragmentManager) {
         this(action);
-        this.fragmentManager = fragmentManager;
+        this.mFragmentManager = fragmentManager;
     }
 
     public abstract void run();
