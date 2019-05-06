@@ -10,27 +10,16 @@ import me.yokeyword.fragmentation.R;
  */
 public class DefaultHorizontalAnimator extends FragmentAnimator implements Parcelable {
 
-    public static final Creator<DefaultHorizontalAnimator> CREATOR = new Creator<DefaultHorizontalAnimator>() {
-        @Override
-        public DefaultHorizontalAnimator createFromParcel(Parcel in) {
-            return new DefaultHorizontalAnimator(in);
-        }
-
-        @Override
-        public DefaultHorizontalAnimator[] newArray(int size) {
-            return new DefaultHorizontalAnimator[size];
-        }
-    };
-
     public DefaultHorizontalAnimator() {
-        enter = R.anim.h_fragment_enter;
-        exit = R.anim.h_fragment_exit;
-        popEnter = R.anim.h_fragment_pop_enter;
-        popExit = R.anim.h_fragment_pop_exit;
+        mEnter = R.anim.h_fragment_enter;
+        mExit = R.anim.h_fragment_exit;
+        mPopEnter = R.anim.h_fragment_pop_enter;
+        mPopExit = R.anim.h_fragment_pop_exit;
     }
 
-    private DefaultHorizontalAnimator(Parcel in) {
-        super(in);
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -38,8 +27,19 @@ public class DefaultHorizontalAnimator extends FragmentAnimator implements Parce
         super.writeToParcel(dest, flags);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    private DefaultHorizontalAnimator(Parcel in) {
+        super(in);
     }
+
+    public static final Creator<DefaultHorizontalAnimator> CREATOR = new Creator<DefaultHorizontalAnimator>() {
+        @Override
+        public DefaultHorizontalAnimator createFromParcel(Parcel source) {
+            return new DefaultHorizontalAnimator(source);
+        }
+
+        @Override
+        public DefaultHorizontalAnimator[] newArray(int size) {
+            return new DefaultHorizontalAnimator[size];
+        }
+    };
 }

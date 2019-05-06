@@ -1,6 +1,5 @@
 package me.yokeyword.fragmentation.anim;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,27 +7,17 @@ import android.os.Parcelable;
  * Created by YoKeyword on 16/2/15.
  */
 public class DefaultNoAnimator extends FragmentAnimator implements Parcelable {
-    public static final Creator<DefaultNoAnimator> CREATOR = new Creator<DefaultNoAnimator>() {
-        @Override
-        public DefaultNoAnimator createFromParcel(Parcel in) {
-            return new DefaultNoAnimator(in);
-        }
-
-        @Override
-        public DefaultNoAnimator[] newArray(int size) {
-            return new DefaultNoAnimator[size];
-        }
-    };
 
     public DefaultNoAnimator() {
-        enter = 0;
-        exit = 0;
-        popEnter = 0;
-        popExit = 0;
+        mEnter = 0;
+        mExit = 0;
+        mPopEnter = 0;
+        mPopExit = 0;
     }
 
-    private DefaultNoAnimator(Parcel in) {
-        super(in);
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -36,8 +25,19 @@ public class DefaultNoAnimator extends FragmentAnimator implements Parcelable {
         super.writeToParcel(dest, flags);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    private DefaultNoAnimator(Parcel in) {
+        super(in);
     }
+
+    public static final Creator<DefaultNoAnimator> CREATOR = new Creator<DefaultNoAnimator>() {
+        @Override
+        public DefaultNoAnimator createFromParcel(Parcel source) {
+            return new DefaultNoAnimator(source);
+        }
+
+        @Override
+        public DefaultNoAnimator[] newArray(int size) {
+            return new DefaultNoAnimator[size];
+        }
+    };
 }

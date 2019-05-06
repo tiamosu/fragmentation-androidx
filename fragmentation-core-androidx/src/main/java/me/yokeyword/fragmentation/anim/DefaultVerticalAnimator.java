@@ -10,27 +10,16 @@ import me.yokeyword.fragmentation.R;
  */
 public class DefaultVerticalAnimator extends FragmentAnimator implements Parcelable {
 
-    public static final Creator<DefaultVerticalAnimator> CREATOR = new Creator<DefaultVerticalAnimator>() {
-        @Override
-        public DefaultVerticalAnimator createFromParcel(Parcel in) {
-            return new DefaultVerticalAnimator(in);
-        }
-
-        @Override
-        public DefaultVerticalAnimator[] newArray(int size) {
-            return new DefaultVerticalAnimator[size];
-        }
-    };
-
     public DefaultVerticalAnimator() {
-        enter = R.anim.v_fragment_enter;
-        exit = R.anim.v_fragment_exit;
-        popEnter = R.anim.v_fragment_pop_enter;
-        popExit = R.anim.v_fragment_pop_exit;
+        mEnter = R.anim.v_fragment_enter;
+        mExit = R.anim.v_fragment_exit;
+        mPopEnter = R.anim.v_fragment_pop_enter;
+        mPopExit = R.anim.v_fragment_pop_exit;
     }
 
-    private DefaultVerticalAnimator(Parcel in) {
-        super(in);
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -38,8 +27,19 @@ public class DefaultVerticalAnimator extends FragmentAnimator implements Parcela
         super.writeToParcel(dest, flags);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    private DefaultVerticalAnimator(Parcel in) {
+        super(in);
     }
+
+    public static final Creator<DefaultVerticalAnimator> CREATOR = new Creator<DefaultVerticalAnimator>() {
+        @Override
+        public DefaultVerticalAnimator createFromParcel(Parcel source) {
+            return new DefaultVerticalAnimator(source);
+        }
+
+        @Override
+        public DefaultVerticalAnimator[] newArray(int size) {
+            return new DefaultVerticalAnimator[size];
+        }
+    };
 }

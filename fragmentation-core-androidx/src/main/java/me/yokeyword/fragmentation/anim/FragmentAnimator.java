@@ -11,47 +11,28 @@ import androidx.annotation.AnimRes;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class FragmentAnimator implements Parcelable {
-    public static final Creator<FragmentAnimator> CREATOR = new Creator<FragmentAnimator>() {
-        @Override
-        public FragmentAnimator createFromParcel(Parcel in) {
-            return new FragmentAnimator(in);
-        }
-
-        @Override
-        public FragmentAnimator[] newArray(int size) {
-            return new FragmentAnimator[size];
-        }
-    };
-
     @AnimRes
-    protected int enter;
+    protected int mEnter;
     @AnimRes
-    protected int exit;
+    protected int mExit;
     @AnimRes
-    protected int popEnter;
+    protected int mPopEnter;
     @AnimRes
-    protected int popExit;
+    protected int mPopExit;
 
     public FragmentAnimator() {
     }
 
     public FragmentAnimator(int enter, int exit) {
-        this.enter = enter;
-        this.exit = exit;
+        this.mEnter = enter;
+        this.mExit = exit;
     }
 
     public FragmentAnimator(int enter, int exit, int popEnter, int popExit) {
-        this.enter = enter;
-        this.exit = exit;
-        this.popEnter = popEnter;
-        this.popExit = popExit;
-    }
-
-    protected FragmentAnimator(Parcel in) {
-        enter = in.readInt();
-        exit = in.readInt();
-        popEnter = in.readInt();
-        popExit = in.readInt();
+        this.mEnter = enter;
+        this.mExit = exit;
+        this.mPopEnter = popEnter;
+        this.mPopExit = popExit;
     }
 
     public FragmentAnimator copy() {
@@ -59,41 +40,38 @@ public class FragmentAnimator implements Parcelable {
     }
 
     public int getEnter() {
-        return enter;
+        return mEnter;
     }
 
     public FragmentAnimator setEnter(int enter) {
-        this.enter = enter;
+        this.mEnter = enter;
         return this;
     }
 
     public int getExit() {
-        return exit;
+        return mExit;
     }
 
-    /**
-     * enter animation
-     */
     public FragmentAnimator setExit(int exit) {
-        this.exit = exit;
+        this.mExit = exit;
         return this;
     }
 
     public int getPopEnter() {
-        return popEnter;
+        return mPopEnter;
     }
 
     public FragmentAnimator setPopEnter(int popEnter) {
-        this.popEnter = popEnter;
+        this.mPopEnter = popEnter;
         return this;
     }
 
     public int getPopExit() {
-        return popExit;
+        return mPopExit;
     }
 
     public FragmentAnimator setPopExit(int popExit) {
-        this.popExit = popExit;
+        this.mPopExit = popExit;
         return this;
     }
 
@@ -104,9 +82,28 @@ public class FragmentAnimator implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(enter);
-        dest.writeInt(exit);
-        dest.writeInt(popEnter);
-        dest.writeInt(popExit);
+        dest.writeInt(this.mEnter);
+        dest.writeInt(this.mExit);
+        dest.writeInt(this.mPopEnter);
+        dest.writeInt(this.mPopExit);
     }
+
+    protected FragmentAnimator(Parcel in) {
+        this.mEnter = in.readInt();
+        this.mExit = in.readInt();
+        this.mPopEnter = in.readInt();
+        this.mPopExit = in.readInt();
+    }
+
+    public static final Creator<FragmentAnimator> CREATOR = new Creator<FragmentAnimator>() {
+        @Override
+        public FragmentAnimator createFromParcel(Parcel source) {
+            return new FragmentAnimator(source);
+        }
+
+        @Override
+        public FragmentAnimator[] newArray(int size) {
+            return new FragmentAnimator[size];
+        }
+    };
 }

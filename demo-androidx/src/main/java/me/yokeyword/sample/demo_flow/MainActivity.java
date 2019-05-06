@@ -66,7 +66,7 @@ public class MainActivity extends MySupportActivity implements
         // 设置横向(和安卓4.x动画相同)
 //        return new DefaultHorizontalAnimator();
         // 设置自定义动画
-//        return new FragmentAnimator(enter,exit,popEnter,popExit);
+//        return new FragmentAnimator(mEnter, mExit, mPopEnter, mPopExit);
     }
 
     private void initView() {
