@@ -26,10 +26,12 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
         mSupport = swipeBackFragment
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onCreate(savedInstanceState: Bundle?) {
         onFragmentCreate()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (view is SwipeBackLayout) {
             val childView = view.getChildAt(0)

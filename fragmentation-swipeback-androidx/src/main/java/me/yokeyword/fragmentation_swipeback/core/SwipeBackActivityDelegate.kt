@@ -23,10 +23,12 @@ class SwipeBackActivityDelegate(swipeBackActivity: ISwipeBackActivity) {
         mActivity = swipeBackActivity
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onCreate(savedInstanceState: Bundle?) {
         onActivityCreate()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onPostCreate(savedInstanceState: Bundle?) {
         mSwipeBackLayout?.attachToActivity(mActivity)
     }
