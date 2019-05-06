@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class EventBusActivityScope {
     private static final String TAG = EventBusActivityScope.class.getSimpleName();
-    private static final Map<Activity, LazyEventBusInstance> sActivityEventBusScopePool = new ConcurrentHashMap<>();
+    private static final Map<Activity, LazyEventBusInstance> ACTIVITY_EVENT_BUS_SCOPE_POOL = new ConcurrentHashMap<>();
     private static AtomicBoolean sInitialized = new AtomicBoolean(false);
     private static volatile EventBus sInvalidEventBus;
 
@@ -36,7 +36,7 @@ public class EventBusActivityScope {
 
                     @Override
                     public void onActivityCreated(Activity activity, Bundle bundle) {
-                        sActivityEventBusScopePool.put(activity, new LazyEventBusInstance());
+                        ACTIVITY_EVENT_BUS_SCOPE_POOL.put(activity, new LazyEventBusInstance());
                     }
 
                     @Override
@@ -61,14 +61,14 @@ public class EventBusActivityScope {
 
                     @Override
                     public void onActivityDestroyed(final Activity activity) {
-                        if (!sActivityEventBusScopePool.containsKey(activity)) {
+                        if (!ACTIVITY_EVENT_BUS_SCOPE_POOL.containsKey(activity)) {
                             return;
                         }
 
                         mainHandler.post(new Runnable() { // Make sure Fragment's onDestroy() has been called.
                             @Override
                             public void run() {
-                                sActivityEventBusScopePool.remove(activity);
+                                ACTIVITY_EVENT_BUS_SCOPE_POOL.remove(activity);
                             }
                         });
                     }
@@ -84,13 +84,11 @@ public class EventBusActivityScope {
             return invalidEventBus();
         }
 
-        LazyEventBusInstance lazyEventBusInstance = sActivityEventBusScopePool.get(activity);
-
+        final LazyEventBusInstance lazyEventBusInstance = ACTIVITY_EVENT_BUS_SCOPE_POOL.get(activity);
         if (lazyEventBusInstance == null) {
             Log.e(TAG, "Can't find the Activity, it has been removed!");
             return invalidEventBus();
         }
-
         return lazyEventBusInstance.getInstance();
     }
 
@@ -99,7 +97,6 @@ public class EventBusActivityScope {
             synchronized (EventBusActivityScope.class) {
                 if (sInvalidEventBus == null) {
                     sInvalidEventBus = new EventBus();
-
                 }
             }
         }

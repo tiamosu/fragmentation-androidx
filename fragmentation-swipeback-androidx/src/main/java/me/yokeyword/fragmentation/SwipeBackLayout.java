@@ -36,6 +36,7 @@ import me.yokeyword.fragmentation_swipeback.core.ISwipeBackActivity;
  */
 @SuppressWarnings("unused")
 public class SwipeBackLayout extends FrameLayout {
+
     /**
      * Edge flag indicating that the left edge should be affected.
      */

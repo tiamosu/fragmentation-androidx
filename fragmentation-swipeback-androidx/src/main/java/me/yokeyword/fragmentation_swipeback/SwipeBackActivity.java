@@ -14,7 +14,7 @@ import me.yokeyword.fragmentation_swipeback.core.SwipeBackActivityDelegate;
  * Created by YoKey on 16/4/19.
  */
 public class SwipeBackActivity extends SupportActivity implements ISwipeBackActivity {
-    final SwipeBackActivityDelegate mDelegate = new SwipeBackActivityDelegate(this);
+    private final SwipeBackActivityDelegate mDelegate = new SwipeBackActivityDelegate(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

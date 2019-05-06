@@ -12,6 +12,7 @@ import android.net.Uri;
  */
 @SuppressWarnings("NullableProblems")
 public class RuntimeTrojanProvider extends ContentProvider {
+
     @Override
     public boolean onCreate() {
         EventBusActivityScope.init(getContext());
