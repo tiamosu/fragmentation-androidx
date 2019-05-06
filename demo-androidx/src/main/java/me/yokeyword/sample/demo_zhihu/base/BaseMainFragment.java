@@ -39,7 +39,7 @@ public abstract class BaseMainFragment extends SupportFragment {
             popChild();
         } else {
             if (this instanceof ZhihuFirstFragment) {   // 如果是 第一个Fragment 则退出app
-                mActivity.finish();
+                getContext().finish();
             } else {                                    // 如果不是,则回到第一个Fragment
                 _mBackToFirstListener.onBackToFirstFragment();
             }

@@ -50,16 +50,16 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     }
 
     private void initView(View view) {
-        EventBusActivityScope.getDefault(mActivity).register(this);
+        EventBusActivityScope.getDefault(getContext()).register(this);
 
         mRecy = view.findViewById(R.id.recy);
         mRefreshLayout = view.findViewById(R.id.refresh_layout);
 
         mRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new PagerAdapter(mActivity);
+        mAdapter = new PagerAdapter(getContext());
         mRecy.setHasFixedSize(true);
-        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
@@ -118,6 +118,6 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        EventBusActivityScope.getDefault(mActivity).unregister(this);
+        EventBusActivityScope.getDefault(getContext()).unregister(this);
     }
 }

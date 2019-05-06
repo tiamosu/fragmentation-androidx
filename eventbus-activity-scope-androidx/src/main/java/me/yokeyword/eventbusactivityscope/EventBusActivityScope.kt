@@ -63,18 +63,18 @@ object EventBusActivityScope {
      * Get the activity-scope EventBus instance
      */
     @JvmStatic
-    fun getDefault(activity: Activity?): EventBus? {
+    fun getDefault(activity: Activity?): EventBus {
         if (activity == null) {
             Log.e(TAG, "Can't find the Activity, the Activity is null!")
-            return invalidEventBus()
+            return invalidEventBus()!!
         }
 
         val lazyEventBusInstance = ACTIVITY_EVENT_BUS_SCOPE_POOL[activity]
         if (lazyEventBusInstance == null) {
             Log.e(TAG, "Can't find the Activity, it has been removed!")
-            return invalidEventBus()
+            return invalidEventBus()!!
         }
-        return lazyEventBusInstance.getInstance()
+        return lazyEventBusInstance.getInstance()!!
     }
 
     private fun invalidEventBus(): EventBus? {

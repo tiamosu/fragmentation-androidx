@@ -55,7 +55,7 @@ public class ShopFragment extends SupportFragment {
     @Override
     public boolean onBackPressedSupport() {
         // ContentFragment是ShopFragment的栈顶子Fragment,会先调用ContentFragment的onBackPressedSupport方法
-        Toast.makeText(mActivity, "onBackPressedSupport-->return false, " + getString(R.string.upper_process), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "onBackPressedSupport-->return false, " + getString(R.string.upper_process), Toast.LENGTH_SHORT).show();
         return false;
     }
 

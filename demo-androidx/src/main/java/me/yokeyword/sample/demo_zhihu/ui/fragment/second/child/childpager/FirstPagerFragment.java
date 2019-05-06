@@ -48,7 +48,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.zhihu_fragment_second_pager_first, container, false);
-        EventBusActivityScope.getDefault(mActivity).register(this);
+        EventBusActivityScope.getDefault(getContext()).register(this);
         initView(view);
         return view;
     }
@@ -63,8 +63,8 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
         mRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new HomeAdapter(mActivity);
-        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
+        mAdapter = new HomeAdapter(getContext());
+        final LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
@@ -123,7 +123,7 @@ public class FirstPagerFragment extends SupportFragment implements SwipeRefreshL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        EventBusActivityScope.getDefault(mActivity).unregister(this);
+        EventBusActivityScope.getDefault(getContext()).unregister(this);
     }
 
 }

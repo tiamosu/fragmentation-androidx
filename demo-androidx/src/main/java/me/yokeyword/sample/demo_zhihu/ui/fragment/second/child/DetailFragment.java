@@ -92,7 +92,7 @@ public class DetailFragment extends BaseBackFragment {
             if (getArguments() != null) {
                 getArguments().putString(ARG_TITLE, mTitle);
             }
-            Toast.makeText(mActivity, R.string.modify_title, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.modify_title, Toast.LENGTH_SHORT).show();
         }
     }
 }

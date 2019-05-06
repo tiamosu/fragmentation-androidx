@@ -13,6 +13,6 @@ public class BaseSwipeBackFragment extends SwipeBackFragment {
     void _initToolbar(Toolbar toolbar) {
         toolbar.setTitle("SwipeBackActivity's Fragment");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(v -> mActivity.onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> getContext().onBackPressed());
     }
 }

@@ -71,9 +71,9 @@ public class MainFragment extends SupportFragment {
         mBottomBar = view.findViewById(R.id.bottomBar);
 
         mBottomBar
-                .addItem(new BottomBarTab(mActivity, R.drawable.ic_message_white_24dp, getString(R.string.msg)))
-                .addItem(new BottomBarTab(mActivity, R.drawable.ic_account_circle_white_24dp, getString(R.string.discover)))
-                .addItem(new BottomBarTab(mActivity, R.drawable.ic_discover_white_24dp, getString(R.string.more)));
+                .addItem(new BottomBarTab(getContext(), R.drawable.ic_message_white_24dp, getString(R.string.msg)))
+                .addItem(new BottomBarTab(getContext(), R.drawable.ic_account_circle_white_24dp, getString(R.string.discover)))
+                .addItem(new BottomBarTab(getContext(), R.drawable.ic_discover_white_24dp, getString(R.string.more)));
 
         // 模拟未读消息
         mBottomBar.getItem(FIRST).setUnreadCount(9);
@@ -99,7 +99,7 @@ public class MainFragment extends SupportFragment {
             public void onTabReselected(int position) {
                 // 在FirstPagerFragment,FirstHomeFragment中接收, 因为是嵌套的Fragment
                 // 主要为了交互: 重选tab 如果列表不在顶部则移动到顶部,如果已经在顶部,则刷新
-                EventBusActivityScope.getDefault(mActivity).post(new TabSelectedEvent(position));
+                EventBusActivityScope.getDefault(getContext()).post(new TabSelectedEvent(position));
             }
         });
     }

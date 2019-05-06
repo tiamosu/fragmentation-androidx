@@ -74,11 +74,11 @@ public class MsgFragment extends BaseBackFragment {
         super.onEnterAnimationEnd(savedInstanceState);
         // 入场动画结束后执行  优化,防动画卡顿
 
-        mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getContext().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        mRecy.setLayoutManager(new LinearLayoutManager(mActivity));
+        mRecy.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecy.setHasFixedSize(true);
-        mAdapter = new MsgAdapter(mActivity);
+        mAdapter = new MsgAdapter(getContext());
         mRecy.setAdapter(mAdapter);
 
         mBtnSend.setOnClickListener(v -> {
@@ -99,7 +99,7 @@ public class MsgFragment extends BaseBackFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mRecy = null;
-        mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        getContext().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         hideSoftInput();
     }
 }

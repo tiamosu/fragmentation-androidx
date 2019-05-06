@@ -57,6 +57,7 @@ public class MenuListFragment extends SupportFragment {
         return view;
     }
 
+    @NonNull
     @Override
     public FragmentAnimator onCreateFragmentAnimator() {
         return new DefaultNoAnimator();
@@ -70,9 +71,9 @@ public class MenuListFragment extends SupportFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecy.setLayoutManager(manager);
-        mAdapter = new MenuAdapter(mActivity);
+        mAdapter = new MenuAdapter(getContext());
         mRecy.setAdapter(mAdapter);
         mAdapter.setDatas(mMenus);
 
