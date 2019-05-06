@@ -20,10 +20,10 @@ public class FragmentationMagician {
     static {
         final Field[] fields = FragmentManagerImpl.class.getDeclaredFields();
         for (Field field : fields) {
-            if (field.getName().equals("mStopped")) { //  > v27.1.0
+            if ("mStopped".equals(field.getName())) { //  > v27.1.0
                 sSupportGreaterThan27dot1dot0 = true;
                 break;
-            } else if (field.getName().equals("mAvailIndices")) { // < 25.4.0
+            } else if ("mAvailIndices".equals(field.getName())) { // < 25.4.0
                 sSupportLessThan25dot4 = true;
                 break;
             }

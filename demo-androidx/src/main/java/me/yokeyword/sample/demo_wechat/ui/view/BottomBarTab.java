@@ -126,7 +126,7 @@ public class BottomBarTab extends FrameLayout {
         if (TextUtils.isEmpty(mTvUnreadCount.getText())) {
             return count;
         }
-        if (mTvUnreadCount.getText().toString().equals("99+")) {
+        if ("99+".equals(mTvUnreadCount.getText().toString())) {
             return 99;
         }
         try {
