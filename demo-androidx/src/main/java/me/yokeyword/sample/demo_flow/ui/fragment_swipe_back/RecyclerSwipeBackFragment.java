@@ -39,8 +39,8 @@ public class RecyclerSwipeBackFragment extends BaseSwipeBackFragment {
         mToolbar = view.findViewById(R.id.toolbar);
         _initToolbar(mToolbar);
 
-        mAdapter = new PagerAdapter(_mActivity);
-        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        mAdapter = new PagerAdapter(mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 

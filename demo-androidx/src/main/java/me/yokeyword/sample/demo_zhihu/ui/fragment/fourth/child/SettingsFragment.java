@@ -37,7 +37,7 @@ public class SettingsFragment extends SupportFragment {
         mToolbar = view.findViewById(R.id.toolbarSettings);
 
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mToolbar.setNavigationOnClickListener(v -> _mActivity.onBackPressed());
+        mToolbar.setNavigationOnClickListener(v -> mActivity.onBackPressed());
     }
 
     @Override

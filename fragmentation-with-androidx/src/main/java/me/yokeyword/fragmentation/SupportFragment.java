@@ -19,10 +19,10 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * {@link androidx.fragment.app.Fragment} APIs.
  * Created by YoKey on 17/6/22.
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused", "WeakerAccess", "JavadocReference"})
 public class SupportFragment extends Fragment implements ISupportFragment {
     private final SupportFragmentDelegate mDelegate = new SupportFragmentDelegate(this);
-    protected FragmentActivity _mActivity;
+    protected FragmentActivity mActivity;
 
     @Override
     public SupportFragmentDelegate getSupportDelegate() {
@@ -32,7 +32,7 @@ public class SupportFragment extends Fragment implements ISupportFragment {
     @NonNull
     @Override
     public FragmentActivity getContext() {
-        return _mActivity;
+        return mActivity;
     }
 
     /**
@@ -48,7 +48,7 @@ public class SupportFragment extends Fragment implements ISupportFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mDelegate.onAttach(context);
-        _mActivity = mDelegate.getActivity();
+        mActivity = mDelegate.getActivity();
     }
 
     @Override

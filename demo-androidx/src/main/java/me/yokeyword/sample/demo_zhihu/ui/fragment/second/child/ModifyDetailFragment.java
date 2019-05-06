@@ -73,7 +73,7 @@ public class ModifyDetailFragment extends BaseBackFragment {
             bundle.putString(DetailFragment.KEY_RESULT_TITLE, mEtModiyTitle.getText().toString());
             setFragmentResult(RESULT_OK, bundle);
 
-            Toast.makeText(_mActivity, R.string.modify_success, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.modify_success, Toast.LENGTH_SHORT).show();
         });
         mBtnNext.setOnClickListener(v -> start(CycleFragment.newInstance(1)));
     }

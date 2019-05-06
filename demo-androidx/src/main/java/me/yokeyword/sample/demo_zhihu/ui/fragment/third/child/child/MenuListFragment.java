@@ -70,9 +70,9 @@ public class MenuListFragment extends SupportFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         mRecy.setLayoutManager(manager);
-        mAdapter = new MenuAdapter(_mActivity);
+        mAdapter = new MenuAdapter(mActivity);
         mRecy.setAdapter(mAdapter);
         mAdapter.setDatas(mMenus);
 

@@ -20,6 +20,6 @@ public class BaseBackFragment extends SwipeBackFragment {
 
     protected void initToolbarNav(Toolbar toolbar) {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(v -> _mActivity.onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> mActivity.onBackPressed());
     }
 }

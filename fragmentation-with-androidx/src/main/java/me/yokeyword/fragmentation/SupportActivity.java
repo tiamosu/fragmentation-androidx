@@ -18,7 +18,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  */
 @SuppressWarnings("unused")
 public class SupportActivity extends AppCompatActivity implements ISupportActivity {
-    final SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
+    private final SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
 
     @Override
     public SupportActivityDelegate getSupportDelegate() {

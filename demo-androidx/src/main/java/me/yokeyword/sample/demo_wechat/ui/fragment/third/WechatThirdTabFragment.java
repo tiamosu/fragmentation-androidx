@@ -59,8 +59,8 @@ public class WechatThirdTabFragment extends BaseMainFragment {
     @Override
     public void onLazyInitView(@Nullable Bundle savedInstanceState) {
         super.onLazyInitView(savedInstanceState);
-        mAdapter = new HomeAdapter(_mActivity);
-        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        mAdapter = new HomeAdapter(mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
@@ -69,7 +69,7 @@ public class WechatThirdTabFragment extends BaseMainFragment {
                 ((MainFragment) getParentFragment()).startBrotherFragment(DetailFragment.newInstance(mAdapter.getItem(position).getTitle()));
             }
             // 或者使用EventBus
-//                EventBusActivityScope.getDefault(_mActivity).post(new StartBrotherEvent(DetailFragment.newInstance(mAdapter.getItem(position).getTitle())));
+//                EventBusActivityScope.getDefault(mActivity).post(new StartBrotherEvent(DetailFragment.newInstance(mAdapter.getItem(position).getTitle())));
         });
 
         // Init Datas

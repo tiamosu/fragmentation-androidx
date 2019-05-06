@@ -69,7 +69,7 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.zhihu_fragment_first_home, container, false);
-        EventBusActivityScope.getDefault(_mActivity).register(this);
+        EventBusActivityScope.getDefault(mActivity).register(this);
         initView(view);
         return view;
     }
@@ -85,8 +85,8 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
         mRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new FirstHomeAdapter(_mActivity);
-        final LinearLayoutManager manager = new LinearLayoutManager(_mActivity);
+        mAdapter = new FirstHomeAdapter(mActivity);
+        final LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         mRecy.setLayoutManager(manager);
         mRecy.setAdapter(mAdapter);
 
@@ -135,7 +135,7 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
             }
         });
 
-        mFab.setOnClickListener(v -> Toast.makeText(_mActivity, "Action", Toast.LENGTH_SHORT).show());
+        mFab.setOnClickListener(v -> Toast.makeText(mActivity, "Action", Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -166,6 +166,6 @@ public class FirstHomeFragment extends SupportFragment implements SwipeRefreshLa
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        EventBusActivityScope.getDefault(_mActivity).unregister(this);
+        EventBusActivityScope.getDefault(mActivity).unregister(this);
     }
 }
