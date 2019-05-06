@@ -9,29 +9,9 @@ import android.os.Parcelable;
  * Created by YoKeyword on 16/6/2.
  */
 public final class ResultRecord implements Parcelable {
-    public static final Creator<ResultRecord> CREATOR = new Creator<ResultRecord>() {
-        @Override
-        public ResultRecord createFromParcel(Parcel in) {
-            return new ResultRecord(in);
-        }
-
-        @Override
-        public ResultRecord[] newArray(int size) {
-            return new ResultRecord[size];
-        }
-    };
-    public int requestCode;
-    public int resultCode = 0;
-    public Bundle resultBundle;
-
-    public ResultRecord() {
-    }
-
-    private ResultRecord(Parcel in) {
-        requestCode = in.readInt();
-        resultCode = in.readInt();
-        resultBundle = in.readBundle(getClass().getClassLoader());
-    }
+    public int mRequestCode;
+    public int mResultCode = 0;
+    public Bundle mResultBundle;
 
     @Override
     public int describeContents() {
@@ -40,8 +20,29 @@ public final class ResultRecord implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(requestCode);
-        dest.writeInt(resultCode);
-        dest.writeBundle(resultBundle);
+        dest.writeInt(this.mRequestCode);
+        dest.writeInt(this.mResultCode);
+        dest.writeBundle(this.mResultBundle);
     }
+
+    public ResultRecord() {
+    }
+
+    private ResultRecord(Parcel in) {
+        this.mRequestCode = in.readInt();
+        this.mResultCode = in.readInt();
+        this.mResultBundle = in.readBundle(getClass().getClassLoader());
+    }
+
+    public static final Creator<ResultRecord> CREATOR = new Creator<ResultRecord>() {
+        @Override
+        public ResultRecord createFromParcel(Parcel source) {
+            return new ResultRecord(source);
+        }
+
+        @Override
+        public ResultRecord[] newArray(int size) {
+            return new ResultRecord[size];
+        }
+    };
 }

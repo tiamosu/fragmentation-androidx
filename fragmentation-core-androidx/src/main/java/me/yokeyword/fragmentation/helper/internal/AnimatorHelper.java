@@ -14,18 +14,18 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  */
 @SuppressWarnings("UnusedReturnValue")
 public final class AnimatorHelper {
-    public Animation enterAnim, exitAnim, popEnterAnim, popExitAnim;
-    private Animation noneAnim, noneAnimFixed;
-    private Context context;
-    private FragmentAnimator fragmentAnimator;
+    public Animation mEnterAnim, mExitAnim, mPopEnterAnim, mPopExitAnim;
+    private Animation mNoneAnim, mNoneAnimFixed;
+    private Context mContext;
+    private FragmentAnimator mFragmentAnimator;
 
     public AnimatorHelper(Context context, FragmentAnimator fragmentAnimator) {
-        this.context = context;
+        this.mContext = context;
         notifyChanged(fragmentAnimator);
     }
 
     public void notifyChanged(FragmentAnimator fragmentAnimator) {
-        this.fragmentAnimator = fragmentAnimator;
+        this.mFragmentAnimator = fragmentAnimator;
         initEnterAnim();
         initExitAnim();
         initPopEnterAnim();
@@ -33,65 +33,69 @@ public final class AnimatorHelper {
     }
 
     public Animation getNoneAnim() {
-        if (noneAnim == null) {
-            noneAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim);
+        if (mNoneAnim == null) {
+            mNoneAnim = AnimationUtils.loadAnimation(mContext, R.anim.no_anim);
         }
-        return noneAnim;
+        return mNoneAnim;
     }
 
     public Animation getNoneAnimFixed() {
-        if (noneAnimFixed == null) {
-            noneAnimFixed = new Animation() {
+        if (mNoneAnimFixed == null) {
+            mNoneAnimFixed = new Animation() {
             };
         }
-        return noneAnimFixed;
+        return mNoneAnimFixed;
     }
 
     @Nullable
     public Animation compatChildFragmentExitAnim(Fragment fragment) {
-        if ((fragment.getTag() != null && fragment.getTag().startsWith("android:switcher:") && fragment.getUserVisibleHint()) ||
-                (fragment.getParentFragment() != null && fragment.getParentFragment().isRemoving() && !fragment.isHidden())) {
+        if ((fragment.getTag() != null
+                && fragment.getTag().startsWith("android:switcher:")
+                && fragment.getUserVisibleHint())
+                || (fragment.getParentFragment() != null
+                && fragment.getParentFragment().isRemoving()
+                && !fragment.isHidden())) {
             final Animation animation = new Animation() {
             };
-            animation.setDuration(exitAnim.getDuration());
+            animation.setDuration(mExitAnim.getDuration());
             return animation;
         }
         return null;
     }
 
     private Animation initEnterAnim() {
-        if (fragmentAnimator.getEnter() == 0) {
-            enterAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim);
+        if (mFragmentAnimator.getEnter() == 0) {
+            mEnterAnim = AnimationUtils.loadAnimation(mContext, R.anim.no_anim);
         } else {
-            enterAnim = AnimationUtils.loadAnimation(context, fragmentAnimator.getEnter());
+            mEnterAnim = AnimationUtils.loadAnimation(mContext, mFragmentAnimator.getEnter());
         }
-        return enterAnim;
+        return mEnterAnim;
     }
 
     private Animation initExitAnim() {
-        if (fragmentAnimator.getExit() == 0) {
-            exitAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim);
+        if (mFragmentAnimator.getExit() == 0) {
+            mExitAnim = AnimationUtils.loadAnimation(mContext, R.anim.no_anim);
         } else {
-            exitAnim = AnimationUtils.loadAnimation(context, fragmentAnimator.getExit());
+            mExitAnim = AnimationUtils.loadAnimation(mContext, mFragmentAnimator.getExit());
         }
-        return exitAnim;
+        return mExitAnim;
     }
 
     private Animation initPopEnterAnim() {
-        if (fragmentAnimator.getPopEnter() == 0) {
-            popEnterAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim);
+        if (mFragmentAnimator.getPopEnter() == 0) {
+            mPopEnterAnim = AnimationUtils.loadAnimation(mContext, R.anim.no_anim);
         } else {
-            popEnterAnim = AnimationUtils.loadAnimation(context, fragmentAnimator.getPopEnter());
+            mPopEnterAnim = AnimationUtils.loadAnimation(mContext, mFragmentAnimator.getPopEnter());
         }
-        return popEnterAnim;
+        return mPopEnterAnim;
     }
 
     private Animation initPopExitAnim() {
-        if (fragmentAnimator.getPopExit() == 0) {
-            popExitAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim);
+        if (mFragmentAnimator.getPopExit() == 0) {
+            mPopExitAnim = AnimationUtils.loadAnimation(mContext, R.anim.no_anim);
         } else {
-            popExitAnim = AnimationUtils.loadAnimation(context, fragmentAnimator.getPopExit());
+            mPopExitAnim = AnimationUtils.loadAnimation(mContext, mFragmentAnimator.getPopExit());
         }
-        return popExitAnim;
+        return mPopExitAnim;
     }
 }

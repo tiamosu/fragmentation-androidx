@@ -162,7 +162,7 @@ class TransactionDelegate {
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm);
                 top.getSupportDelegate().mLockAnim = true;
                 if (!FragmentationMagician.isStateSaved(fm)) {
-                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().mAnimHelper.popExitAnim);
+                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().mAnimHelper.mPopExitAnim);
                 }
 
                 removeTopFragment(fm);
@@ -205,7 +205,7 @@ class TransactionDelegate {
                 handleAfterSaveInStateTransactionException(fm, "startWithPopTo()");
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm);
                 if (!FragmentationMagician.isStateSaved(fm)) {
-                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().mAnimHelper.popExitAnim);
+                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().mAnimHelper.mPopExitAnim);
                 }
 
                 safePopTo(fragmentTag, fm, flag, willPopFragments);
@@ -331,7 +331,7 @@ class TransactionDelegate {
                         .getFragment(from.getArguments(), FRAGMENTATION_STATE_SAVE_RESULT);
             }
             if (targetFragment != null) {
-                targetFragment.onFragmentResult(resultRecord.requestCode, resultRecord.resultCode, resultRecord.resultBundle);
+                targetFragment.onFragmentResult(resultRecord.mRequestCode, resultRecord.mResultCode, resultRecord.mResultBundle);
             }
         } catch (IllegalStateException ignored) {
             // Fragment no longer exists
@@ -551,7 +551,7 @@ class TransactionDelegate {
     private void saveRequestCode(FragmentManager fm, Fragment from, Fragment to, int requestCode) {
         final Bundle bundle = getArguments(to);
         final ResultRecord resultRecord = new ResultRecord();
-        resultRecord.requestCode = requestCode;
+        resultRecord.mRequestCode = requestCode;
         bundle.putParcelable(FRAGMENTATION_ARG_RESULT_RECORD, resultRecord);
         fm.putFragment(bundle, FRAGMENTATION_STATE_SAVE_RESULT, from);
     }

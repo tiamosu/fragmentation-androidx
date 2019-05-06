@@ -23,7 +23,7 @@ import me.yokeyword.fragmentation.helper.internal.ResultRecord;
 import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
 import me.yokeyword.fragmentation.helper.internal.VisibleDelegate;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "JavadocReference"})
 public class SupportFragmentDelegate {
     static final int STATUS_UN_ROOT = 0;
     static final int STATUS_ROOT_ANIM_DISABLE = 1;
@@ -191,15 +191,15 @@ public class SupportFragmentDelegate {
                 if (mRootStatus == STATUS_ROOT_ANIM_DISABLE) {
                     enterAnim = mAnimHelper.getNoneAnim();
                 } else {
-                    enterAnim = mAnimHelper.enterAnim;
+                    enterAnim = mAnimHelper.mEnterAnim;
                     fixAnimationListener(enterAnim);
                 }
                 return enterAnim;
             } else {
-                return mAnimHelper.popExitAnim;
+                return mAnimHelper.mPopExitAnim;
             }
         } else if (transit == FragmentTransaction.TRANSIT_FRAGMENT_CLOSE) {
-            return enter ? mAnimHelper.popEnterAnim : mAnimHelper.exitAnim;
+            return enter ? mAnimHelper.mPopEnterAnim : mAnimHelper.mExitAnim;
         } else {
             if (mIsSharedElement && enter) {
                 compatSharedElements();
@@ -389,8 +389,8 @@ public class SupportFragmentDelegate {
 
         final ResultRecord resultRecord = args.getParcelable(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD);
         if (resultRecord != null) {
-            resultRecord.resultCode = resultCode;
-            resultRecord.resultBundle = bundle;
+            resultRecord.mResultCode = resultCode;
+            resultRecord.mResultBundle = bundle;
         }
     }
 
@@ -687,8 +687,8 @@ public class SupportFragmentDelegate {
 
     private Animation getEnterAnim() {
         if (mCustomEnterAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper != null && mAnimHelper.enterAnim != null) {
-                return mAnimHelper.enterAnim;
+            if (mAnimHelper != null && mAnimHelper.mEnterAnim != null) {
+                return mAnimHelper.mEnterAnim;
             }
         } else {
             try {
@@ -710,8 +710,8 @@ public class SupportFragmentDelegate {
 
     public long getExitAnimDuration() {
         if (mCustomExitAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper != null && mAnimHelper.exitAnim != null) {
-                return mAnimHelper.exitAnim.getDuration();
+            if (mAnimHelper != null && mAnimHelper.mExitAnim != null) {
+                return mAnimHelper.mExitAnim.getDuration();
             }
         } else {
             try {
@@ -726,8 +726,8 @@ public class SupportFragmentDelegate {
 
     private long getPopExitAnimDuration() {
         if (mCustomPopExitAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper != null && mAnimHelper.popExitAnim != null) {
-                return mAnimHelper.popExitAnim.getDuration();
+            if (mAnimHelper != null && mAnimHelper.mPopExitAnim != null) {
+                return mAnimHelper.mPopExitAnim.getDuration();
             }
         } else {
             try {
@@ -743,8 +743,8 @@ public class SupportFragmentDelegate {
     @Nullable
     Animation getExitAnim() {
         if (mCustomExitAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper != null && mAnimHelper.exitAnim != null) {
-                return mAnimHelper.exitAnim;
+            if (mAnimHelper != null && mAnimHelper.mExitAnim != null) {
+                return mAnimHelper.mExitAnim;
             }
         } else {
             try {
