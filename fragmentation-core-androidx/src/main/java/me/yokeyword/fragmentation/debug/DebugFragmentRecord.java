@@ -8,11 +8,11 @@ import java.util.List;
  */
 @SuppressWarnings("WeakerAccess")
 public class DebugFragmentRecord {
-    public CharSequence fragmentName;
-    public List<DebugFragmentRecord> childFragmentRecord;
+    public CharSequence mFragmentName;
+    public List<DebugFragmentRecord> mChildFragmentRecord;
 
     public DebugFragmentRecord(CharSequence fragmentName, List<DebugFragmentRecord> childFragmentRecord) {
-        this.fragmentName = fragmentName;
-        this.childFragmentRecord = childFragmentRecord;
+        this.mFragmentName = fragmentName;
+        this.mChildFragmentRecord = childFragmentRecord;
     }
 }

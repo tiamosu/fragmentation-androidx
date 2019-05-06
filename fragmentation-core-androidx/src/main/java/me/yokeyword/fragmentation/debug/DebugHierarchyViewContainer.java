@@ -9,37 +9,33 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.core.widget.NestedScrollView;
 import me.yokeyword.fragmentation.R;
 
 /**
  * Created by YoKeyword on 16/2/21.
  */
-public class DebugHierarchyViewContainer extends ScrollView {
+public class DebugHierarchyViewContainer extends NestedScrollView {
     private Context mContext;
-
-    private LinearLayout mLinearLayout;
-    private LinearLayout mTitleLayout;
-
+    private LinearLayoutCompat mLinearLayout;
+    private LinearLayoutCompat mTitleLayout;
     private int mItemHeight;
     private int mPadding;
 
     public DebugHierarchyViewContainer(Context context) {
-        super(context);
-        initView(context);
+        this(context, null);
     }
 
     public DebugHierarchyViewContainer(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView(context);
+        this(context, attrs, android.R.attr.scrollViewStyle);
     }
 
     public DebugHierarchyViewContainer(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -50,8 +46,8 @@ public class DebugHierarchyViewContainer extends ScrollView {
     private void initView(Context context) {
         mContext = context;
         final HorizontalScrollView hScrollView = new HorizontalScrollView(context);
-        mLinearLayout = new LinearLayout(context);
-        mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        mLinearLayout = new LinearLayoutCompat(context);
+        mLinearLayout.setOrientation(LinearLayoutCompat.VERTICAL);
         hScrollView.addView(mLinearLayout);
         addView(hScrollView);
 
@@ -66,7 +62,7 @@ public class DebugHierarchyViewContainer extends ScrollView {
 
     public void bindFragmentRecords(List<DebugFragmentRecord> fragmentRecords) {
         mLinearLayout.removeAllViews();
-        final LinearLayout ll = getTitleLayout();
+        final LinearLayoutCompat ll = getTitleLayout();
         mLinearLayout.addView(ll);
 
         if (fragmentRecords == null) {
@@ -77,31 +73,31 @@ public class DebugHierarchyViewContainer extends ScrollView {
 
     @SuppressLint("SetTextI18n")
     @NonNull
-    private LinearLayout getTitleLayout() {
+    private LinearLayoutCompat getTitleLayout() {
         if (mTitleLayout != null) {
             return mTitleLayout;
         }
 
-        mTitleLayout = new LinearLayout(mContext);
+        mTitleLayout = new LinearLayoutCompat(mContext);
         mTitleLayout.setPadding(dip2px(24), dip2px(24), 0, dip2px(8));
-        mTitleLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mTitleLayout.setOrientation(LinearLayoutCompat.HORIZONTAL);
         final ViewGroup.LayoutParams flParams = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mTitleLayout.setLayoutParams(flParams);
 
-        final TextView title = new TextView(mContext);
+        final AppCompatTextView title = new AppCompatTextView(mContext);
         title.setText("栈视图(Stack)");
         title.setTextSize(20);
         title.setTextColor(Color.BLACK);
-        final LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+        final LinearLayoutCompat.LayoutParams p = new LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         p.gravity = Gravity.CENTER_VERTICAL;
         title.setLayoutParams(p);
         mTitleLayout.addView(title);
 
-        final ImageView img = new ImageView(mContext);
+        final AppCompatImageView img = new AppCompatImageView(mContext);
         img.setImageResource(R.drawable.fragmentation_help);
-        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        final LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.leftMargin = dip2px(16);
         params.gravity = Gravity.CENTER_VERTICAL;
@@ -116,16 +112,17 @@ public class DebugHierarchyViewContainer extends ScrollView {
         return mTitleLayout;
     }
 
-    private void setView(final List<DebugFragmentRecord> fragmentRecordList, final int hierarchy, final TextView tvItem) {
+    private void setView(final List<DebugFragmentRecord> fragmentRecordList,
+                         final int hierarchy, final AppCompatTextView tvItem) {
         for (int i = fragmentRecordList.size() - 1; i >= 0; i--) {
             final DebugFragmentRecord child = fragmentRecordList.get(i);
             int tempHierarchy = hierarchy;
 
-            final TextView childTvItem;
+            final AppCompatTextView childTvItem;
             childTvItem = getTextView(child, tempHierarchy);
             childTvItem.setTag(R.id.hierarchy, tempHierarchy);
 
-            final List<DebugFragmentRecord> childFragmentRecord = child.childFragmentRecord;
+            final List<DebugFragmentRecord> childFragmentRecord = child.mChildFragmentRecord;
             if (childFragmentRecord != null && childFragmentRecord.size() > 0) {
                 tempHierarchy++;
                 childTvItem.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fragmentation_ic_right, 0, 0, 0);
@@ -161,12 +158,13 @@ public class DebugHierarchyViewContainer extends ScrollView {
         }
     }
 
-    private void handleExpandView(List<DebugFragmentRecord> childFragmentRecord, int finalChilHierarchy, TextView childTvItem) {
+    private void handleExpandView(final List<DebugFragmentRecord> childFragmentRecord,
+                                  final int finalChilHierarchy, final AppCompatTextView childTvItem) {
         DebugHierarchyViewContainer.this.setView(childFragmentRecord, finalChilHierarchy, childTvItem);
         childTvItem.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fragmentation_ic_expandable, 0, 0, 0);
     }
 
-    private void removeView(int hierarchy) {
+    private void removeView(final int hierarchy) {
         final int size = mLinearLayout.getChildCount();
         for (int i = size - 1; i >= 0; i--) {
             final View view = mLinearLayout.getChildAt(i);
@@ -176,9 +174,10 @@ public class DebugHierarchyViewContainer extends ScrollView {
         }
     }
 
-    private TextView getTextView(DebugFragmentRecord fragmentRecord, int hierarchy) {
-        final TextView tvItem = new TextView(mContext);
-        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mItemHeight);
+    private AppCompatTextView getTextView(final DebugFragmentRecord fragmentRecord, final int hierarchy) {
+        final AppCompatTextView tvItem = new AppCompatTextView(mContext);
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, mItemHeight);
         tvItem.setLayoutParams(params);
         if (hierarchy == 0) {
             tvItem.setTextColor(Color.parseColor("#333333"));
@@ -192,8 +191,7 @@ public class DebugHierarchyViewContainer extends ScrollView {
         tvItem.setBackgroundDrawable(a.getDrawable(0));
         a.recycle();
 
-        tvItem.setText(fragmentRecord.fragmentName);
-
+        tvItem.setText(fragmentRecord.mFragmentName);
         return tvItem;
     }
 }

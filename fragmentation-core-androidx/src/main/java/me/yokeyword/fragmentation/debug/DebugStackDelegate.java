@@ -13,13 +13,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -58,7 +58,7 @@ public class DebugStackDelegate implements SensorEventListener {
         final View root = mActivity.findViewById(android.R.id.content);
         if (root instanceof FrameLayout) {
             final FrameLayout content = (FrameLayout) root;
-            final ImageView stackView = new ImageView(mActivity);
+            final AppCompatImageView stackView = new AppCompatImageView(mActivity);
             stackView.setImageResource(R.drawable.fragmentation_ic_stack);
             final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -110,7 +110,9 @@ public class DebugStackDelegate implements SensorEventListener {
         }
         final DebugHierarchyViewContainer container = new DebugHierarchyViewContainer(mActivity);
         container.bindFragmentRecords(getFragmentRecords());
-        container.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        container.setLayoutParams(params);
         mStackDialog = new AlertDialog.Builder(mActivity)
                 .setView(container)
                 .setPositiveButton(android.R.string.cancel, null)
@@ -135,22 +137,22 @@ public class DebugStackDelegate implements SensorEventListener {
             if (i == fragmentRecordList.size() - 1) {
                 builder.append("═══════════════════════════════════════════════════════════════════════════════════\n");
                 if (i == 0) {
-                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.fragmentName).append("\n");
+                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.mFragmentName).append("\n");
                     builder.append("═══════════════════════════════════════════════════════════════════════════════════");
                 } else {
-                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.fragmentName).append("\n\n");
+                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.mFragmentName).append("\n\n");
                 }
             } else if (i == 0) {
-                builder.append("\t栈底\t\t\t").append(fragmentRecord.fragmentName).append("\n\n");
-                processChildLog(fragmentRecord.childFragmentRecord, builder, 1);
+                builder.append("\t栈底\t\t\t").append(fragmentRecord.mFragmentName).append("\n\n");
+                processChildLog(fragmentRecord.mChildFragmentRecord, builder, 1);
                 builder.append("═══════════════════════════════════════════════════════════════════════════════════");
                 Log.i(tag, builder.toString());
                 return;
             } else {
-                builder.append("\t↓\t\t\t").append(fragmentRecord.fragmentName).append("\n\n");
+                builder.append("\t↓\t\t\t").append(fragmentRecord.mFragmentName).append("\n\n");
             }
 
-            processChildLog(fragmentRecord.childFragmentRecord, builder, 1);
+            processChildLog(fragmentRecord.mChildFragmentRecord, builder, 1);
         }
     }
 
@@ -178,16 +180,16 @@ public class DebugStackDelegate implements SensorEventListener {
                 builder.append("\t\t\t");
             }
             if (j == 0) {
-                builder.append("\t子栈顶\t\t").append(childFragmentRecord.fragmentName).append("\n\n");
+                builder.append("\t子栈顶\t\t").append(childFragmentRecord.mFragmentName).append("\n\n");
             } else if (j == fragmentRecordList.size() - 1) {
-                builder.append("\t子栈底\t\t").append(childFragmentRecord.fragmentName).append("\n\n");
-                processChildLog(childFragmentRecord.childFragmentRecord, builder, ++childHierarchy);
+                builder.append("\t子栈底\t\t").append(childFragmentRecord.mFragmentName).append("\n\n");
+                processChildLog(childFragmentRecord.mChildFragmentRecord, builder, ++childHierarchy);
                 return;
             } else {
-                builder.append("\t↓\t\t\t").append(childFragmentRecord.fragmentName).append("\n\n");
+                builder.append("\t↓\t\t\t").append(childFragmentRecord.mFragmentName).append("\n\n");
             }
 
-            processChildLog(childFragmentRecord.childFragmentRecord, builder, childHierarchy);
+            processChildLog(childFragmentRecord.mChildFragmentRecord, builder, childHierarchy);
         }
     }
 
@@ -237,43 +239,43 @@ public class DebugStackDelegate implements SensorEventListener {
     }
 
     private class StackViewTouchListener implements View.OnTouchListener {
-        private View stackView;
-        private float dX, dY = 0f;
-        private float downX, downY = 0f;
-        private boolean isClickState;
-        private int clickLimitValue;
+        private View mStackView;
+        private float mDX, mDY = 0f;
+        private float mDownX, mDownY = 0f;
+        private boolean mIsClickState;
+        private int mClickLimitValue;
 
         StackViewTouchListener(View stackView, int clickLimitValue) {
-            this.stackView = stackView;
-            this.clickLimitValue = clickLimitValue;
+            this.mStackView = stackView;
+            this.mClickLimitValue = clickLimitValue;
         }
 
         @SuppressWarnings("ConstantConditions")
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            float X = event.getRawX();
-            float Y = event.getRawY();
+            float x = event.getRawX();
+            float y = event.getRawY();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    isClickState = true;
-                    downX = X;
-                    downY = Y;
-                    dX = stackView.getX() - event.getRawX();
-                    dY = stackView.getY() - event.getRawY();
+                    mIsClickState = true;
+                    mDownX = x;
+                    mDownY = y;
+                    mDX = mStackView.getX() - event.getRawX();
+                    mDY = mStackView.getY() - event.getRawY();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (Math.abs(X - downX) < clickLimitValue && Math.abs(Y - downY) < clickLimitValue && isClickState) {
-                        isClickState = true;
+                    if (Math.abs(x - mDownX) < mClickLimitValue && Math.abs(y - mDownY) < mClickLimitValue && mIsClickState) {
+                        mIsClickState = true;
                     } else {
-                        isClickState = false;
-                        stackView.setX(event.getRawX() + dX);
-                        stackView.setY(event.getRawY() + dY);
+                        mIsClickState = false;
+                        mStackView.setX(event.getRawX() + mDX);
+                        mStackView.setY(event.getRawY() + mDY);
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
-                    if (X - downX < clickLimitValue && isClickState) {
-                        stackView.performClick();
+                    if (x - mDownX < mClickLimitValue && mIsClickState) {
+                        mStackView.performClick();
                     }
                     break;
                 default:
