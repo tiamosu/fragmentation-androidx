@@ -461,7 +461,7 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
                     }
                     if (!(mFragment as Fragment).isDetached) {
                         onDragFinished()
-                        mFragment!!.supportDelegate.popQuiet()
+                        mFragment!!.getSupportDelegate().popQuiet()
                     }
                 } else {
                     if (!mActivity!!.isFinishing) {

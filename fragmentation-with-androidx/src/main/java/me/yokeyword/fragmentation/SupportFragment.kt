@@ -39,7 +39,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mDelegate.onAttach(context)
-        mActivity = mDelegate.activity
+        mActivity = mDelegate.getActivity()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,7 +163,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * Return true if the fragment has been supportVisible.
      */
     override fun isSupportVisible(): Boolean {
-        return mDelegate.isSupportVisible
+        return mDelegate.isSupportVisible()
     }
 
     /**
@@ -180,14 +180,14 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @return FragmentAnimator
      */
     override fun getFragmentAnimator(): FragmentAnimator {
-        return mDelegate.fragmentAnimator
+        return mDelegate.getFragmentAnimator()
     }
 
     /**
      * 设置Fragment内的全局动画
      */
     override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
-        mDelegate.fragmentAnimator = fragmentAnimator
+        mDelegate.setFragmentAnimator(fragmentAnimator)
     }
 
     /**

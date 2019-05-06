@@ -35,9 +35,9 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
     fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (view is SwipeBackLayout) {
             val childView = view.getChildAt(0)
-            mSupport.supportDelegate.setBackground(childView)
+            mSupport.getSupportDelegate().setBackground(childView)
         } else {
-            mSupport.supportDelegate.setBackground(view)
+            mSupport.getSupportDelegate().setBackground(view)
         }
     }
 

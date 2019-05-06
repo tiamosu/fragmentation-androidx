@@ -77,7 +77,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @return FragmentAnimator
      */
     override fun getFragmentAnimator(): FragmentAnimator {
-        return mDelegate.fragmentAnimator
+        return mDelegate.getFragmentAnimator()
     }
 
     /**
@@ -85,7 +85,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * 设置Fragment内的全局动画
      */
     override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
-        mDelegate.fragmentAnimator = fragmentAnimator
+        mDelegate.setFragmentAnimator(fragmentAnimator)
     }
 
     /**
@@ -242,7 +242,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * 可以通过该方法改变其内所有Fragment的默认背景。
      */
     fun setDefaultFragmentBackground(@DrawableRes backgroundRes: Int) {
-        mDelegate.defaultFragmentBackground = backgroundRes
+        mDelegate.setDefaultFragmentBackground(backgroundRes)
     }
 
     /**
