@@ -19,15 +19,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 object EventBusActivityScope {
     private val TAG = EventBusActivityScope::class.java.simpleName
     private val ACTIVITY_EVENT_BUS_SCOPE_POOL = ConcurrentHashMap<Activity, LazyEventBusInstance>()
-    private val sInitialized = AtomicBoolean(false)
+    private val mInitialized = AtomicBoolean(false)
     @Volatile
     private var mInvalidEventBus: EventBus? = null
 
     internal fun init(context: Context?) {
-        if (sInitialized.getAndSet(true)) {
+        if (mInitialized.getAndSet(true)) {
             return
         }
-
         (context?.applicationContext as? Application)
                 ?.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
                     private val mainHandler = Handler(Looper.getMainLooper())
@@ -50,7 +49,6 @@ object EventBusActivityScope {
                         if (!ACTIVITY_EVENT_BUS_SCOPE_POOL.containsKey(activity)) {
                             return
                         }
-
                         // Make sure Fragment's onDestroy() has been called.
                         mainHandler.post {
                             ACTIVITY_EVENT_BUS_SCOPE_POOL.remove(activity)

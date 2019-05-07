@@ -71,7 +71,9 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
         this.mFragmentAnimator = fragmentAnimator
 
-        for (fragment in FragmentationMagician.getActiveFragments(getSupportFragmentManager())) {
+        val fragmentList = FragmentationMagician.getActiveFragments(getSupportFragmentManager())
+                ?: return
+        for (fragment in fragmentList) {
             if (fragment is ISupportFragment) {
                 val delegate = fragment.getSupportDelegate()
                 if (delegate.mAnimByActivity) {
