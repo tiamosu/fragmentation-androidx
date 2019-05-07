@@ -21,9 +21,9 @@ import java.util.*
  * Created by YoKeyword on 16/1/22.
  */
 class TransactionDelegate internal constructor(private val mSupport: ISupportActivity) {
-    internal var mActionQueue: ActionQueue
     private val mActivity: FragmentActivity = mSupport as FragmentActivity
     private var mHandler: Handler = Handler(Looper.getMainLooper())
+    internal var mActionQueue: ActionQueue
 
     init {
         mActionQueue = ActionQueue(mHandler)

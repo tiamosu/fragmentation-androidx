@@ -69,16 +69,14 @@ object SupportHelper {
     @JvmStatic
     fun getTopFragment(fragmentManager: FragmentManager?, containerId: Int): ISupportFragment? {
         val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager) ?: return null
-
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
-                val iFragment = fragment as ISupportFragment
                 if (containerId == 0) {
-                    return iFragment
+                    return fragment
                 }
-                if (containerId == iFragment.getSupportDelegate().mContainerId) {
-                    return iFragment
+                if (containerId == fragment.getSupportDelegate().mContainerId) {
+                    return fragment
                 }
             }
         }
@@ -93,9 +91,7 @@ object SupportHelper {
     @JvmStatic
     fun getPreFragment(fragment: Fragment): ISupportFragment? {
         val fragmentManager = fragment.fragmentManager ?: return null
-
         val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager) ?: return null
-
         val index = fragmentList.indexOf(fragment)
         for (i in index - 1 downTo 0) {
             val preFragment = fragmentList[i]
@@ -196,7 +192,6 @@ object SupportHelper {
                 if (containerId == 0) {
                     return supportFragment
                 }
-
                 if (containerId == supportFragment!!.getSupportDelegate().mContainerId) {
                     return supportFragment
                 }
