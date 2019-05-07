@@ -1,5 +1,7 @@
 apply {
     from "${rootDir.path}/config_app.gradle"
+    plugin "kotlin-android"
+    plugin "kotlin-android-extensions"
 }
 
 dependencies {
@@ -15,5 +17,8 @@ dependencies {
     implementation Deps.material
     implementation Deps.cardview
     implementation Deps.recyclerview
+
+    implementation "androidx.core:core-ktx:1.0.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
