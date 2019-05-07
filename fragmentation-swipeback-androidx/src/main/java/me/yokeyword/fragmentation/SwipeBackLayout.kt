@@ -69,8 +69,8 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
     init {
         mViewDragHelper = ViewDragHelper.create(this, ViewDragCallback())
-        setShadow(R.drawable.shadow_left, EDGE_LEFT)
         setEdgeOrientation(EDGE_LEFT)
+        setShadow(R.drawable.shadow_left, EDGE_LEFT)
     }
 
     fun getViewDragHelper(): ViewDragHelper {
@@ -101,9 +101,9 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * for edges for which edge tracking has been enabled.
      *
      * @param orientation Combination of edge flags describing the edges to watch
-     * @see .EDGE_LEFT
+     * @see EDGE_LEFT
      *
-     * @see .EDGE_RIGHT
+     * @see EDGE_RIGHT
      */
     fun setEdgeOrientation(@EdgeOrientation orientation: Int) {
         mEdgeFlag = orientation
@@ -117,6 +117,14 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     /**
      * Set a drawable used for edge shadow.
      */
+    @Suppress("DEPRECATION")
+    fun setShadow(resId: Int, edgeFlag: Int) {
+        setShadow(resources.getDrawable(resId), edgeFlag)
+    }
+
+    /**
+     * Set a drawable used for edge shadow.
+     */
     fun setShadow(shadow: Drawable, edgeFlag: Int) {
         if (edgeFlag and EDGE_LEFT != 0) {
             mShadowLeft = shadow
@@ -124,14 +132,6 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
             mShadowRight = shadow
         }
         invalidate()
-    }
-
-    /**
-     * Set a drawable used for edge shadow.
-     */
-    @Suppress("DEPRECATION")
-    fun setShadow(resId: Int, edgeFlag: Int) {
-        setShadow(resources.getDrawable(resId), edgeFlag)
     }
 
     /**
@@ -170,11 +170,13 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
         child.getHitRect(childRect)
 
         if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
-            mShadowLeft!!.setBounds(childRect.left - mShadowLeft!!.intrinsicWidth, childRect.top, childRect.left, childRect.bottom)
+            mShadowLeft!!.setBounds(childRect.left - mShadowLeft!!.intrinsicWidth,
+                    childRect.top, childRect.left, childRect.bottom)
             mShadowLeft!!.alpha = (mScrimOpacity * FULL_ALPHA).toInt()
             mShadowLeft!!.draw(canvas)
         } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
-            mShadowRight!!.setBounds(childRect.right, childRect.top, childRect.right + mShadowRight!!.intrinsicWidth, childRect.bottom)
+            mShadowRight!!.setBounds(childRect.right, childRect.top,
+                    childRect.right + mShadowRight!!.intrinsicWidth, childRect.bottom)
             mShadowRight!!.alpha = (mScrimOpacity * FULL_ALPHA).toInt()
             mShadowRight!!.draw(canvas)
         }
@@ -209,20 +211,21 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
     override fun computeScroll() {
         mScrimOpacity = 1 - mScrollPercent
-        if (mScrimOpacity >= 0) {
-            if (mViewDragHelper.continueSettling(true)) {
-                ViewCompat.postInvalidateOnAnimation(this)
+        if (mScrimOpacity < 0) {
+            return
+        }
+        if (mViewDragHelper.continueSettling(true)) {
+            ViewCompat.postInvalidateOnAnimation(this)
+        }
+        if (mPreFragment?.view != null) {
+            if (mCallOnDestroyView) {
+                mPreFragment!!.view!!.x = 0f
+                return
             }
-            if (mPreFragment?.view != null) {
-                if (mCallOnDestroyView) {
-                    mPreFragment!!.view!!.x = 0f
-                    return
-                }
-                if (mViewDragHelper.capturedView != null) {
-                    val leftOffset = ((mViewDragHelper.capturedView!!.left - width).toFloat()
-                            * mParallaxOffset * mScrimOpacity).toInt()
-                    mPreFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
-                }
+            if (mViewDragHelper.capturedView != null) {
+                val leftOffset = ((mViewDragHelper.capturedView!!.left - width).toFloat()
+                        * mParallaxOffset * mScrimOpacity).toInt()
+                mPreFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
             }
         }
     }
@@ -241,15 +244,15 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
     fun hiddenFragment() {
         if (mPreFragment?.view != null) {
-            mPreFragment?.view!!.visibility = View.GONE
+            mPreFragment!!.view!!.visibility = View.GONE
         }
     }
 
     fun attachToActivity(activity: FragmentActivity) {
         mActivity = activity
-        val a = activity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-        val background = a.getResourceId(0, 0)
-        a.recycle()
+        val typedArray = activity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
+        val background = typedArray.getResourceId(0, 0)
+        typedArray.recycle()
 
         val decor = activity.window.decorView as ViewGroup
         val decorChild = decor.getChildAt(0) as ViewGroup
@@ -383,41 +386,43 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             val dragEnable = mViewDragHelper.isEdgeTouched(mEdgeFlag, pointerId)
-            if (dragEnable) {
-                if (mViewDragHelper.isEdgeTouched(EDGE_LEFT, pointerId)) {
-                    mCurrentSwipeOrientation = EDGE_LEFT
-                } else if (mViewDragHelper.isEdgeTouched(EDGE_RIGHT, pointerId)) {
-                    mCurrentSwipeOrientation = EDGE_RIGHT
-                }
+            if (!dragEnable) {
+                return false
+            }
 
-                if (mListeners != null) {
-                    for (listener in mListeners!!) {
-                        listener.onEdgeTouch(mCurrentSwipeOrientation)
-                    }
-                }
+            if (mViewDragHelper.isEdgeTouched(EDGE_LEFT, pointerId)) {
+                mCurrentSwipeOrientation = EDGE_LEFT
+            } else if (mViewDragHelper.isEdgeTouched(EDGE_RIGHT, pointerId)) {
+                mCurrentSwipeOrientation = EDGE_RIGHT
+            }
 
-                if (mPreFragment == null) {
-                    if (mFragment != null) {
-                        val fragmentTemp = mFragment as Fragment
-                        val fragmentList = FragmentationMagician.getActiveFragments(
-                                fragmentTemp.fragmentManager)
-                        if (fragmentList != null && fragmentList.size > 1) {
-                            val index = fragmentList.indexOf(fragmentTemp)
-                            for (i in index - 1 downTo 0) {
-                                val fragment = fragmentList[i]
-                                if (fragment?.view != null) {
-                                    fragment.view!!.visibility = View.VISIBLE
-                                    mPreFragment = fragment
-                                    break
-                                }
+            if (mListeners != null) {
+                for (listener in mListeners!!) {
+                    listener.onEdgeTouch(mCurrentSwipeOrientation)
+                }
+            }
+
+            if (mPreFragment == null) {
+                if (mFragment != null) {
+                    val fragmentTemp = mFragment as Fragment
+                    val fragmentList = FragmentationMagician.getActiveFragments(
+                            fragmentTemp.fragmentManager)
+                    if (fragmentList != null && fragmentList.size > 1) {
+                        val index = fragmentList.indexOf(fragmentTemp)
+                        for (i in index - 1 downTo 0) {
+                            val fragment = fragmentList[i]
+                            if (fragment?.view != null) {
+                                fragment.view!!.visibility = View.VISIBLE
+                                mPreFragment = fragment
+                                break
                             }
                         }
                     }
-                } else {
-                    val preView = mPreFragment!!.view
-                    if (preView != null && preView.visibility != View.VISIBLE) {
-                        preView.visibility = View.VISIBLE
-                    }
+                }
+            } else {
+                val preView = mPreFragment!!.view
+                if (preView != null && preView.visibility != View.VISIBLE) {
+                    preView.visibility = View.VISIBLE
                 }
             }
             return dragEnable
@@ -484,7 +489,6 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             val childWidth = releasedChild.width
-
             var left = 0
             val top = 0
             if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
