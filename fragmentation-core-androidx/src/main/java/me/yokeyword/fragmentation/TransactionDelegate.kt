@@ -90,7 +90,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
      * Dispatch the start transaction.
      */
     internal fun dispatchStartTransaction(fm: FragmentManager?, from: ISupportFragment?,
-                                          to: ISupportFragment, requestCode: Int, launchMode: Int, type: Int) {
+                                          to: ISupportFragment?, requestCode: Int, launchMode: Int, type: Int) {
         enqueue(fm, object : Action(if (launchMode == ISupportFragment.SINGLETASK) ACTION_POP_MOCK else ACTION_NORMAL) {
             override fun run() {
                 doDispatchStartTransaction(fm, from, to, requestCode, launchMode, type)
@@ -258,7 +258,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             }
 
             val parentFragment = (activeFragment as Fragment).parentFragment
-            return dispatchBackPressedEvent(parentFragment as ISupportFragment?)
+            return dispatchBackPressedEvent(parentFragment as? ISupportFragment)
         }
         return false
     }
@@ -272,7 +272,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             var targetFragment: ISupportFragment? = null
             if (from.fragmentManager != null) {
                 targetFragment = from.fragmentManager!!
-                        .getFragment(from.arguments!!, FRAGMENTATION_STATE_SAVE_RESULT) as ISupportFragment?
+                        .getFragment(from.arguments!!, FRAGMENTATION_STATE_SAVE_RESULT) as? ISupportFragment
             }
             targetFragment?.onFragmentResult(resultRecord.mRequestCode, resultRecord.mResultCode, resultRecord.mResultBundle)
         } catch (ignored: IllegalStateException) {
@@ -288,7 +288,8 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         mActionQueue.enqueue(action)
     }
 
-    private fun doDispatchStartTransaction(fm: FragmentManager?, from: ISupportFragment?, to: ISupportFragment, requestCode: Int, launchMode: Int, type: Int) {
+    private fun doDispatchStartTransaction(fm: FragmentManager?, from: ISupportFragment?,
+                                           to: ISupportFragment?, requestCode: Int, launchMode: Int, type: Int) {
         var fromTemp = from
         checkNotNull(to, "toFragment == null")
 
@@ -342,8 +343,8 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             SupportHelper.getTopFragment(fm)
         } else {
             if (from.getSupportDelegate().mContainerId == 0) {
-                val fromF = from as Fragment?
-                if (fromF!!.tag != null && !fromF.tag!!.startsWith("android:switcher:")) {
+                val fromF = from as? Fragment
+                if (fromF?.tag != null && !fromF.tag!!.startsWith("android:switcher:")) {
                     throw IllegalStateException("Can't find container, please call loadRootFragment() first!")
                 }
             }
@@ -579,9 +580,8 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
 
     private fun mockStartWithPopAnim(from: ISupportFragment, to: ISupportFragment, exitAnim: Animation?) {
         val fromF = from as Fragment
-        val container = findContainerById(fromF, from.getSupportDelegate().mContainerId) ?: return
-
         val fromView = fromF.view ?: return
+        val container = findContainerById(fromF, from.getSupportDelegate().mContainerId) ?: return
 
         container.removeViewInLayout(fromView)
         val mock = addMockView(fromView, container)
@@ -631,7 +631,6 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         return if (container is ViewGroup) {
             container
         } else null
-
     }
 
     private fun handleAfterSaveInStateTransactionException(fm: FragmentManager?, action: String) {

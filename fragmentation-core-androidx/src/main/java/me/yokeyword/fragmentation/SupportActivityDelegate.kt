@@ -60,8 +60,8 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
      *
      * @return FragmentAnimator
      */
-    fun getFragmentAnimator(): FragmentAnimator {
-        return mFragmentAnimator!!.copy()
+    fun getFragmentAnimator(): FragmentAnimator? {
+        return mFragmentAnimator?.copy()
     }
 
     /**
@@ -94,7 +94,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
      *
      * @return FragmentAnimator对象
      */
-    fun onCreateFragmentAnimator(): FragmentAnimator {
+    fun onCreateFragmentAnimator(): FragmentAnimator? {
         return DefaultVerticalAnimator()
     }
 
@@ -153,7 +153,6 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
                 if (mTransactionDelegate!!.dispatchBackPressedEvent(activeFragment)) {
                     return
                 }
-
                 mSupport.onBackPressedSupport()
             }
         })

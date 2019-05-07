@@ -170,7 +170,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * Set fragment animation with a higher priority than the ISupportActivity
      * 设定当前Fragmemt动画,优先级比在SupportActivity里高
      */
-    override fun onCreateFragmentAnimator(): FragmentAnimator {
+    override fun onCreateFragmentAnimator(): FragmentAnimator? {
         return mDelegate.onCreateFragmentAnimator()
     }
 
@@ -179,7 +179,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      *
      * @return FragmentAnimator
      */
-    override fun getFragmentAnimator(): FragmentAnimator {
+    override fun getFragmentAnimator(): FragmentAnimator? {
         return mDelegate.getFragmentAnimator()
     }
 
@@ -207,7 +207,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      *
      * @see .startForResult
      */
-    override fun setFragmentResult(resultCode: Int, bundle: Bundle) {
+    override fun setFragmentResult(resultCode: Int, bundle: Bundle?) {
         mDelegate.setFragmentResult(resultCode, bundle)
     }
 
@@ -242,7 +242,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      *
      * @see .start
      */
-    override fun putNewBundle(newBundle: Bundle) {
+    override fun putNewBundle(newBundle: Bundle?) {
         mDelegate.putNewBundle(newBundle)
     }
 

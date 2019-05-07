@@ -13,11 +13,11 @@ interface ISupportActivity {
 
     fun extraTransaction(): ExtraTransaction
 
-    fun getFragmentAnimator(): FragmentAnimator
+    fun getFragmentAnimator(): FragmentAnimator?
 
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator)
 
-    fun onCreateFragmentAnimator(): FragmentAnimator
+    fun onCreateFragmentAnimator(): FragmentAnimator?
 
     fun post(runnable: Runnable)
 

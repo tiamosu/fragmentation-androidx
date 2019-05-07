@@ -27,19 +27,19 @@ interface ISupportFragment {
 
     fun isSupportVisible(): Boolean
 
-    fun onCreateFragmentAnimator(): FragmentAnimator
+    fun onCreateFragmentAnimator(): FragmentAnimator?
 
-    fun getFragmentAnimator(): FragmentAnimator
+    fun getFragmentAnimator(): FragmentAnimator?
 
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator)
 
-    fun setFragmentResult(resultCode: Int, bundle: Bundle)
+    fun setFragmentResult(resultCode: Int, bundle: Bundle?)
 
     fun onFragmentResult(requestCode: Int, resultCode: Int, data: Bundle?)
 
     fun onNewBundle(args: Bundle)
 
-    fun putNewBundle(newBundle: Bundle)
+    fun putNewBundle(newBundle: Bundle?)
 
     fun onBackPressedSupport(): Boolean
 

@@ -17,7 +17,7 @@ import me.yokeyword.fragmentation.helper.internal.VisibleDelegate
 
 @Suppress("unused", "UNUSED_PARAMETER")
 class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
-    private lateinit var _mActivity: FragmentActivity
+    private lateinit var mActivity: FragmentActivity
     internal var mFragmentAnimator: FragmentAnimator? = null
     internal var mAnimHelper: AnimatorHelper? = null
     internal var mLockAnim: Boolean = false
@@ -82,7 +82,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     fun onAttach(context: Context) {
         if (context is ISupportActivity) {
             this.mSupport = context
-            this._mActivity = context as FragmentActivity
+            this.mActivity = context as FragmentActivity
             mTransactionDelegate = mSupport!!.getSupportDelegate().getTransactionDelegate()
         } else {
             throw RuntimeException(context.javaClass.simpleName + " must impl ISupportActivity!")
@@ -120,7 +120,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
         // Fix the overlapping BUG on pre-24.0.0
         processRestoreInstanceState(savedInstanceState)
-        mAnimHelper = AnimatorHelper(_mActivity.applicationContext, mFragmentAnimator!!)
+        mAnimHelper = AnimatorHelper(mActivity.applicationContext, mFragmentAnimator!!)
 
         val enter = getEnterAnim() ?: return
 
@@ -195,7 +195,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             fixAnimationListener(if (mCustomEnterAnim == 0)
                 mAnimHelper!!.getNoneAnim()
             else
-                AnimationUtils.loadAnimation(_mActivity, mCustomEnterAnim))
+                AnimationUtils.loadAnimation(mActivity, mCustomEnterAnim))
         }
 
         if (mFirstCreateView) {
@@ -305,7 +305,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * Set fragment animation with a higher priority than the ISupportActivity
      * 设定当前Fragmemt动画,优先级比在ISupportActivity里高
      */
-    fun onCreateFragmentAnimator(): FragmentAnimator {
+    fun onCreateFragmentAnimator(): FragmentAnimator? {
         return mSupport!!.getFragmentAnimator()
     }
 
@@ -314,7 +314,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      *
      * @return FragmentAnimator
      */
-    fun getFragmentAnimator(): FragmentAnimator {
+    fun getFragmentAnimator(): FragmentAnimator? {
         if (mSupport == null) {
             throw RuntimeException("Fragment has not been attached to Activity!")
         }
@@ -325,7 +325,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
                 mFragmentAnimator = mSupport!!.getFragmentAnimator()
             }
         }
-        return mFragmentAnimator!!
+        return mFragmentAnimator
     }
 
     /**
@@ -347,7 +347,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      *
      * @see .startForResult
      */
-    fun setFragmentResult(resultCode: Int, bundle: Bundle) {
+    fun setFragmentResult(resultCode: Int, bundle: Bundle?) {
         val args = mFragment!!.arguments
         if (args == null || !args.containsKey(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD)) {
             return
@@ -387,7 +387,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      *
      * @see .start
      */
-    fun putNewBundle(newBundle: Bundle) {
+    fun putNewBundle(newBundle: Bundle?) {
         this.mNewBundle = newBundle
     }
 
@@ -425,15 +425,19 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
         loadRootFragment(containerId, toFragment, true, false)
     }
 
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment, addToBackStack: Boolean, allowAnim: Boolean) {
-        mTransactionDelegate!!.loadRootTransaction(getChildFragmentManager(), containerId, toFragment, addToBackStack, allowAnim)
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment,
+                         addToBackStack: Boolean, allowAnim: Boolean) {
+        mTransactionDelegate!!.loadRootTransaction(getChildFragmentManager(), containerId,
+                toFragment, addToBackStack, allowAnim)
     }
 
     /**
      * 加载多个同级根Fragment,类似Wechat, QQ主页的场景
      */
-    fun loadMultipleRootFragment(containerId: Int, showPosition: Int, vararg toFragments: ISupportFragment) {
-        mTransactionDelegate!!.loadMultipleRootTransaction(getChildFragmentManager(), containerId, showPosition, *toFragments)
+    fun loadMultipleRootFragment(containerId: Int, showPosition: Int,
+                                 vararg toFragments: ISupportFragment) {
+        mTransactionDelegate!!.loadMultipleRootTransaction(getChildFragmentManager(),
+                containerId, showPosition, *toFragments)
     }
 
     /**
@@ -545,24 +549,32 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * If you want to begin another FragmentTransaction immediately after popTo(), use this method.
      * 如果你想在出栈后, 立刻进行FragmentTransaction操作，请使用该方法
      */
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean, afterPopTransactionRunnable: Runnable?) {
-        popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, TransactionDelegate.DEFAULT_POPTO_ANIM)
+    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
+              afterPopTransactionRunnable: Runnable?) {
+        popTo(targetFragmentClass, includeTargetFragment,
+                afterPopTransactionRunnable, TransactionDelegate.DEFAULT_POPTO_ANIM)
     }
 
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean, afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mTransactionDelegate!!.popTo(targetFragmentClass.name, includeTargetFragment, afterPopTransactionRunnable, mFragment!!.fragmentManager, popAnim)
+    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
+              afterPopTransactionRunnable: Runnable?, popAnim: Int) {
+        mTransactionDelegate!!.popTo(targetFragmentClass.name, includeTargetFragment,
+                afterPopTransactionRunnable, mFragment!!.fragmentManager, popAnim)
     }
 
     fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
         popToChild(targetFragmentClass, includeTargetFragment, null)
     }
 
-    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean, afterPopTransactionRunnable: Runnable?) {
-        popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, TransactionDelegate.DEFAULT_POPTO_ANIM)
+    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
+                   afterPopTransactionRunnable: Runnable?) {
+        popToChild(targetFragmentClass, includeTargetFragment,
+                afterPopTransactionRunnable, TransactionDelegate.DEFAULT_POPTO_ANIM)
     }
 
-    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean, afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mTransactionDelegate!!.popTo(targetFragmentClass.name, includeTargetFragment, afterPopTransactionRunnable, getChildFragmentManager(), popAnim)
+    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
+                   afterPopTransactionRunnable: Runnable?, popAnim: Int) {
+        mTransactionDelegate!!.popTo(targetFragmentClass.name, includeTargetFragment,
+                afterPopTransactionRunnable, getChildFragmentManager(), popAnim)
     }
 
     fun popQuiet() {
@@ -624,7 +636,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     private fun getWindowBackground(): Int {
-        val a = _mActivity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
+        val a = mActivity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
         val background = a.getResourceId(0, 0)
         a.recycle()
         return background
@@ -650,7 +662,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun getActivity(): FragmentActivity {
-        return _mActivity
+        return mActivity
     }
 
     private fun getEnterAnim(): Animation? {
@@ -660,7 +672,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(_mActivity, mCustomEnterAnim)
+                return AnimationUtils.loadAnimation(mActivity, mCustomEnterAnim)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -681,7 +693,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(_mActivity, mCustomExitAnim).duration
+                return AnimationUtils.loadAnimation(mActivity, mCustomExitAnim).duration
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -696,7 +708,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(_mActivity, mCustomPopExitAnim).duration
+                return AnimationUtils.loadAnimation(mActivity, mCustomPopExitAnim).duration
             } catch (ignore: Exception) {
             }
         }
@@ -710,7 +722,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(_mActivity, mCustomExitAnim)
+                return AnimationUtils.loadAnimation(mActivity, mCustomExitAnim)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

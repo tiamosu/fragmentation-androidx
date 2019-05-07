@@ -57,7 +57,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
     }
 
     /**
-     * 不建议复写该方法,请使用 [.onBackPressedSupport] 代替
+     * 不建议复写该方法,请使用 [onBackPressedSupport] 代替
      */
     override fun onBackPressed() {
         mDelegate.onBackPressed()
@@ -76,7 +76,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      *
      * @return FragmentAnimator
      */
-    override fun getFragmentAnimator(): FragmentAnimator {
+    override fun getFragmentAnimator(): FragmentAnimator? {
         return mDelegate.getFragmentAnimator()
     }
 
@@ -98,7 +98,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      *
      * @return FragmentAnimator对象
      */
-    override fun onCreateFragmentAnimator(): FragmentAnimator {
+    override fun onCreateFragmentAnimator(): FragmentAnimator? {
         return mDelegate.onCreateFragmentAnimator()
     }
 
