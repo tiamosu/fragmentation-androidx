@@ -28,7 +28,7 @@ open class SwipeBackFragment : SupportFragment(), ISwipeBackFragment {
         mDelegate.onViewCreated(view, savedInstanceState)
     }
 
-    override fun attachToSwipeBack(view: View): View {
+    override fun attachToSwipeBack(view: View): View? {
         return mDelegate.attachToSwipeBack(view)
     }
 
@@ -37,8 +37,8 @@ open class SwipeBackFragment : SupportFragment(), ISwipeBackFragment {
         mDelegate.onHiddenChanged(hidden)
     }
 
-    override fun getSwipeBackLayout(): SwipeBackLayout {
-        return mDelegate.getSwipeBackLayout()!!
+    override fun getSwipeBackLayout(): SwipeBackLayout? {
+        return mDelegate.getSwipeBackLayout()
     }
 
     /**

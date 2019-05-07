@@ -7,7 +7,7 @@ import me.yokeyword.fragmentation.SwipeBackLayout
  */
 interface ISwipeBackActivity {
 
-    fun getSwipeBackLayout(): SwipeBackLayout
+    fun getSwipeBackLayout(): SwipeBackLayout?
 
     fun setSwipeBackEnable(enable: Boolean)
 

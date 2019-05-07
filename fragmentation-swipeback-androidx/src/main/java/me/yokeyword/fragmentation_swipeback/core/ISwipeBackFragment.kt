@@ -10,9 +10,9 @@ import me.yokeyword.fragmentation.SwipeBackLayout
  */
 interface ISwipeBackFragment {
 
-    fun attachToSwipeBack(view: View): View
+    fun attachToSwipeBack(view: View): View?
 
-    fun getSwipeBackLayout(): SwipeBackLayout
+    fun getSwipeBackLayout(): SwipeBackLayout?
 
     fun setSwipeBackEnable(enable: Boolean)
 

@@ -41,9 +41,9 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
         }
     }
 
-    fun attachToSwipeBack(view: View): View {
+    fun attachToSwipeBack(view: View): View? {
         mSwipeBackLayout?.attachToFragment(mSupport, view)
-        return mSwipeBackLayout!!
+        return mSwipeBackLayout
     }
 
     fun setEdgeLevel(edgeLevel: SwipeBackLayout.EdgeLevel) {
@@ -83,7 +83,6 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
         if (mFragment.context == null) {
             return
         }
-
         mSwipeBackLayout = SwipeBackLayout(mFragment.context!!)
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)

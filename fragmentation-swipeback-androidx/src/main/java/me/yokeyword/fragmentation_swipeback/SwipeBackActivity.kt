@@ -26,8 +26,8 @@ open class SwipeBackActivity : SupportActivity(), ISwipeBackActivity {
         mDelegate.onPostCreate(savedInstanceState)
     }
 
-    override fun getSwipeBackLayout(): SwipeBackLayout {
-        return mDelegate.getSwipeBackLayout()!!
+    override fun getSwipeBackLayout(): SwipeBackLayout? {
+        return mDelegate.getSwipeBackLayout()
     }
 
     /**
