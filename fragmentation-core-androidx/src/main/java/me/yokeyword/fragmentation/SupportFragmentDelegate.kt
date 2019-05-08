@@ -331,11 +331,9 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     /**
      * Set the fragment animation.
      */
-    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
+    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         this.mFragmentAnimator = fragmentAnimator
-        if (mAnimHelper != null) {
-            mAnimHelper!!.notifyChanged(fragmentAnimator)
-        }
+        mAnimHelper?.notifyChanged(fragmentAnimator)
         mAnimByActivity = false
     }
 
@@ -435,9 +433,9 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * 加载多个同级根Fragment,类似Wechat, QQ主页的场景
      */
     fun loadMultipleRootFragment(containerId: Int, showPosition: Int,
-                                 vararg toFragments: ISupportFragment) {
+                                 toFragments: Array<out ISupportFragment?>) {
         mTransactionDelegate!!.loadMultipleRootTransaction(getChildFragmentManager(),
-                containerId, showPosition, *toFragments)
+                containerId, showPosition, toFragments)
     }
 
     /**

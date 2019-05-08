@@ -31,7 +31,7 @@ interface ISupportFragment {
 
     fun getFragmentAnimator(): FragmentAnimator?
 
-    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator)
+    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?)
 
     fun setFragmentResult(resultCode: Int, bundle: Bundle?)
 

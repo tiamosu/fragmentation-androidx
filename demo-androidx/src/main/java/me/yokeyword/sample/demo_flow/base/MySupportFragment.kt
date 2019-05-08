@@ -182,7 +182,7 @@ abstract class MySupportFragment : Fragment(), ISupportFragment {
     /**
      * 设置Fragment内的全局动画
      */
-    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
+    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         mDelegate.setFragmentAnimator(fragmentAnimator)
     }
 

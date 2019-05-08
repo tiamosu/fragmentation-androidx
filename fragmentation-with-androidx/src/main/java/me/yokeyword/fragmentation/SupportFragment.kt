@@ -186,7 +186,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
     /**
      * 设置Fragment内的全局动画
      */
-    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
+    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         mDelegate.setFragmentAnimator(fragmentAnimator)
     }
 
@@ -282,8 +282,8 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 加载多个同级根Fragment,类似Wechat, QQ主页的场景
      */
     fun loadMultipleRootFragment(containerId: Int, showPosition: Int,
-                                 vararg toFragments: ISupportFragment) {
-        mDelegate.loadMultipleRootFragment(containerId, showPosition, *toFragments)
+                                 toFragments: Array<out ISupportFragment?>) {
+        mDelegate.loadMultipleRootFragment(containerId, showPosition, toFragments)
     }
 
     /**

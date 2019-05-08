@@ -24,7 +24,6 @@ import me.yokeyword.sample.demo_zhihu.ui.view.BottomBarTab
  * Created by YoKeyword on 16/6/2.
  */
 class MainActivity : SupportActivity(), BaseMainFragment.OnBackToFirstListener {
-
     private val mFragments = arrayOfNulls<SupportFragment>(4)
     private var mBottomBar: BottomBar? = null
 
@@ -39,12 +38,7 @@ class MainActivity : SupportActivity(), BaseMainFragment.OnBackToFirstListener {
             mFragments[THIRD] = ZhihuThirdFragment.newInstance()
             mFragments[FOURTH] = ZhihuFourthFragment.newInstance()
 
-            loadMultipleRootFragment(R.id.fl_container, FIRST,
-                    mFragments[FIRST]!!,
-                    mFragments[SECOND]!!,
-                    mFragments[THIRD]!!,
-                    mFragments[FOURTH]!!
-            )
+            loadMultipleRootFragment(R.id.fl_container, FIRST, mFragments)
         } else {
             // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题
 

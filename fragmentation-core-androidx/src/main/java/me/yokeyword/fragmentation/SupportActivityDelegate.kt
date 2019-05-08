@@ -195,8 +195,8 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     /**
      * 加载多个同级根Fragment,类似Wechat, QQ主页的场景
      */
-    fun loadMultipleRootFragment(containerId: Int, showPosition: Int, vararg toFragments: ISupportFragment) {
-        mTransactionDelegate!!.loadMultipleRootTransaction(getSupportFragmentManager(), containerId, showPosition, *toFragments)
+    fun loadMultipleRootFragment(containerId: Int, showPosition: Int, toFragments: Array<out ISupportFragment?>) {
+        mTransactionDelegate!!.loadMultipleRootTransaction(getSupportFragmentManager(), containerId, showPosition, toFragments)
     }
 
     /**

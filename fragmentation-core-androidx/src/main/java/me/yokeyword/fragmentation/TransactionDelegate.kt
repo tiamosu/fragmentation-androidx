@@ -29,12 +29,6 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         mActionQueue = ActionQueue(mHandler)
     }
 
-    private fun <T> checkNotNull(value: T?, message: String) {
-        if (value == null) {
-            throw NullPointerException(message)
-        }
-    }
-
     internal fun post(runnable: Runnable) {
         mActionQueue.enqueue(object : Action() {
             override fun run() {
@@ -63,7 +57,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     }
 
     internal fun loadMultipleRootTransaction(fm: FragmentManager, containerId: Int,
-                                             showPosition: Int, vararg tos: ISupportFragment) {
+                                             showPosition: Int, tos: Array<out ISupportFragment?>) {
         enqueue(fm, object : Action(ACTION_LOAD) {
             override fun run() {
                 val ft = fm.beginTransaction()
@@ -291,8 +285,6 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     private fun doDispatchStartTransaction(fm: FragmentManager?, from: ISupportFragment?,
                                            to: ISupportFragment?, requestCode: Int, launchMode: Int, type: Int) {
         var fromTemp = from
-        checkNotNull(to, "toFragment == null")
-
         if ((type == TYPE_ADD_RESULT || type == TYPE_ADD_RESULT_WITHOUT_HIDE) && fromTemp != null) {
             if (!(fromTemp as Fragment).isAdded) {
                 Log.w(TAG, fromTemp.javaClass.simpleName + " has not been attached yet! startForResult() converted to start()")
@@ -430,16 +422,16 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         supportCommit(fm, ft)
     }
 
-    private fun bindContainerId(containerId: Int, to: ISupportFragment) {
-        val args = getArguments(to as Fragment)
+    private fun bindContainerId(containerId: Int, to: ISupportFragment?) {
+        val args = getArguments(to as? Fragment)
         args.putInt(FRAGMENTATION_ARG_CONTAINER, containerId)
     }
 
-    private fun getArguments(fragment: Fragment): Bundle {
-        var bundle = fragment.arguments
+    private fun getArguments(fragment: Fragment?): Bundle {
+        var bundle = fragment?.arguments
         if (bundle == null) {
             bundle = Bundle()
-            fragment.arguments = bundle
+            fragment?.arguments = bundle
         }
         return bundle
     }

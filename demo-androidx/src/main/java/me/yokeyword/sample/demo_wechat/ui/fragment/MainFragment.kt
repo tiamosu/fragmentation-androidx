@@ -35,14 +35,9 @@ class MainFragment : SupportFragment() {
             mFragments[SECOND] = WechatSecondTabFragment.newInstance()
             mFragments[THIRD] = WechatThirdTabFragment.newInstance()
 
-            loadMultipleRootFragment(R.id.fl_tab_container, FIRST,
-                    mFragments[FIRST]!!,
-                    mFragments[SECOND]!!,
-                    mFragments[THIRD]!!
-            )
+            loadMultipleRootFragment(R.id.fl_tab_container, FIRST, mFragments)
         } else {
             // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题
-
             // 这里我们需要拿到mFragments的引用
             mFragments[FIRST] = firstFragment
             mFragments[SECOND] = findChildFragment(WechatSecondTabFragment::class.java)
