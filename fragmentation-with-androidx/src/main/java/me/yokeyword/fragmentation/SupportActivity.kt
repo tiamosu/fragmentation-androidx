@@ -84,7 +84,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * Set all fragments animation.
      * 设置Fragment内的全局动画
      */
-    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
+    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         mDelegate.setFragmentAnimator(fragmentAnimator)
     }
 

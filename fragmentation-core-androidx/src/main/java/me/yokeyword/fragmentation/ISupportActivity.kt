@@ -15,7 +15,7 @@ interface ISupportActivity {
 
     fun getFragmentAnimator(): FragmentAnimator?
 
-    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator)
+    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?)
 
     fun onCreateFragmentAnimator(): FragmentAnimator?
 

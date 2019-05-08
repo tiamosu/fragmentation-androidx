@@ -68,7 +68,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
      * Set all fragments animation.
      * 设置Fragment内的全局动画
      */
-    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator) {
+    fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         this.mFragmentAnimator = fragmentAnimator
 
         val fragmentList = FragmentationMagician.getActiveFragments(getSupportFragmentManager())
@@ -77,7 +77,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
             if (fragment is ISupportFragment) {
                 val delegate = fragment.getSupportDelegate()
                 if (delegate.mAnimByActivity) {
-                    delegate.mFragmentAnimator = fragmentAnimator.copy()
+                    delegate.mFragmentAnimator = fragmentAnimator?.copy()
                     delegate.mAnimHelper?.notifyChanged(delegate.mFragmentAnimator)
                 }
             }
