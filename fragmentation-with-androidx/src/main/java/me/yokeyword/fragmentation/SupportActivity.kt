@@ -22,7 +22,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
         return mDelegate
     }
 
-    fun getContext(): SupportActivity {
+    open fun getContext(): SupportActivity {
         return this
     }
 
