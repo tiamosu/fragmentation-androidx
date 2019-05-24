@@ -71,8 +71,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         this.mFragmentAnimator = fragmentAnimator
 
-        val fragmentList = FragmentationMagician.getActiveFragments(getSupportFragmentManager())
-                ?: return
+        val fragmentList = FragmentationMagician.getActiveFragments(getSupportFragmentManager()) ?: return
         for (fragment in fragmentList) {
             if (fragment is ISupportFragment) {
                 val delegate = fragment.getSupportDelegate()
@@ -184,11 +183,11 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     /**
      * 加载根Fragment, 即Activity内的第一个Fragment 或 Fragment内的第一个子Fragment
      */
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment) {
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?) {
         loadRootFragment(containerId, toFragment, true, false)
     }
 
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment, addToBackStack: Boolean, allowAnimation: Boolean) {
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?, addToBackStack: Boolean, allowAnimation: Boolean) {
         mTransactionDelegate!!.loadRootTransaction(getSupportFragmentManager(), containerId, toFragment, addToBackStack, allowAnimation)
     }
 
@@ -208,7 +207,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
      *
      * @param showFragment 需要show的Fragment
      */
-    fun showHideFragment(showFragment: ISupportFragment) {
+    fun showHideFragment(showFragment: ISupportFragment?) {
         showHideFragment(showFragment, null)
     }
 
@@ -218,18 +217,18 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
      * @param showFragment 需要show的Fragment
      * @param hideFragment 需要hide的Fragment
      */
-    fun showHideFragment(showFragment: ISupportFragment, hideFragment: ISupportFragment?) {
+    fun showHideFragment(showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
         mTransactionDelegate!!.showHideFragment(getSupportFragmentManager(), showFragment, hideFragment)
     }
 
-    fun start(toFragment: ISupportFragment) {
+    fun start(toFragment: ISupportFragment?) {
         start(toFragment, ISupportFragment.STANDARD)
     }
 
     /**
      * @param launchMode Similar to Activity's LaunchMode.
      */
-    fun start(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
+    fun start(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
         mTransactionDelegate!!.dispatchStartTransaction(getSupportFragmentManager(),
                 getTopFragment(), toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD)
     }
@@ -237,7 +236,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     /**
      * Launch an fragment for which you would like a result when it poped.
      */
-    fun startForResult(toFragment: ISupportFragment, requestCode: Int) {
+    fun startForResult(toFragment: ISupportFragment?, requestCode: Int) {
         mTransactionDelegate!!.dispatchStartTransaction(getSupportFragmentManager(),
                 getTopFragment(), toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT)
     }
@@ -245,16 +244,16 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     /**
      * Start the target Fragment and pop itself
      */
-    fun startWithPop(toFragment: ISupportFragment) {
+    fun startWithPop(toFragment: ISupportFragment?) {
         mTransactionDelegate!!.startWithPop(getSupportFragmentManager(), getTopFragment(), toFragment)
     }
 
-    fun startWithPopTo(toFragment: ISupportFragment, targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
         mTransactionDelegate!!.startWithPopTo(getSupportFragmentManager(), getTopFragment(),
                 toFragment, targetFragmentClass.name, includeTargetFragment)
     }
 
-    fun replaceFragment(toFragment: ISupportFragment, addToBackStack: Boolean) {
+    fun replaceFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
         mTransactionDelegate!!.dispatchStartTransaction(getSupportFragmentManager(), getTopFragment(),
                 toFragment, 0, ISupportFragment.STANDARD,
                 if (addToBackStack) TransactionDelegate.TYPE_REPLACE else TransactionDelegate.TYPE_REPLACE_DONT_BACK)

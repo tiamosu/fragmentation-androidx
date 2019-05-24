@@ -202,12 +202,12 @@ object SupportHelper {
 
     @Suppress("UNCHECKED_CAST")
     internal fun <T : ISupportFragment> findBackStackFragment(
-            fragmentClass: Class<T>, toFragmentTag: String?, fragmentManager: FragmentManager?): T? {
+            fragmentClass: Class<T>?, toFragmentTag: String?, fragmentManager: FragmentManager?): T? {
 
         var toFragmentTagTemp = toFragmentTag
         val count = fragmentManager?.backStackEntryCount ?: 0
         if (toFragmentTagTemp == null) {
-            toFragmentTagTemp = fragmentClass.name
+            toFragmentTagTemp = fragmentClass?.name
         }
 
         for (i in count - 1 downTo 0) {

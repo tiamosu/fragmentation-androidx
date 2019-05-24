@@ -419,11 +419,11 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     /**
      * 加载根Fragment, 即Activity内的第一个Fragment 或 Fragment内的第一个子Fragment
      */
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment) {
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?) {
         loadRootFragment(containerId, toFragment, true, false)
     }
 
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment,
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?,
                          addToBackStack: Boolean, allowAnim: Boolean) {
         mTransactionDelegate!!.loadRootTransaction(getChildFragmentManager(), containerId,
                 toFragment, addToBackStack, allowAnim)
@@ -445,25 +445,25 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      *
      * 建议使用更明确的[.showHideFragment]
      */
-    fun showHideFragment(showFragment: ISupportFragment) {
+    fun showHideFragment(showFragment: ISupportFragment?) {
         showHideFragment(showFragment, null)
     }
 
     /**
      * show一个Fragment,hide一个Fragment ; 主要用于类似微信主页那种 切换tab的情况
      */
-    fun showHideFragment(showFragment: ISupportFragment, hideFragment: ISupportFragment?) {
+    fun showHideFragment(showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
         mTransactionDelegate!!.showHideFragment(getChildFragmentManager(), showFragment, hideFragment)
     }
 
-    fun start(toFragment: ISupportFragment) {
+    fun start(toFragment: ISupportFragment?) {
         start(toFragment, ISupportFragment.STANDARD)
     }
 
     /**
      * @param launchMode Similar to Activity's LaunchMode.
      */
-    fun start(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
+    fun start(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
         mTransactionDelegate!!.dispatchStartTransaction(mFragment!!.fragmentManager, mSupportF,
                 toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD)
     }
@@ -471,7 +471,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     /**
      * Launch an fragment for which you would like a result when it poped.
      */
-    fun startForResult(toFragment: ISupportFragment, requestCode: Int) {
+    fun startForResult(toFragment: ISupportFragment?, requestCode: Int) {
         mTransactionDelegate!!.dispatchStartTransaction(mFragment!!.fragmentManager, mSupportF,
                 toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT)
     }
@@ -479,40 +479,40 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     /**
      * Start the target Fragment and pop itself
      */
-    fun startWithPop(toFragment: ISupportFragment) {
+    fun startWithPop(toFragment: ISupportFragment?) {
         mTransactionDelegate!!.startWithPop(mFragment!!.fragmentManager, mSupportF, toFragment)
     }
 
-    fun startWithPopTo(toFragment: ISupportFragment, targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
         mTransactionDelegate!!.startWithPopTo(mFragment!!.fragmentManager, mSupportF, toFragment,
                 targetFragmentClass.name, includeTargetFragment)
     }
 
-    fun replaceFragment(toFragment: ISupportFragment, addToBackStack: Boolean) {
+    fun replaceFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
         mTransactionDelegate!!.dispatchStartTransaction(mFragment!!.fragmentManager, mSupportF,
                 toFragment, 0, ISupportFragment.STANDARD,
                 if (addToBackStack) TransactionDelegate.TYPE_REPLACE else TransactionDelegate.TYPE_REPLACE_DONT_BACK)
     }
 
-    fun startChild(toFragment: ISupportFragment) {
+    fun startChild(toFragment: ISupportFragment?) {
         startChild(toFragment, ISupportFragment.STANDARD)
     }
 
-    fun startChild(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
+    fun startChild(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
         mTransactionDelegate!!.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
                 toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD)
     }
 
-    fun startChildForResult(toFragment: ISupportFragment, requestCode: Int) {
+    fun startChildForResult(toFragment: ISupportFragment?, requestCode: Int) {
         mTransactionDelegate!!.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
                 toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT)
     }
 
-    fun startChildWithPop(toFragment: ISupportFragment) {
+    fun startChildWithPop(toFragment: ISupportFragment?) {
         mTransactionDelegate!!.startWithPop(getChildFragmentManager(), getTopFragment(), toFragment)
     }
 
-    fun replaceChildFragment(toFragment: ISupportFragment, addToBackStack: Boolean) {
+    fun replaceChildFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
         mTransactionDelegate!!.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
                 toFragment, 0, ISupportFragment.STANDARD,
                 if (addToBackStack) TransactionDelegate.TYPE_REPLACE else TransactionDelegate.TYPE_REPLACE_DONT_BACK)

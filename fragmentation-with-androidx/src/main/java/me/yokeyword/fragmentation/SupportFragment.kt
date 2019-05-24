@@ -269,11 +269,11 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @param containerId 容器id
      * @param toFragment  目标Fragment
      */
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment) {
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?) {
         mDelegate.loadRootFragment(containerId, toFragment)
     }
 
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment,
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?,
                          addToBackStack: Boolean, allowAnim: Boolean) {
         mDelegate.loadRootFragment(containerId, toFragment, addToBackStack, allowAnim)
     }
@@ -295,39 +295,39 @@ open class SupportFragment : Fragment(), ISupportFragment {
      *
      * @param showFragment 需要show的Fragment
      */
-    fun showHideFragment(showFragment: ISupportFragment) {
+    fun showHideFragment(showFragment: ISupportFragment?) {
         mDelegate.showHideFragment(showFragment)
     }
 
     /**
      * show一个Fragment,hide一个Fragment ; 主要用于类似微信主页那种 切换tab的情况
      */
-    fun showHideFragment(showFragment: ISupportFragment, hideFragment: ISupportFragment) {
+    fun showHideFragment(showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
         mDelegate.showHideFragment(showFragment, hideFragment)
     }
 
-    fun start(toFragment: ISupportFragment) {
+    fun start(toFragment: ISupportFragment?) {
         mDelegate.start(toFragment)
     }
 
     /**
      * @param launchMode Similar to Activity's LaunchMode.
      */
-    fun start(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
+    fun start(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
         mDelegate.start(toFragment, launchMode)
     }
 
     /**
      * Launch an fragment for which you would like a result when it poped.
      */
-    fun startForResult(toFragment: ISupportFragment, requestCode: Int) {
+    fun startForResult(toFragment: ISupportFragment?, requestCode: Int) {
         mDelegate.startForResult(toFragment, requestCode)
     }
 
     /**
      * Start the target Fragment and pop itself
      */
-    fun startWithPop(toFragment: ISupportFragment) {
+    fun startWithPop(toFragment: ISupportFragment?) {
         mDelegate.startWithPop(toFragment)
     }
 
@@ -335,13 +335,13 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @see .popTo
      * @see .start
      */
-    fun startWithPopTo(toFragment: ISupportFragment, targetFragmentClass: Class<*>,
+    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>,
                        includeTargetFragment: Boolean) {
         mDelegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
     }
 
 
-    fun replaceFragment(toFragment: ISupportFragment, addToBackStack: Boolean) {
+    fun replaceFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
         mDelegate.replaceFragment(toFragment, addToBackStack)
     }
 
