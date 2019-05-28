@@ -15,8 +15,8 @@ object Publish {
     const val groupId = "me.xia" //jcenter上的路径
     const val publishVersion = "1.0.8" //版本号
     const val desc = "Oh hi, this is a nice description for a project, right?"
-    const val website = "https://github.com/wexia/fragmentation-androidx"
-    const val gitUrl = "https://github.com/wexia/fragmentation-androidx.git"
+    const val website = "https://github.com/tiamosu/fragmentation-androidx"
+    const val gitUrl = "https://github.com/tiamosu/fragmentation-androidx.git"
     const val email = "djy2009wenbi@gmail.com"
 }
 
