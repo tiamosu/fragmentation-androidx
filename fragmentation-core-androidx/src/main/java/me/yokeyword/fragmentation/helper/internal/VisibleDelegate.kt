@@ -160,7 +160,7 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
     }
 
     private fun isParentInvisible(): Boolean {
-        val fragment = mFragment.parentFragment as ISupportFragment?
+        val fragment = mFragment.parentFragment as? ISupportFragment
         return fragment != null && !fragment.isSupportVisible()
     }
 

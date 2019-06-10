@@ -70,6 +70,9 @@ object FragmentationMagician {
             return false
         }
         try {
+            if (sSupportGreaterThan27dot1dot0) {
+                return fragmentManager.isStateSaved()
+            }
             return fragmentManager.mStateSaved
         } catch (e: Exception) {
             e.printStackTrace()
@@ -164,11 +167,11 @@ object FragmentationMagician {
         if (fragmentManager !is FragmentManagerImpl) {
             return
         }
-
         if (isStateSaved(fragmentManager)) {
+            val tempStateSaved = fragmentManager.mStateSaved
             fragmentManager.mStateSaved = false
             compatRunAction(fragmentManager, runnable)
-            fragmentManager.mStateSaved = true
+            fragmentManager.mStateSaved = tempStateSaved
         } else {
             runnable.run()
         }
@@ -186,9 +189,9 @@ object FragmentationMagician {
             runnable.run()
             return
         }
-
+        val tempStopped = fragmentManagerImpl.mStopped
         fragmentManagerImpl.mStopped = false
         runnable.run()
-        fragmentManagerImpl.mStopped = true
+        fragmentManagerImpl.mStopped = tempStopped
     }
 }

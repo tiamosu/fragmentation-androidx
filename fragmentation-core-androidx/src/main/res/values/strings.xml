@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fragmentation_stack_view">Stack</string>
+    <string name="fragmentation_stack_help">*: Not in backStack\n*: Visible</string>
+</resources>

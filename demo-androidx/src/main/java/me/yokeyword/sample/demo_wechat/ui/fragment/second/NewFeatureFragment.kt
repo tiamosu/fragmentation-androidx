@@ -41,6 +41,14 @@ class NewFeatureFragment : BaseBackFragment() {
                     .start(CycleFragment.newInstance(0))
         }
 
+        // 启动一个DialogFragment
+        view.findViewById<View>(R.id.btn_dialog).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                val dialogFragment = DemoDialogFragment.newInstance()
+                dialogFragment.show(fragmentManager, javaClass.simpleName)
+            }
+        })
+
         return attachToSwipeBack(view)
     }
 

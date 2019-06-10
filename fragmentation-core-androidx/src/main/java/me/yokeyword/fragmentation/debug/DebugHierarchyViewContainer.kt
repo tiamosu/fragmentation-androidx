@@ -73,7 +73,7 @@ class DebugHierarchyViewContainer @JvmOverloads constructor(
         mTitleLayout!!.layoutParams = flParams
 
         val title = AppCompatTextView(mContext!!)
-        title.text = "栈视图(Stack)"
+        title.text = mContext!!.getString(R.string.fragmentation_stack_view)
         title.textSize = 20f
         title.setTextColor(Color.BLACK)
         val p = LinearLayoutCompat.LayoutParams(
@@ -89,7 +89,9 @@ class DebugHierarchyViewContainer @JvmOverloads constructor(
         params.leftMargin = dip2px(16f)
         params.gravity = Gravity.CENTER_VERTICAL
         img.layoutParams = params
-        mTitleLayout!!.setOnClickListener { Toast.makeText(mContext, "* means not in backBack.", Toast.LENGTH_SHORT).show() }
+        mTitleLayout!!.setOnClickListener {
+            Toast.makeText(mContext, R.string.fragmentation_stack_help, Toast.LENGTH_LONG).show()
+        }
         mTitleLayout!!.addView(img)
         return mTitleLayout!!
     }

@@ -66,9 +66,7 @@ class Fragmentation internal constructor(builder: FragmentationBuilder) {
         /**
          * Sets the mode to display the stack view
          *
-         *
          * None if debug(false).
-         *
          *
          * Default:NONE
          */
@@ -86,13 +84,8 @@ class Fragmentation internal constructor(builder: FragmentationBuilder) {
         }
 
         fun install(): Fragmentation? {
-            synchronized(Fragmentation::class.java) {
-                if (INSTANCE != null) {
-                    throw RuntimeException("Default instance already exists." + " It may be only set once before it's used the first time to ensure consistent behavior.")
-                }
-                INSTANCE = Fragmentation(this)
-                return INSTANCE
-            }
+            INSTANCE = Fragmentation(this)
+            return INSTANCE
         }
     }
 

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
@@ -61,6 +62,7 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
     private var mContentLeft: Int = 0
     private var mContentTop: Int = 0
+    private var mSwipeAlpha = 0.5f
 
     /**
      * The set of listeners to be sent events through.
@@ -78,12 +80,21 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     }
 
     /**
+     * 滑动中，上一个页面View的阴影透明度
+     *
+     * @param alpha 0.0f:无阴影, 1.0f:较重的阴影, 默认:0.5f
+     */
+    fun setSwipeAlpha(@FloatRange(from = 0.0, to = 1.0) alpha: Float) {
+        this.mSwipeAlpha = alpha
+    }
+
+    /**
      * Set scroll threshold, we will close the activity, when scrollPercent over
      * this value
      *
      * @param threshold
      */
-    fun setScrollThresHold(threshold: Float) {
+    fun setScrollThresHold(@FloatRange(from = 0.0, to = 1.0) threshold: Float) {
         if (threshold >= 1.0f || threshold <= 0) {
             throw IllegalArgumentException("Threshold value should be between 0 and 1.0")
         }
@@ -184,7 +195,7 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
     private fun drawScrim(canvas: Canvas, child: View) {
         val baseAlpha = (DEFAULT_SCRIM_COLOR and -0x1000000).ushr(24)
-        val alpha = (baseAlpha * mScrimOpacity).toInt()
+        val alpha = (baseAlpha * mScrimOpacity * mSwipeAlpha).toInt()
         val color = alpha shl 24
 
         if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {

@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager
  * Created by YoKey on 17/12/28.
  */
 abstract class Action {
-
     var mFragmentManager: FragmentManager? = null
     var mAction = ACTION_NORMAL
     var mDuration: Long = 0

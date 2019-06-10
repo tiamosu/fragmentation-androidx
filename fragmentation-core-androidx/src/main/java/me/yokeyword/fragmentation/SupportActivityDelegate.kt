@@ -25,6 +25,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
             throw RuntimeException("Must extends FragmentActivity/AppCompatActivity")
         }
         this.mActivity = mSupport
+        this.mDebugStackDelegate = DebugStackDelegate(mActivity)
     }
 
     /**
@@ -38,8 +39,6 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
 
     fun onCreate() {
         mTransactionDelegate = getTransactionDelegate()
-        mDebugStackDelegate = DebugStackDelegate(mActivity)
-
         mFragmentAnimator = mSupport.onCreateFragmentAnimator()
         mDebugStackDelegate!!.onCreate(Fragmentation.getDefault().getMode())
     }
@@ -71,7 +70,8 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         this.mFragmentAnimator = fragmentAnimator
 
-        val fragmentList = FragmentationMagician.getActiveFragments(getSupportFragmentManager()) ?: return
+        val fragmentList = FragmentationMagician.getActiveFragments(getSupportFragmentManager())
+                ?: return
         for (fragment in fragmentList) {
             if (fragment is ISupportFragment) {
                 val delegate = fragment.getSupportDelegate()

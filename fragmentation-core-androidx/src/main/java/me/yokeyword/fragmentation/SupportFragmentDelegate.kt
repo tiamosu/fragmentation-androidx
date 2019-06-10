@@ -576,7 +576,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun popQuiet() {
-        mTransactionDelegate!!.popQuiet(mFragment!!.fragmentManager)
+        mTransactionDelegate!!.popQuiet(mFragment!!.fragmentManager, mFragment)
     }
 
     private fun getChildFragmentManager(): FragmentManager {
@@ -674,7 +674,6 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
         }
         return null
     }

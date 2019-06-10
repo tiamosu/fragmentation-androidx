@@ -19,8 +19,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation.Fragmentation
+import me.yokeyword.fragmentation.ISupportFragment
 import me.yokeyword.fragmentation.R
 import java.util.*
+
 
 /**
  * Created by YoKey on 17/6/13.
@@ -192,7 +194,7 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
             }
             var name: CharSequence = fragment.javaClass.simpleName
             if (backStackCount == 0) {
-                name = span(name)
+                name = span(name, " *")
             } else {
                 for (j in 0 until backStackCount) {
                     val entry = fragment.fragmentManager!!.getBackStackEntryAt(j)
@@ -200,17 +202,21 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
                         break
                     }
                     if (j == backStackCount - 1) {
-                        name = span(name)
+                        name = span(name, " *")
                     }
                 }
+            }
+
+            if ((fragment as? ISupportFragment)?.isSupportVisible() == true) {
+                name = span(name, " ☀")
             }
             fragmentRecords.add(DebugFragmentRecord(name, getChildFragmentRecords(fragment)))
         }
     }
 
-    private fun span(name: CharSequence): CharSequence {
+    private fun span(name: CharSequence, string: String): CharSequence {
         var nameTemp = name
-        nameTemp = "$nameTemp *"
+        nameTemp = nameTemp.toString() + string
         return nameTemp
     }
 

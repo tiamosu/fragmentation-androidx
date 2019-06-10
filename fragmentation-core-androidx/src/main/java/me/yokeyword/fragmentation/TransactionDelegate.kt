@@ -212,11 +212,12 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         }
     }
 
-    internal fun popQuiet(fm: FragmentManager?) {
+    internal fun popQuiet(fm: FragmentManager?, fragment: Fragment?) {
         enqueue(fm, object : Action(ACTION_POP_MOCK) {
             override fun run() {
                 mSupport.getSupportDelegate().mPopMultipleNoAnim = true
                 removeTopFragment(fm)
+                FragmentationMagician.popBackStackAllowingStateLoss(fm, fragment?.tag, 0)
                 FragmentationMagician.popBackStackAllowingStateLoss(fm)
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
                 mSupport.getSupportDelegate().mPopMultipleNoAnim = false
