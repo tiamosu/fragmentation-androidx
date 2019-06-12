@@ -3,12 +3,10 @@ package me.yokeyword.fragmentation
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-
-import java.util.ArrayList
-
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentationMagician
+import java.util.*
 
 /**
  * Created by YoKey on 17/6/13.
@@ -25,9 +23,9 @@ object SupportHelper {
         if (view == null || view.context == null) {
             return
         }
-        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         view.requestFocus()
-        view.postDelayed({ imm.showSoftInput(view, InputMethodManager.SHOW_FORCED) }, SHOW_SPACE)
+        view.postDelayed({ imm?.showSoftInput(view, InputMethodManager.SHOW_FORCED) }, SHOW_SPACE)
     }
 
     /**
@@ -38,8 +36,8 @@ object SupportHelper {
         if (view == null || view.context == null) {
             return
         }
-        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**
@@ -72,10 +70,7 @@ object SupportHelper {
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
-                if (containerId == 0) {
-                    return fragment
-                }
-                if (containerId == fragment.getSupportDelegate().mContainerId) {
+                if (containerId == 0 || containerId == fragment.getSupportDelegate().mContainerId) {
                     return fragment
                 }
             }
@@ -138,22 +133,18 @@ object SupportHelper {
         if (toFragmentTag == null) {
             val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager)
                     ?: return null
-
             val sizeChildFrgList = fragmentList.size
             for (i in sizeChildFrgList - 1 downTo 0) {
                 val brotherFragment = fragmentList[i]
-                if (brotherFragment is ISupportFragment && brotherFragment.javaClass.name == fragmentClass!!.name) {
+                if (brotherFragment is ISupportFragment && brotherFragment.javaClass.name == fragmentClass?.name) {
                     fragment = brotherFragment
                     break
                 }
             }
         } else {
-            fragment = fragmentManager?.findFragmentByTag(toFragmentTag)
-            if (fragment == null) {
-                return null
-            }
+            fragment = fragmentManager?.findFragmentByTag(toFragmentTag) ?: return null
         }
-        return fragment as T?
+        return fragment as? T
     }
 
     private fun getActiveFragment(fragmentManager: FragmentManager, parentFragment: ISupportFragment?): ISupportFragment? {
@@ -163,7 +154,7 @@ object SupportHelper {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
                 if (fragment.isResumed && !fragment.isHidden && fragment.userVisibleHint) {
-                    return getActiveFragment(fragment.childFragmentManager, fragment as ISupportFragment)
+                    return getActiveFragment(fragment.childFragmentManager, fragment)
                 }
             }
         }
@@ -188,11 +179,8 @@ object SupportHelper {
             val entry = fragmentManager?.getBackStackEntryAt(i)
             val fragment = fragmentManager?.findFragmentByTag(entry?.name)
             if (fragment is ISupportFragment) {
-                val supportFragment = fragment as ISupportFragment?
-                if (containerId == 0) {
-                    return supportFragment
-                }
-                if (containerId == supportFragment!!.getSupportDelegate().mContainerId) {
+                val supportFragment = fragment as? ISupportFragment
+                if (containerId == 0 || containerId == supportFragment?.getSupportDelegate()?.mContainerId) {
                     return supportFragment
                 }
             }
@@ -215,7 +203,7 @@ object SupportHelper {
             if (toFragmentTagTemp == entry?.name) {
                 val fragment = fragmentManager?.findFragmentByTag(entry?.name)
                 if (fragment is ISupportFragment) {
-                    return fragment as T?
+                    return fragment as? T
                 }
             }
         }
