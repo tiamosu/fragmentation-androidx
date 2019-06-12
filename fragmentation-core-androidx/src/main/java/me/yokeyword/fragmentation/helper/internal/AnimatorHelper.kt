@@ -10,7 +10,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
 /**
  * @Hide Created by YoKeyword on 16/7/26.
  */
-class AnimatorHelper(private val mContext: Context, fragmentAnimator: FragmentAnimator) {
+class AnimatorHelper(private val mContext: Context, fragmentAnimator: FragmentAnimator?) {
     var mEnterAnim: Animation? = null
     var mExitAnim: Animation? = null
     var mPopEnterAnim: Animation? = null
@@ -45,10 +45,10 @@ class AnimatorHelper(private val mContext: Context, fragmentAnimator: FragmentAn
         return mNoneAnimFixed!!
     }
 
-    fun compatChildFragmentExitAnim(fragment: Fragment): Animation? {
-        if ((fragment.tag != null
+    fun compatChildFragmentExitAnim(fragment: Fragment?): Animation? {
+        if ((fragment?.tag != null
                         && fragment.tag!!.startsWith("android:switcher:")
-                        && fragment.userVisibleHint) || (fragment.parentFragment != null
+                        && fragment.userVisibleHint) || (fragment?.parentFragment != null
                         && fragment.parentFragment!!.isRemoving
                         && !fragment.isHidden)) {
             val animation = object : Animation() {}

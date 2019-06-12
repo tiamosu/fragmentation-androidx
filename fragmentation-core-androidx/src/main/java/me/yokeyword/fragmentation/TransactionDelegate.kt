@@ -56,11 +56,11 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         })
     }
 
-    internal fun loadMultipleRootTransaction(fm: FragmentManager, containerId: Int,
+    internal fun loadMultipleRootTransaction(fm: FragmentManager?, containerId: Int,
                                              showPosition: Int, tos: Array<out ISupportFragment?>) {
         enqueue(fm, object : Action(ACTION_LOAD) {
             override fun run() {
-                val ft = fm.beginTransaction()
+                val ft = fm?.beginTransaction()
                 for (i in tos.indices) {
                     val to = tos[i] as Fragment
                     val args = getArguments(to)
@@ -68,10 +68,10 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                     bindContainerId(containerId, tos[i])
 
                     val toName = to.javaClass.name
-                    ft.add(containerId, to, toName)
+                    ft?.add(containerId, to, toName)
 
                     if (i != showPosition) {
-                        ft.hide(to)
+                        ft?.hide(to)
                     }
                 }
 
@@ -95,7 +95,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     /**
      * Show showFragment then hide hideFragment
      */
-    internal fun showHideFragment(fm: FragmentManager, showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
+    internal fun showHideFragment(fm: FragmentManager?, showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
         enqueue(fm, object : Action() {
             override fun run() {
                 doShowHideFragment(fm, showFragment, hideFragment)
@@ -133,7 +133,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     }
 
     internal fun startWithPopTo(fm: FragmentManager?, from: ISupportFragment?, to: ISupportFragment?,
-                                fragmentTag: String, includeTargetFragment: Boolean) {
+                                fragmentTag: String?, includeTargetFragment: Boolean) {
         enqueue(fm, object : Action(ACTION_POP_MOCK) {
             override fun run() {
                 var flag = 0
@@ -231,7 +231,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
      * @param targetFragmentTag     Tag
      * @param includeTargetFragment Whether it includes targetFragment
      */
-    internal fun popTo(targetFragmentTag: String, includeTargetFragment: Boolean,
+    internal fun popTo(targetFragmentTag: String?, includeTargetFragment: Boolean,
                        afterPopTransactionRunnable: Runnable?, fm: FragmentManager?, popAnim: Int) {
         enqueue(fm, object : Action(ACTION_POP_MOCK) {
             override fun run() {
@@ -258,9 +258,9 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         return false
     }
 
-    internal fun handleResultRecord(from: Fragment) {
+    internal fun handleResultRecord(from: Fragment?) {
         try {
-            val args = from.arguments ?: return
+            val args = from?.arguments ?: return
             val resultRecord = args.getParcelable<ResultRecord>(FRAGMENTATION_ARG_RESULT_RECORD)
                     ?: return
 
@@ -402,21 +402,21 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         supportCommit(fm, ft)
     }
 
-    private fun doShowHideFragment(fm: FragmentManager, showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
+    private fun doShowHideFragment(fm: FragmentManager?, showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
         if (showFragment === hideFragment || showFragment == null) {
             return
         }
 
-        val ft = fm.beginTransaction().show(showFragment as Fragment)
+        val ft = fm?.beginTransaction()?.show(showFragment as Fragment)
         if (hideFragment == null) {
             val fragmentList = FragmentationMagician.getActiveFragments(fm) ?: return
             for (fragment in fragmentList) {
                 if (fragment != null && fragment !== showFragment) {
-                    ft.hide(fragment)
+                    ft?.hide(fragment)
                 }
             }
         } else {
-            ft.hide((hideFragment as? Fragment)!!)
+            ft?.hide((hideFragment as? Fragment)!!)
         }
         supportCommit(fm, ft)
     }

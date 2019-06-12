@@ -89,8 +89,8 @@ object SupportHelper {
      * @param fragment 目标Fragment
      */
     @JvmStatic
-    fun getPreFragment(fragment: Fragment): ISupportFragment? {
-        val fragmentManager = fragment.fragmentManager ?: return null
+    fun getPreFragment(fragment: Fragment?): ISupportFragment? {
+        val fragmentManager = fragment?.fragmentManager ?: return null
         val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager) ?: return null
         val index = fragmentList.indexOf(fragment)
         for (i in index - 1 downTo 0) {
@@ -107,7 +107,7 @@ object SupportHelper {
      * find Fragment from FragmentStack
      */
     @JvmStatic
-    fun <T : ISupportFragment> findFragment(fragmentManager: FragmentManager?, fragmentClass: Class<T>): T? {
+    fun <T : ISupportFragment> findFragment(fragmentManager: FragmentManager?, fragmentClass: Class<T>?): T? {
         return findStackFragment(fragmentClass, null, fragmentManager)
     }
 

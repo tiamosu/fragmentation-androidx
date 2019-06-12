@@ -189,7 +189,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @see .popTo
      * @see .start
      */
-    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>,
+    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>?,
                        includeTargetFragment: Boolean) {
         mDelegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
     }
@@ -218,7 +218,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @param targetFragmentClass   目标fragment
      * @param includeTargetFragment 是否包含该fragment
      */
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+    fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
         mDelegate.popTo(targetFragmentClass, includeTargetFragment)
     }
 
@@ -226,13 +226,13 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * If you want to begin another FragmentTransaction immediately after popTo(), use this method.
      * 如果你想在出栈后, 立刻进行FragmentTransaction操作，请使用该方法
      */
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
-              afterPopTransactionRunnable: Runnable) {
+    fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
+              afterPopTransactionRunnable: Runnable?) {
         mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
     }
 
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
-              afterPopTransactionRunnable: Runnable, popAnim: Int) {
+    fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
+              afterPopTransactionRunnable: Runnable?, popAnim: Int) {
         mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
     }
 
@@ -255,7 +255,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
     /**
      * 获取栈内的fragment对象
      */
-    fun <T : ISupportFragment> findFragment(fragmentClass: Class<T>): T? {
+    fun <T : ISupportFragment> findFragment(fragmentClass: Class<T>?): T? {
         return SupportHelper.findFragment(supportFragmentManager, fragmentClass)
     }
 }

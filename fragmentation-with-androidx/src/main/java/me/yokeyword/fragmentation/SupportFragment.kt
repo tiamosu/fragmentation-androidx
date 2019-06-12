@@ -335,7 +335,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @see .popTo
      * @see .start
      */
-    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>,
+    fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>?,
                        includeTargetFragment: Boolean) {
         mDelegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
     }
@@ -366,7 +366,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @param targetFragmentClass   目标fragment
      * @param includeTargetFragment 是否包含该fragment
      */
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+    fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
         mDelegate.popTo(targetFragmentClass, includeTargetFragment)
     }
 
@@ -374,27 +374,27 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * If you want to begin another FragmentTransaction immediately after popTo(), use this method.
      * 如果你想在出栈后, 立刻进行FragmentTransaction操作，请使用该方法
      */
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
-              afterPopTransactionRunnable: Runnable) {
+    fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
+              afterPopTransactionRunnable: Runnable?) {
         mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
     }
 
-    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
-              afterPopTransactionRunnable: Runnable, popAnim: Int) {
+    fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
+              afterPopTransactionRunnable: Runnable?, popAnim: Int) {
         mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
     }
 
-    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+    fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
         mDelegate.popToChild(targetFragmentClass, includeTargetFragment)
     }
 
-    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
-                   afterPopTransactionRunnable: Runnable) {
+    fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
+                   afterPopTransactionRunnable: Runnable?) {
         mDelegate.popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
     }
 
-    fun popToChild(targetFragmentClass: Class<*>, includeTargetFragment: Boolean,
-                   afterPopTransactionRunnable: Runnable, popAnim: Int) {
+    fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
+                   afterPopTransactionRunnable: Runnable?, popAnim: Int) {
         mDelegate.popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
     }
 
@@ -419,14 +419,14 @@ open class SupportFragment : Fragment(), ISupportFragment {
     /**
      * 获取栈内的fragment对象
      */
-    fun <T : ISupportFragment> findFragment(fragmentClass: Class<T>): T? {
+    fun <T : ISupportFragment> findFragment(fragmentClass: Class<T>?): T? {
         return SupportHelper.findFragment(fragmentManager, fragmentClass)
     }
 
     /**
      * 获取栈内的fragment对象
      */
-    fun <T : ISupportFragment> findChildFragment(fragmentClass: Class<T>): T? {
+    fun <T : ISupportFragment> findChildFragment(fragmentClass: Class<T>?): T? {
         return SupportHelper.findFragment(childFragmentManager, fragmentClass)
     }
 }
