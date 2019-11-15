@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation.ISupportFragment
 
@@ -49,7 +50,7 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
         initVisible()
     }
 
-    fun initVisible() {
+    private fun initVisible() {
         if (!mInvisibleWhenLeave && !mFragment.isHidden && mFragment.userVisibleHint) {
             if (mFragment.parentFragment == null || isFragmentVisible(mFragment.parentFragment!!)) {
                 mNeedDispatch = false
@@ -91,13 +92,29 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
     fun onHiddenChanged(hidden: Boolean) {
         if (!hidden && !mFragment.isResumed) {
             //if fragment is shown but not resumed, ignore...
-            mInvisibleWhenLeave = false
+            //if fragment is shown but not resumed, ignore...
+            onFragmentShownWhenNotResumed()
             return
         }
         if (hidden) {
             safeDispatchUserVisibleHint(false)
         } else {
             enqueueDispatchVisible()
+        }
+    }
+
+    private fun onFragmentShownWhenNotResumed() {
+        mInvisibleWhenLeave = false
+        dispatchChildOnFragmentShownWhenNotResumed()
+    }
+
+    private fun dispatchChildOnFragmentShownWhenNotResumed() {
+        val fragmentManager: FragmentManager = mFragment.childFragmentManager
+        val childFragments = FragmentationMagician.getActiveFragments(fragmentManager) ?: return
+        for (child in childFragments) {
+            if (child is ISupportFragment && !child.isHidden && child.userVisibleHint) {
+                child.getSupportDelegate().getVisibleDelegate().onFragmentShownWhenNotResumed()
+            }
         }
     }
 
