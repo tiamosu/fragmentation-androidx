@@ -18,6 +18,8 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
     private var mInvisibleWhenLeave: Boolean = false
     private var mIsFirstVisible = true
     private var mFirstCreateViewCompatReplace = true
+    private var mAbortInitVisible = false
+    private var mTaskDispatchSupportVisible: Runnable? = null
 
     private var mHandler: Handler? = null
     private var mSaveInstanceState: Bundle? = null
@@ -44,6 +46,10 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
         if (mFirstCreateViewCompatReplace) {
             mFirstCreateViewCompatReplace = false
         }
+        initVisible()
+    }
+
+    fun initVisible() {
         if (!mInvisibleWhenLeave && !mFragment.isHidden && mFragment.userVisibleHint) {
             if (mFragment.parentFragment == null || isFragmentVisible(mFragment.parentFragment!!)) {
                 mNeedDispatch = false
@@ -58,10 +64,21 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
                 mNeedDispatch = false
                 dispatchSupportVisible(true)
             }
+        } else {
+            if (mAbortInitVisible) {
+                mAbortInitVisible = false
+                initVisible()
+            }
         }
     }
 
     fun onPause() {
+        if (mTaskDispatchSupportVisible != null) {
+            getHandler().removeCallbacks(mTaskDispatchSupportVisible)
+            mAbortInitVisible = true
+            return
+        }
+
         if (mIsSupportVisible && isFragmentVisible(mFragment)) {
             mNeedDispatch = false
             mInvisibleWhenLeave = false
@@ -110,7 +127,11 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
     }
 
     private fun enqueueDispatchVisible() {
-        getHandler().post { dispatchSupportVisible(true) }
+        mTaskDispatchSupportVisible = Runnable {
+            mTaskDispatchSupportVisible = null
+            dispatchSupportVisible(true)
+        }
+        getHandler().post(mTaskDispatchSupportVisible)
     }
 
     private fun dispatchSupportVisible(visible: Boolean) {

@@ -18,7 +18,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
 @Suppress("unused")
 open class SupportFragment : Fragment(), ISupportFragment {
     private val mDelegate = SupportFragmentDelegate(apply { })
-    private lateinit var mActivity: SupportActivity
+    private lateinit var mActivity: FragmentActivity
 
     override fun getSupportDelegate(): SupportFragmentDelegate {
         return mDelegate
@@ -39,7 +39,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mDelegate.onAttach(context)
-        mActivity = mDelegate.getActivity() as SupportActivity
+        mActivity = mDelegate.getActivity()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
