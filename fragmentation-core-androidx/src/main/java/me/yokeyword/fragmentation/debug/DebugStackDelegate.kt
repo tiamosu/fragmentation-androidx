@@ -22,6 +22,7 @@ import me.yokeyword.fragmentation.Fragmentation
 import me.yokeyword.fragmentation.ISupportFragment
 import me.yokeyword.fragmentation.R
 import java.util.*
+import kotlin.math.abs
 
 
 /**
@@ -74,7 +75,7 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
         val values = event.values
         if (sensorType == Sensor.TYPE_ACCELEROMETER) {
             val value = 12
-            if (Math.abs(values[0]) >= value || Math.abs(values[1]) >= value || Math.abs(values[2]) >= value) {
+            if (abs(values[0]) >= value || abs(values[1]) >= value || abs(values[2]) >= value) {
                 showFragmentStackHierarchyView()
             }
         }
@@ -239,8 +240,8 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
                     mDX = mStackView.x - event.rawX
                     mDY = mStackView.y - event.rawY
                 }
-                MotionEvent.ACTION_MOVE -> if (Math.abs(x - mDownX) < mClickLimitValue
-                        && Math.abs(y - mDownY) < mClickLimitValue && mIsClickState) {
+                MotionEvent.ACTION_MOVE -> if (abs(x - mDownX) < mClickLimitValue
+                        && abs(y - mDownY) < mClickLimitValue && mIsClickState) {
                     mIsClickState = true
                 } else {
                     mIsClickState = false

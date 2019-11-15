@@ -14,9 +14,9 @@ import me.yokeyword.fragmentation.ISupportFragment
 class VisibleDelegate(private val mSupportF: ISupportFragment) {
 
     // SupportVisible相关
-    private var mIsSupportVisible: Boolean = false
+    private var mIsSupportVisible = false
     private var mNeedDispatch = true
-    private var mInvisibleWhenLeave: Boolean = false
+    private var mInvisibleWhenLeave = false
     private var mIsFirstVisible = true
     private var mFirstCreateViewCompatReplace = true
     private var mAbortInitVisible = false

@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation_swipeback.R
 import me.yokeyword.fragmentation_swipeback.core.ISwipeBackActivity
 import java.util.*
+import kotlin.math.abs
 
 /**
  * Thx https://github.com/ikew0ng/SwipeBackLayout.
@@ -95,9 +96,7 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * @param threshold
      */
     fun setScrollThresHold(@FloatRange(from = 0.0, to = 1.0) threshold: Float) {
-        if (threshold >= 1.0f || threshold <= 0) {
-            throw IllegalArgumentException("Threshold value should be between 0 and 1.0")
-        }
+        require(!(threshold >= 1.0f || threshold <= 0)) { "Threshold value should be between 0 and 1.0" }
         mScrollFinishThreshold = threshold
     }
 
@@ -442,9 +441,9 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
         override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
             var ret = 0
             if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
-                ret = Math.min(child.width, Math.max(left, 0))
+                ret = child.width.coerceAtMost(left.coerceAtLeast(0))
             } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
-                ret = Math.min(0, Math.max(left, -child.width))
+                ret = 0.coerceAtMost(left.coerceAtLeast(-child.width))
             }
             return ret
         }
@@ -453,9 +452,9 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
             super.onViewPositionChanged(changedView, left, top, dx, dy)
 
             if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
-                mScrollPercent = Math.abs(left.toFloat() / (mContentView!!.width + mShadowLeft!!.intrinsicWidth))
+                mScrollPercent = abs(left.toFloat() / (mContentView!!.width + mShadowLeft!!.intrinsicWidth))
             } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
-                mScrollPercent = Math.abs(left.toFloat() / (mContentView!!.width + mShadowRight!!.intrinsicWidth))
+                mScrollPercent = abs(left.toFloat() / (mContentView!!.width + mShadowRight!!.intrinsicWidth))
             }
             mContentLeft = left
             mContentTop = top

@@ -337,9 +337,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         } else {
             if (from.getSupportDelegate().mContainerId == 0) {
                 val fromF = from as? Fragment
-                if (fromF?.tag != null && !fromF.tag!!.startsWith("android:switcher:")) {
-                    throw IllegalStateException("Can't find container, please call loadRootFragment() first!")
-                }
+                check(!(fromF?.tag != null && !fromF.tag!!.startsWith("android:switcher:"))) { "Can't find container, please call loadRootFragment() first!" }
             }
             SupportHelper.getTopFragment(fm, from.getSupportDelegate().mContainerId)
         }
@@ -606,16 +604,15 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             return null
         }
 
-        val container: View?
         val parentFragment = fragment.parentFragment
-        if (parentFragment != null) {
+        val container = if (parentFragment != null) {
             if (parentFragment.view != null) {
-                container = parentFragment.view!!.findViewById(containerId)
+                parentFragment.view!!.findViewById(containerId)
             } else {
-                container = findContainerById(parentFragment, containerId)
+                findContainerById(parentFragment, containerId)
             }
         } else {
-            container = mActivity.findViewById(containerId)
+            mActivity.findViewById(containerId)
         }
 
         return if (container is ViewGroup) {
