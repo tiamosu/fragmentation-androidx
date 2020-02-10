@@ -37,6 +37,6 @@ import android.util.Log
 class AfterSaveStateTransactionWarning(action: String) : RuntimeException("Warning: Perform this $action action after onSaveInstanceState!") {
 
     init {
-        Log.w("Fragmentation", message)
+        Log.w("Fragmentation", message ?: "")
     }
 }

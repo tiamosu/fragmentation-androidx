@@ -40,15 +40,17 @@ class ActionQueue(private val mMainHandler: Handler) {
         }
 
         val action = mQueue.peek()
-        action.run()
-
-        executeNextAction(action)
+        action?.apply {
+            run()
+            executeNextAction(this)
+        }
     }
 
     private fun executeNextAction(action: Action) {
         if (action.mAction == Action.ACTION_POP) {
             val top = SupportHelper.getBackStackTopFragment(action.mFragmentManager)
-            action.mDuration = top?.getSupportDelegate()?.getExitAnimDuration() ?: Action.DEFAULT_POP_TIME
+            action.mDuration = top?.getSupportDelegate()?.getExitAnimDuration()
+                    ?: Action.DEFAULT_POP_TIME
         }
 
         mMainHandler.postDelayed({
