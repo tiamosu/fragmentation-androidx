@@ -12,7 +12,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
 /**
  * Base class for activities that use the support-based
  * [ISupportFragment] and
- * [androidx.fragment.app.Fragment] APIs.
+ * [Fragment] APIs.
  * Created by YoKey on 17/6/22.
  */
 @Suppress("unused")

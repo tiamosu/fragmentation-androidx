@@ -42,6 +42,9 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
     }
 
     fun attachToSwipeBack(view: View): View? {
+        if (mSwipeBackLayout?.parent != null) {
+            onFragmentCreate()
+        }
         mSwipeBackLayout?.attachToFragment(mSupport, view)
         return mSwipeBackLayout
     }

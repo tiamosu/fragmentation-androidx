@@ -1,6 +1,6 @@
 package me.yokeyword.sample.demo_wechat.ui.fragment.second
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,9 +24,9 @@ class DemoDialogFragment : DialogFragment() {
 
     private var mActivity: FragmentActivity? = null
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
-        mActivity = activity as FragmentActivity?
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity = context as FragmentActivity?
     }
 
     /**
@@ -35,7 +35,7 @@ class DemoDialogFragment : DialogFragment() {
      *
      * 如果是SupportFragment打开，可以不用复写该方法， 放到post()中show亦可
      */
-    override fun show(manager: FragmentManager?, tag: String?) {
+    override fun show(manager: FragmentManager, tag: String?) {
         if (mActivity is ISupportActivity) {
             (mActivity as ISupportActivity).getSupportDelegate()
                     .post(Runnable { super@DemoDialogFragment.show(manager, tag) })

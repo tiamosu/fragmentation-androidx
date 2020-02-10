@@ -92,7 +92,6 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
     fun onHiddenChanged(hidden: Boolean) {
         if (!hidden && !mFragment.isResumed) {
             //if fragment is shown but not resumed, ignore...
-            //if fragment is shown but not resumed, ignore...
             onFragmentShownWhenNotResumed()
             return
         }

@@ -125,7 +125,6 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 removeTopFragment(fm)
                 FragmentationMagician.popBackStackAllowingStateLoss(fm)
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-                mHandler.post { FragmentationMagician.reorderIndices(fm) }
             }
         })
 
@@ -318,8 +317,6 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             dontAddToBackStack = transactionRecord.mDontAddToBackStack
             if (transactionRecord.mSharedElementList != null) {
                 sharedElementList = transactionRecord.mSharedElementList
-                // Compat SharedElement
-                FragmentationMagician.reorderIndices(fm)
             }
         }
 
@@ -520,10 +517,6 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         FragmentationMagician.popBackStackAllowingStateLoss(fm, fragmentTag, flag)
         FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
         mSupport.getSupportDelegate().mPopMultipleNoAnim = false
-
-        if (FragmentationMagician.isSupportLessThan25dot4()) {
-            mHandler.post { FragmentationMagician.reorderIndices(fm) }
-        }
     }
 
     private fun mockPopToAnim(from: Fragment, targetFragmentTag: String?, fm: FragmentManager?,
@@ -538,6 +531,9 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 ?: return
 
         val fromView = from.view ?: return
+        if (fromView.animation != null) {
+            fromView.clearAnimation()
+        }
 
         container.removeViewInLayout(fromView)
         val mock = addMockView(fromView, container)
@@ -556,9 +552,10 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             animation = AnimationUtils.loadAnimation(mActivity, popAnim)
         }
 
-        fromView.startAnimation(animation)
+        mock.startAnimation(animation)
         mHandler.postDelayed({
             try {
+                mock.clearAnimation()
                 mock.removeViewInLayout(fromView)
                 container.removeViewInLayout(mock)
             } catch (ignored: Exception) {
@@ -569,17 +566,20 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     private fun mockStartWithPopAnim(from: ISupportFragment?, to: ISupportFragment?, exitAnim: Animation?) {
         val fromF = from as? Fragment
         val fromView = fromF?.view ?: return
-        val container = findContainerById(fromF, from.getSupportDelegate().mContainerId) ?: return
+        if (fromView.animation != null) {
+            fromView.clearAnimation()
+        }
 
+        val container = findContainerById(fromF, from.getSupportDelegate().mContainerId) ?: return
         container.removeViewInLayout(fromView)
         val mock = addMockView(fromView, container)
 
         to?.getSupportDelegate()?.mEnterAnimListener = object : SupportFragmentDelegate.EnterAnimListener {
             override fun onEnterAnimStart() {
-                fromView.startAnimation(exitAnim)
-
+                mock.startAnimation(exitAnim)
                 mHandler.postDelayed({
                     try {
+                        mock.clearAnimation()
                         mock.removeViewInLayout(fromView)
                         container.removeViewInLayout(mock)
                     } catch (ignored: Exception) {

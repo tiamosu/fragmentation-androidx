@@ -45,7 +45,7 @@ class NewFeatureFragment : BaseBackFragment() {
         view.findViewById<View>(R.id.btn_dialog).setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 val dialogFragment = DemoDialogFragment.newInstance()
-                dialogFragment.show(fragmentManager, javaClass.simpleName)
+                dialogFragment.show(fragmentManager ?: return, javaClass.simpleName)
             }
         })
 

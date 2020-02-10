@@ -220,22 +220,24 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     }
 
     override fun computeScroll() {
-        mScrimOpacity = 1 - mScrollPercent
-        if (mScrimOpacity < 0) {
-            return
-        }
-        if (mViewDragHelper.continueSettling(true)) {
-            ViewCompat.postInvalidateOnAnimation(this)
-        }
-        if (mPreFragment?.view != null) {
-            if (mCallOnDestroyView) {
-                mPreFragment!!.view!!.x = 0f
+        if (mEnable) {
+            mScrimOpacity = 1 - mScrollPercent
+            if (mScrimOpacity < 0) {
                 return
             }
-            if (mViewDragHelper.capturedView != null) {
-                val leftOffset = ((mViewDragHelper.capturedView!!.left - width).toFloat()
-                        * mParallaxOffset * mScrimOpacity).toInt()
-                mPreFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
+            if (mViewDragHelper.continueSettling(true)) {
+                ViewCompat.postInvalidateOnAnimation(this)
+            }
+            if (mPreFragment?.view != null) {
+                if (mCallOnDestroyView) {
+                    mPreFragment!!.view!!.x = 0f
+                    return
+                }
+                if (mViewDragHelper.capturedView != null) {
+                    val leftOffset = ((mViewDragHelper.capturedView!!.left - width).toFloat()
+                            * mParallaxOffset * mScrimOpacity).toInt()
+                    mPreFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
+                }
             }
         }
     }

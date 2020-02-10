@@ -109,15 +109,8 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             mFragmentAnimator = savedInstanceState.getParcelable(TransactionDelegate.FRAGMENTATION_STATE_SAVE_ANIMATOR)
             mIsHidden = savedInstanceState.getBoolean(TransactionDelegate.FRAGMENTATION_STATE_SAVE_IS_HIDDEN)
             mContainerId = savedInstanceState.getInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER)
-
-            // RootFragment
-            if (mRootStatus != STATUS_UN_ROOT) {
-                FragmentationMagician.reorderIndices(mFragment?.fragmentManager)
-            }
         }
 
-        // Fix the overlapping BUG on pre-24.0.0
-        processRestoreInstanceState(savedInstanceState)
         mAnimHelper = AnimatorHelper(mActivity.applicationContext, mFragmentAnimator)
 
         val enter = getEnterAnim() ?: return
@@ -578,19 +571,6 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     private fun getTopFragment(): ISupportFragment? {
         return SupportHelper.getTopFragment(getChildFragmentManager())
-    }
-
-    private fun processRestoreInstanceState(savedInstanceState: Bundle?) {
-        val fragmentManager: FragmentManager? = mFragment?.fragmentManager
-        if (savedInstanceState != null && fragmentManager != null) {
-            val ft = fragmentManager.beginTransaction()
-            if (mIsHidden) {
-                ft.hide(mFragment!!)
-            } else {
-                ft.show(mFragment!!)
-            }
-            ft.commitAllowingStateLoss()
-        }
     }
 
     private fun fixAnimationListener(enterAnim: Animation?) {
