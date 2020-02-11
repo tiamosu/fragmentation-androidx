@@ -27,5 +27,5 @@ object Deps {
     const val cardview = "androidx.cardview:cardview:1.0.0"
     const val constraintlayout = "androidx.constraintlayout:constraintlayout:1.1.3"
     const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    const val eventbus = "org.greenrobot:eventbus:3.1.1"
+    const val eventbus = "org.greenrobot:eventbus:3.2.0"
 }
