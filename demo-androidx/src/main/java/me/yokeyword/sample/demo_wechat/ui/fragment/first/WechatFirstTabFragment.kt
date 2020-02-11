@@ -6,10 +6,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import org.greenrobot.eventbus.Subscribe
-
-import java.util.ArrayList
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +18,8 @@ import me.yokeyword.sample.demo_wechat.entity.Chat
 import me.yokeyword.sample.demo_wechat.event.TabSelectedEvent
 import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener
 import me.yokeyword.sample.demo_wechat.ui.fragment.MainFragment
+import org.greenrobot.eventbus.Subscribe
+import java.util.*
 
 /**
  * Created by YoKeyword on 16/6/30.

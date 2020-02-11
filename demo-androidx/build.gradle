@@ -6,20 +6,16 @@ apply {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':fragmentation-with-androidx')
-    implementation project(':fragmentation-swipeback-androidx')
+    api project(':fragmentation-with-androidx')
+    api project(':fragmentation-swipeback-androidx')
     // EventBus
-    implementation project(':eventbus-activity-scope-androidx')
-    implementation Deps.eventbus
+    api project(':eventbus-activity-scope-androidx')
+    api Deps.eventbus
 
-    implementation Deps.appcompat
-    implementation Deps.constraintlayout
-    implementation Deps.material
-    implementation Deps.cardview
-    implementation Deps.recyclerview
-    implementation Deps.swiperefreshlayout
-
-    implementation "androidx.core:core-ktx:1.2.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api Deps.appcompat
+    api Deps.material
+    api Deps.cardview
+    api Deps.recyclerview
+    api Deps.swiperefreshlayout
 }
 

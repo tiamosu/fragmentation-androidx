@@ -13,7 +13,7 @@ object Android {
 object Publish {
     const val userOrg = "weixia" //bintray.com用户名
     const val groupId = "me.xia" //jcenter上的路径
-    const val publishVersion = "1.1.3" //版本号
+    const val publishVersion = "1.1.4" //版本号
     const val desc = "Oh hi, this is a nice description for a project, right?"
     const val website = "https://github.com/tiamosu/fragmentation-androidx"
     const val gitUrl = "https://github.com/tiamosu/fragmentation-androidx.git"
@@ -22,10 +22,10 @@ object Publish {
 
 object Deps {
     const val appcompat = "androidx.appcompat:appcompat:1.1.0"
-    const val constraintlayout = "androidx.constraintlayout:constraintlayout:1.1.3"
     const val material = "com.google.android.material:material:1.1.0"
-    const val cardview = "androidx.cardview:cardview:1.0.0"
     const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
+    const val cardview = "androidx.cardview:cardview:1.0.0"
+    const val constraintlayout = "androidx.constraintlayout:constraintlayout:1.1.3"
     const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     const val eventbus = "org.greenrobot:eventbus:3.1.1"
 }
