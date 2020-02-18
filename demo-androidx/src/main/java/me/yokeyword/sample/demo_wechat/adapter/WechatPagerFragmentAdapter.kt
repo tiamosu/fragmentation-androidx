@@ -9,6 +9,7 @@ import me.yokeyword.sample.demo_wechat.ui.fragment.second.OtherPagerFragment
 /**
  * Created by YoKeyword on 16/6/5.
  */
+@Suppress("UNCHECKED_CAST")
 class WechatPagerFragmentAdapter(fm: FragmentManager, vararg titles: String) : FragmentPagerAdapter(fm) {
     private val mTitles: Array<String> = titles as Array<String>
 

@@ -16,7 +16,7 @@ import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener
 /**
  * Created by YoKeyword on 16/6/30.
  */
-class MsgAdapter(private val mContext: Context) : RecyclerView.Adapter<MsgAdapter.VH>() {
+class MsgAdapter(mContext: Context) : RecyclerView.Adapter<MsgAdapter.VH>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(mContext)
     private val mItems = ArrayList<Msg>()
     private var mClickListener: OnItemClickListener? = null

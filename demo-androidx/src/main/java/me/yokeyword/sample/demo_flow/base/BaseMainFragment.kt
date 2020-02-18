@@ -14,7 +14,7 @@ open class BaseMainFragment : MySupportFragment() {
     @JvmOverloads
     protected fun initToolbarNav(toolbar: Toolbar, isHome: Boolean = false) {
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp)
-        toolbar.setNavigationOnClickListener { v ->
+        toolbar.setNavigationOnClickListener {
             mOpenDraweListener?.onOpenDrawer()
         }
     }

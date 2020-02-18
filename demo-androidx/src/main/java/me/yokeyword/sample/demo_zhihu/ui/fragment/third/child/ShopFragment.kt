@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
-import java.util.ArrayList
-import java.util.Arrays
 import androidx.appcompat.widget.Toolbar
 import me.yokeyword.fragmentation.SupportFragment
 import me.yokeyword.sample.R
 import me.yokeyword.sample.demo_zhihu.ui.fragment.third.child.child.ContentFragment
 import me.yokeyword.sample.demo_zhihu.ui.fragment.third.child.child.MenuListFragment
+import java.util.*
 
 /**
  * Created by YoKeyword on 16/2/4.
@@ -31,7 +29,7 @@ class ShopFragment : SupportFragment() {
         mToolbar!!.setTitle(R.string.shop)
 
         if (findChildFragment(MenuListFragment::class.java) == null) {
-            val listMenus = ArrayList(Arrays.asList(*resources.getStringArray(R.array.array_menu)))
+            val listMenus = ArrayList(listOf(*resources.getStringArray(R.array.array_menu)))
             val menuListFragment = MenuListFragment.newInstance(listMenus)
             loadRootFragment(R.id.fl_list_container, menuListFragment)
             // false:  不加入回退栈;  false: 不显示动画

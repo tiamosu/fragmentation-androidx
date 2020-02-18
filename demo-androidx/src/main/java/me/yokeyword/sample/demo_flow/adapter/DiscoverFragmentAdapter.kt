@@ -8,6 +8,7 @@ import me.yokeyword.sample.demo_flow.ui.fragment.discover.PagerChildFragment
 /**
  * Created by YoKeyword on 16/2/5.
  */
+@Suppress("UNCHECKED_CAST")
 class DiscoverFragmentAdapter(fm: FragmentManager, vararg titles: String) : FragmentPagerAdapter(fm) {
     private val mTitles: Array<String> = titles as Array<String>
 

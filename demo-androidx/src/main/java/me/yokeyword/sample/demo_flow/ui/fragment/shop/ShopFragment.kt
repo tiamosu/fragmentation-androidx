@@ -29,7 +29,7 @@ class ShopFragment : BaseMainFragment() {
         initToolbarNav(mToolbar!!)
 
         if (findChildFragment(MenuListFragment::class.java) == null) {
-            val listMenus = ArrayList(Arrays.asList(*resources.getStringArray(R.array.array_menu)))
+            val listMenus = ArrayList(listOf(*resources.getStringArray(R.array.array_menu)))
             val menuListFragment = MenuListFragment.newInstance(listMenus)
             loadRootFragment(R.id.fl_list_container, menuListFragment)
             // false:  不加入回退栈;  false: 不显示动画
