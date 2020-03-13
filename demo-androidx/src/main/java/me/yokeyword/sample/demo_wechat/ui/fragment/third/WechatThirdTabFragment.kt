@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import me.yokeyword.fragmentation.SupportFragment
 import me.yokeyword.sample.R
 import me.yokeyword.sample.demo_wechat.adapter.HomeAdapter
-import me.yokeyword.sample.demo_wechat.base.BaseMainFragment
 import me.yokeyword.sample.demo_wechat.entity.Article
 import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener
 import me.yokeyword.sample.demo_wechat.ui.fragment.MainFragment
@@ -18,7 +18,7 @@ import java.util.*
 /**
  * Created by YoKeyword on 16/6/30.
  */
-class WechatThirdTabFragment : BaseMainFragment() {
+class WechatThirdTabFragment : SupportFragment() {
     private var mRecy: RecyclerView? = null
     private var mToolbar: Toolbar? = null
     private var mAdapter: HomeAdapter? = null

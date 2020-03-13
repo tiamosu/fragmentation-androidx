@@ -115,6 +115,7 @@
     <string name="send">发送</string>
     <string name="sign_in_success">登录成功,NavigationView的用户名已经更改!</string>
     <string name="can_swipe">可侧滑返回</string>
+    <string name="cant_swipe">不可以侧滑返回，不可以使用pop()，退出只能使用remove()</string>
     <string name="upper_process">传递给上层处理!</string>
 
     <string name="anim_v">设置全局动画成功! 竖向</string>

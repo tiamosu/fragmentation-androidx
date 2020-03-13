@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope
 import me.yokeyword.fragmentation.SupportFragment
 import me.yokeyword.sample.R
+import me.yokeyword.sample.demo_wechat.base.BaseMainFragment
 import me.yokeyword.sample.demo_wechat.event.TabSelectedEvent
 import me.yokeyword.sample.demo_wechat.ui.fragment.first.WechatFirstTabFragment
 import me.yokeyword.sample.demo_wechat.ui.fragment.second.WechatSecondTabFragment
@@ -17,7 +18,7 @@ import me.yokeyword.sample.demo_wechat.ui.view.BottomBarTab
 /**
  * Created by YoKeyword on 16/6/30.
  */
-class MainFragment : SupportFragment() {
+class MainFragment : BaseMainFragment() {
     private val mFragments = arrayOfNulls<SupportFragment>(3)
     private var mBottomBar: BottomBar? = null
 

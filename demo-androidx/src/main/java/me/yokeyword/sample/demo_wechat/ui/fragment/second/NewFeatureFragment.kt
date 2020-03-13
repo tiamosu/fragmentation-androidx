@@ -27,15 +27,14 @@ class NewFeatureFragment : BaseBackFragment() {
         // 自定义动画启动一个Fragment，并且不隐藏自己
         view.findViewById<View>(R.id.btn_start_dont_hide).setOnClickListener {
             extraTransaction()
-                    .setCustomAnimations(R.anim.v_fragment_enter, 0, 0, R.anim.v_fragment_exit)
+                    .setCustomAnimations(R.anim.v_fragment_enter, 0,
+                            0, R.anim.v_fragment_exit)
                     .startDontHideSelf(ViewFragment.newInstance())
         }
 
         // 自定义动画启动一个Fragment
         view.findViewById<View>(R.id.btn_start).setOnClickListener {
             extraTransaction()
-                    //                        .setTag("CustomTag")
-                    //                        . ...
                     .setCustomAnimations(R.anim.v_fragment_enter, R.anim.v_fragment_pop_exit,
                             R.anim.v_fragment_pop_enter, R.anim.v_fragment_exit)
                     .start(CycleFragment.newInstance(0))
@@ -48,6 +47,15 @@ class NewFeatureFragment : BaseBackFragment() {
                 dialogFragment.show(fragmentManager ?: return, javaClass.simpleName)
             }
         })
+
+        // 启动一个Fragment,不加入backstack
+        view.findViewById<View>(R.id.btn_dont_add_stack).setOnClickListener {
+            extraTransaction()
+                    .setCustomAnimations(R.anim.v_fragment_enter, R.anim.v_fragment_pop_exit,
+                            R.anim.v_fragment_pop_enter, R.anim.v_fragment_exit)
+                    .dontAddToBackStack()
+                    .start(DontAddStackFragment.newInstance())
+        }
 
         return attachToSwipeBack(view)
     }

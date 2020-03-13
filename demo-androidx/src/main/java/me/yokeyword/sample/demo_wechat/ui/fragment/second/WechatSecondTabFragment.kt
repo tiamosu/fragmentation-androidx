@@ -4,18 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import com.google.android.material.tabs.TabLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
+import me.yokeyword.fragmentation.SupportFragment
 import me.yokeyword.sample.R
 import me.yokeyword.sample.demo_wechat.adapter.WechatPagerFragmentAdapter
-import me.yokeyword.sample.demo_wechat.base.BaseMainFragment
 
 /**
  * Created by YoKeyword on 16/6/30.
  */
-class WechatSecondTabFragment : BaseMainFragment() {
+class WechatSecondTabFragment : SupportFragment() {
     private var mTab: TabLayout? = null
     private var mToolbar: Toolbar? = null
     private var mViewPager: ViewPager? = null

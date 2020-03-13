@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope
+import me.yokeyword.fragmentation.SupportFragment
 import me.yokeyword.sample.R
 import me.yokeyword.sample.demo_wechat.adapter.ChatAdapter
-import me.yokeyword.sample.demo_wechat.base.BaseMainFragment
 import me.yokeyword.sample.demo_wechat.entity.Chat
 import me.yokeyword.sample.demo_wechat.event.TabSelectedEvent
 import me.yokeyword.sample.demo_wechat.listener.OnItemClickListener
@@ -24,7 +24,7 @@ import java.util.*
 /**
  * Created by YoKeyword on 16/6/30.
  */
-class WechatFirstTabFragment : BaseMainFragment(), SwipeRefreshLayout.OnRefreshListener {
+class WechatFirstTabFragment : SupportFragment(), SwipeRefreshLayout.OnRefreshListener {
     private var mToolbar: Toolbar? = null
     private var mRefreshLayout: SwipeRefreshLayout? = null
     private var mRecy: RecyclerView? = null

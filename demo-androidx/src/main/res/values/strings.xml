@@ -114,6 +114,7 @@
     <string name="send">Send</string>
     <string name="sign_in_success">Sign in successful, NavigationView\'s name has changed</string>
     <string name="can_swipe">can be swipe-back</string>
+    <string name="cant_swipe">must use remove() to close ,don\'t use pop() or swipe-back</string>
     <string name="upper_process">Passed to the upper processing!</string>
 
     <string name="anim_v">Set animation: Vertical</string>
