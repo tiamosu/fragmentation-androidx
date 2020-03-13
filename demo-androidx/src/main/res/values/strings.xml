@@ -137,6 +137,9 @@
     <string name="action_anim_v">Set animation:Vertical(Default)</string>
     <string name="swipe_back">Swipe back</string>
 
+    <string name="go_login">Go LoginFragment</string>
+    <string name="go_main">Go MainFragment</string>
+
     <string name="time">2 days ago</string>
     <string name="msg">Msg</string>
     <string name="all">All</string>

@@ -141,6 +141,9 @@
     <string name="action_anim_v">设置全局动画成功! 竖向(默认)</string>
     <string name="swipe_back">侧滑返回</string>
 
+    <string name="go_login">到登录界面</string>
+    <string name="go_main">到主界面</string>
+
     <string name="time">前天</string>
     <string name="msg">消息</string>
     <string name="all">全部</string>

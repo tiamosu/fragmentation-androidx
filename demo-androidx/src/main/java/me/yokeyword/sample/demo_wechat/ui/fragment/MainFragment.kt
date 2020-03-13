@@ -78,10 +78,6 @@ class MainFragment : BaseMainFragment() {
         })
     }
 
-    override fun onFragmentResult(requestCode: Int, resultCode: Int, data: Bundle?) {
-        super.onFragmentResult(requestCode, resultCode, data)
-    }
-
     /**
      * start other BrotherFragment
      */
