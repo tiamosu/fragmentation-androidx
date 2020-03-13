@@ -97,6 +97,8 @@ abstract class ExtraTransaction {
 
     /**
      * Don't add this extraTransaction to the back stack.
+     * If you use this function to don't add to BackStack ,
+     * then you must call {@link [DontAddToBackStackTransaction] # [remove] } when leaving the fragment.
      */
     abstract fun dontAddToBackStack(): DontAddToBackStackTransaction
 

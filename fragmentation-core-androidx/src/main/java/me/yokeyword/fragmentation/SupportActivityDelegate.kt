@@ -71,7 +71,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
         this.mFragmentAnimator = fragmentAnimator
 
         val fragmentList = FragmentationMagician
-                .getActiveFragments(getSupportFragmentManager()) ?: return
+                .getAddedFragments(getSupportFragmentManager()) ?: return
         for (fragment in fragmentList) {
             if (fragment is ISupportFragment) {
                 val delegate = fragment.getSupportDelegate()
@@ -148,7 +148,7 @@ class SupportActivityDelegate(private val mSupport: ISupportActivity) {
                 }
 
                 // 获取activeFragment:即从栈顶开始 状态为show的那个Fragment
-                val activeFragment = SupportHelper.getActiveFragment(getSupportFragmentManager())
+                val activeFragment = SupportHelper.getAddedFragment(getSupportFragmentManager())
                 if (mTransactionDelegate?.dispatchBackPressedEvent(activeFragment) == true) {
                     return
                 }

@@ -5,7 +5,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentationMagician
+import androidx.fragment.app.FragmentationMagician.getAddedFragments
 import java.util.*
 
 /**
@@ -66,7 +66,7 @@ object SupportHelper {
 
     @JvmStatic
     fun getTopFragment(fragmentManager: FragmentManager?, containerId: Int): ISupportFragment? {
-        val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager) ?: return null
+        val fragmentList = getAddedFragments(fragmentManager) ?: return null
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
@@ -86,7 +86,7 @@ object SupportHelper {
     @JvmStatic
     fun getPreFragment(fragment: Fragment?): ISupportFragment? {
         val fragmentManager = fragment?.fragmentManager ?: return null
-        val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager) ?: return null
+        val fragmentList = getAddedFragments(fragmentManager) ?: return null
         val index = fragmentList.indexOf(fragment)
         for (i in index - 1 downTo 0) {
             val preFragment = fragmentList[i]
@@ -103,7 +103,7 @@ object SupportHelper {
      */
     @JvmStatic
     fun <T : ISupportFragment> findFragment(fragmentManager: FragmentManager?, fragmentClass: Class<T>?): T? {
-        return findStackFragment(fragmentClass, null, fragmentManager)
+        return findAddedFragment(fragmentClass, null, fragmentManager)
     }
 
     /**
@@ -114,24 +114,24 @@ object SupportHelper {
      */
     @JvmStatic
     fun <T : ISupportFragment> findFragment(fragmentManager: FragmentManager, fragmentTag: String): T? {
-        return findStackFragment(null, fragmentTag, fragmentManager)
+        return findAddedFragment(null, fragmentTag, fragmentManager)
     }
 
     /**
      * 从栈顶开始，寻找FragmentManager以及其所有子栈, 直到找到状态为show & userVisible的Fragment
      */
     @JvmStatic
-    fun getActiveFragment(fragmentManager: FragmentManager): ISupportFragment? {
-        return getActiveFragment(fragmentManager, null)
+    fun getAddedFragment(fragmentManager: FragmentManager): ISupportFragment? {
+        return getAddedFragment(fragmentManager, null)
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : ISupportFragment> findStackFragment(
+    private fun <T : ISupportFragment> findAddedFragment(
             fragmentClass: Class<T>?, toFragmentTag: String?, fragmentManager: FragmentManager?): T? {
 
         var fragment: Fragment? = null
         if (toFragmentTag == null) {
-            val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager)
+            val fragmentList = getAddedFragments(fragmentManager)
                     ?: return null
             val sizeChildFrgList = fragmentList.size
             for (i in sizeChildFrgList - 1 downTo 0) {
@@ -147,14 +147,16 @@ object SupportHelper {
         return fragment as? T
     }
 
-    private fun getActiveFragment(fragmentManager: FragmentManager, parentFragment: ISupportFragment?): ISupportFragment? {
-        val fragmentList = FragmentationMagician.getActiveFragments(fragmentManager)
-                ?: return parentFragment
+    private fun getAddedFragment(fragmentManager: FragmentManager, parentFragment: ISupportFragment?): ISupportFragment? {
+        val fragmentList = getAddedFragments(fragmentManager)
+        if (fragmentList == null || fragmentList.isEmpty()) {
+            return parentFragment
+        }
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
                 if (fragment.isResumed && !fragment.isHidden && fragment.userVisibleHint) {
-                    return getActiveFragment(fragment.childFragmentManager, fragment)
+                    return getAddedFragment(fragment.childFragmentManager, fragment)
                 }
             }
         }
@@ -188,6 +190,23 @@ object SupportHelper {
         return null
     }
 
+    /**
+     * Get the first Fragment from added list
+     */
+    fun getAddedFirstFragment(fragmentManager: FragmentManager?): ISupportFragment? {
+        val fragmentList = getAddedFragments(fragmentManager)
+        if (fragmentList == null || fragmentList.isEmpty()) {
+            return null
+        }
+        val fragment = fragmentList[0]
+        if (fragment is ISupportFragment) {
+            if (fragment.isResumed && !fragment.isHidden && fragment.userVisibleHint) {
+                return fragment
+            }
+        }
+        return null
+    }
+
     @Suppress("UNCHECKED_CAST")
     internal fun <T : ISupportFragment> findBackStackFragment(
             fragmentClass: Class<T>?, toFragmentTag: String?, fragmentManager: FragmentManager?): T? {
@@ -213,7 +232,7 @@ object SupportHelper {
     internal fun getWillPopFragments(fm: FragmentManager?, targetTag: String?, includeTarget: Boolean): List<Fragment> {
         val target = fm?.findFragmentByTag(targetTag)
         val willPopFragments = ArrayList<Fragment>()
-        val fragmentList = FragmentationMagician.getActiveFragments(fm) ?: return willPopFragments
+        val fragmentList = getAddedFragments(fm) ?: return willPopFragments
 
         val size = fragmentList.size
         var startIndex = -1

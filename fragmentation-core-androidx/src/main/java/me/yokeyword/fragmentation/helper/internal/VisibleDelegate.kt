@@ -51,7 +51,7 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
     }
 
     private fun initVisible() {
-        if (!mInvisibleWhenLeave && !mFragment.isHidden && mFragment.userVisibleHint) {
+        if (!mInvisibleWhenLeave && isFragmentVisible(mFragment)) {
             if (mFragment.parentFragment == null || isFragmentVisible(mFragment.parentFragment!!)) {
                 mNeedDispatch = false
                 safeDispatchUserVisibleHint(true)
@@ -109,7 +109,7 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
 
     private fun dispatchChildOnFragmentShownWhenNotResumed() {
         val fragmentManager: FragmentManager = mFragment.childFragmentManager
-        val childFragments = FragmentationMagician.getActiveFragments(fragmentManager) ?: return
+        val childFragments = FragmentationMagician.getAddedFragments(fragmentManager) ?: return
         for (child in childFragments) {
             if (child is ISupportFragment && !child.isHidden && child.userVisibleHint) {
                 child.getSupportDelegate().getVisibleDelegate().onFragmentShownWhenNotResumed()
@@ -187,7 +187,7 @@ class VisibleDelegate(private val mSupportF: ISupportFragment) {
                 return
             }
             val fragmentManager = mFragment.childFragmentManager
-            val childFragments = FragmentationMagician.getActiveFragments(fragmentManager) ?: return
+            val childFragments = FragmentationMagician.getAddedFragments(fragmentManager) ?: return
             for (child in childFragments) {
                 if (child is ISupportFragment && !child.isHidden && child.userVisibleHint) {
                     child.getSupportDelegate().getVisibleDelegate().dispatchSupportVisible(visible)

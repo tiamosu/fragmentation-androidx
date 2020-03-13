@@ -13,8 +13,6 @@ interface ISupportFragment {
 
     fun extraTransaction(): ExtraTransaction
 
-    fun enqueueAction(runnable: Runnable)
-
     fun post(runnable: Runnable)
 
     fun onEnterAnimationEnd(savedInstanceState: Bundle?)

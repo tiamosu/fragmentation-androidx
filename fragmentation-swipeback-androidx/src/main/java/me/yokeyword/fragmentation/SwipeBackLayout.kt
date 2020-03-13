@@ -417,7 +417,7 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
             if (mPreFragment == null) {
                 if (mFragment != null) {
                     val fragmentTemp = mFragment as Fragment
-                    val fragmentList = FragmentationMagician.getActiveFragments(
+                    val fragmentList = FragmentationMagician.getAddedFragments(
                             fragmentTemp.fragmentManager)
                     if (fragmentList != null && fragmentList.size > 1) {
                         val index = fragmentList.indexOf(fragmentTemp)

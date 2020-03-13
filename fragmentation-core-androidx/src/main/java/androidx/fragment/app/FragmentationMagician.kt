@@ -57,7 +57,7 @@ object FragmentationMagician {
         hookStateSaved(fragmentManager, Runnable { fragmentManager?.executePendingTransactions() })
     }
 
-    fun getActiveFragments(fragmentManager: FragmentManager?): List<Fragment?>? {
+    fun getAddedFragments(fragmentManager: FragmentManager?): List<Fragment?>? {
         return fragmentManager?.fragments
     }
 

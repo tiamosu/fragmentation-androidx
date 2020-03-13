@@ -38,7 +38,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mDelegate.onAttach(context)
+        mDelegate.onAttach()
         mActivity = mDelegate.getActivity() as SupportActivity
     }
 
@@ -86,25 +86,10 @@ open class SupportFragment : Fragment(), ISupportFragment {
         mDelegate.onHiddenChanged(hidden)
     }
 
+    @Suppress("DEPRECATION")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         mDelegate.setUserVisibleHint(isVisibleToUser)
-    }
-
-    /**
-     * Causes the Runnable r to be added to the action queue.
-     *
-     *
-     * The runnable will be run after all the previous action has been run.
-     *
-     *
-     * 前面的事务全部执行后 执行该Action
-     *
-     */
-    @Suppress("DEPRECATION")
-    @Deprecated("Use {@link #post(Runnable)} instead.")
-    override fun enqueueAction(runnable: Runnable) {
-        mDelegate.enqueueAction(runnable)
     }
 
     /**

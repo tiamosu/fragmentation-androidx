@@ -136,7 +136,7 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
     }
 
     private fun getFragmentRecords(): List<DebugFragmentRecord>? {
-        val fragmentList = FragmentationMagician.getActiveFragments(mActivity.supportFragmentManager)
+        val fragmentList = FragmentationMagician.getAddedFragments(mActivity.supportFragmentManager)
         if (fragmentList == null || fragmentList.isEmpty()) {
             return null
         }
@@ -175,7 +175,7 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
 
     private fun getChildFragmentRecords(parentFragment: Fragment): List<DebugFragmentRecord>? {
         val fragmentRecords = ArrayList<DebugFragmentRecord>()
-        val fragmentList = FragmentationMagician.getActiveFragments(parentFragment.childFragmentManager)
+        val fragmentList = FragmentationMagician.getAddedFragments(parentFragment.childFragmentManager)
         if (fragmentList == null || fragmentList.isEmpty()) {
             return null
         }

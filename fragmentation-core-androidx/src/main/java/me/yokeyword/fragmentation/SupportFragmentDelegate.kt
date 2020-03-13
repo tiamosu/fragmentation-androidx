@@ -1,14 +1,16 @@
 package me.yokeyword.fragmentation
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import me.yokeyword.fragmentation.anim.FragmentAnimator
 import me.yokeyword.fragmentation.helper.internal.AnimatorHelper
 import me.yokeyword.fragmentation.helper.internal.ResultRecord
@@ -20,28 +22,30 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     private lateinit var mActivity: FragmentActivity
     internal var mFragmentAnimator: FragmentAnimator? = null
     internal var mAnimHelper: AnimatorHelper? = null
-    internal var mLockAnim: Boolean = false
-    internal var mContainerId: Int = 0
+    internal var mLockAnim = false
+    internal var mContainerId = 0
     internal var mTransactionRecord: TransactionRecord? = null
     internal var mNewBundle: Bundle? = null
     internal var mAnimByActivity = true
     internal var mEnterAnimListener: EnterAnimListener? = null
     private var mRootStatus = STATUS_UN_ROOT
-    private var mIsSharedElement: Boolean = false
+    private var mIsSharedElement = false
     private var mCustomEnterAnim = Integer.MIN_VALUE
     private var mCustomExitAnim = Integer.MIN_VALUE
     private var mCustomPopExitAnim = Integer.MIN_VALUE
     private var mHandler: Handler? = null
     private var mFirstCreateView = true
-    private var mReplaceMode: Boolean = false
+    private var mReplaceMode = false
     private var mIsHidden = true
     private var mTransactionDelegate: TransactionDelegate? = null
+
     // SupportVisible
     private var mVisibleDelegate: VisibleDelegate? = null
     private var mSaveInstanceState: Bundle? = null
     private var mFragment: Fragment? = null
-    private var mSupport: ISupportActivity? = null
-    private var mRootViewClickable: Boolean = false
+    private var mSupportA: ISupportActivity? = null
+    private var mRootViewClickable = false
+
     private val mNotifyEnterAnimEndRunnable = Runnable {
         if (mFragment == null) {
             return@Runnable
@@ -75,17 +79,19 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
         if (mTransactionDelegate == null) {
             throw RuntimeException(mFragment?.javaClass?.simpleName + " not attach!")
         }
-        return ExtraTransaction.ExtraTransactionImpl((mSupport as? FragmentActivity),
+        return ExtraTransaction.ExtraTransactionImpl((mSupportA as? FragmentActivity),
                 mSupportF, mTransactionDelegate, false)
     }
 
-    fun onAttach(context: Context) {
-        if (context !is ISupportActivity) {
-            throw RuntimeException(context.javaClass.simpleName + " must impl ISupportActivity!")
+    fun onAttach() {
+        val activity = mFragment?.activity
+        if (activity !is ISupportActivity) {
+            throw RuntimeException(activity?.javaClass?.simpleName
+                    ?: "fragment" + " must impl ISupportActivity!")
         }
-        this.mSupport = context
-        this.mActivity = context as FragmentActivity
-        mTransactionDelegate = mSupport?.getSupportDelegate()?.getTransactionDelegate()
+        this.mSupportA = activity
+        this.mActivity = activity
+        mTransactionDelegate = mSupportA?.getSupportDelegate()?.getTransactionDelegate()
     }
 
     fun onCreate(savedInstanceState: Bundle?) {
@@ -117,9 +123,9 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
         getEnterAnim()?.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                mSupport?.getSupportDelegate()?.mFragmentClickable = false  // 开启防抖动
+                mSupportA?.getSupportDelegate()?.mFragmentClickable = false  // 开启防抖动
 
-                getHandler().postDelayed({ mSupport?.getSupportDelegate()?.mFragmentClickable = true }, enter.duration)
+                getHandler().postDelayed({ mSupportA?.getSupportDelegate()?.mFragmentClickable = true }, enter.duration)
             }
 
             override fun onAnimationEnd(animation: Animation) {}
@@ -129,7 +135,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        if (mSupport?.getSupportDelegate()?.mPopMultipleNoAnim == true || mLockAnim) {
+        if (mSupportA?.getSupportDelegate()?.mPopMultipleNoAnim == true || mLockAnim) {
             return if (transit == FragmentTransaction.TRANSIT_FRAGMENT_CLOSE && enter) {
                 mAnimHelper?.getNoneAnimFixed()
             } else mAnimHelper?.getNoneAnim()
@@ -203,7 +209,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun onDestroyView() {
-        mSupport?.getSupportDelegate()?.mFragmentClickable = true
+        mSupportA?.getSupportDelegate()?.mFragmentClickable = true
         getVisibleDelegate().onDestroyView()
         getHandler().removeCallbacks(mNotifyEnterAnimEndRunnable)
     }
@@ -218,21 +224,6 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     fun setUserVisibleHint(isVisibleToUser: Boolean) {
         getVisibleDelegate().setUserVisibleHint(isVisibleToUser)
-    }
-
-    /**
-     * Causes the Runnable r to be added to the action queue.
-     *
-     *
-     * The runnable will be run after all the previous action has been run.
-     *
-     *
-     * 前面的事务全部执行后 执行该Action
-     *
-     */
-    @Deprecated("Use {@link #post(Runnable)} instead.", ReplaceWith("post(runnable)"))
-    fun enqueueAction(runnable: Runnable) {
-        post(runnable)
     }
 
     /**
@@ -297,7 +288,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * 设定当前Fragmemt动画,优先级比在ISupportActivity里高
      */
     fun onCreateFragmentAnimator(): FragmentAnimator? {
-        return mSupport!!.getFragmentAnimator()
+        return mSupportA!!.getFragmentAnimator()
     }
 
     /**
@@ -309,7 +300,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
         if (mFragmentAnimator == null) {
             mFragmentAnimator = mSupportF.onCreateFragmentAnimator()
             if (mFragmentAnimator == null) {
-                mFragmentAnimator = mSupport?.getFragmentAnimator()
+                mFragmentAnimator = mSupportA?.getFragmentAnimator()
             }
         }
         return mFragmentAnimator
@@ -576,7 +567,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     private fun fixAnimationListener(enterAnim: Animation?) {
         // AnimationListener is not reliable.
         getHandler().postDelayed(mNotifyEnterAnimEndRunnable, enterAnim?.duration ?: 0)
-        mSupport?.getSupportDelegate()?.mFragmentClickable = true
+        mSupportA?.getSupportDelegate()?.mFragmentClickable = true
 
         if (mEnterAnimListener != null) {
             getHandler().post {
@@ -596,7 +587,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
             return
         }
 
-        val defaultBg = mSupport?.getSupportDelegate()?.getDefaultFragmentBackground() ?: 0
+        val defaultBg = mSupportA?.getSupportDelegate()?.getDefaultFragmentBackground() ?: 0
         if (defaultBg == 0) {
             val background = getWindowBackground()
             view.setBackgroundResource(background)
@@ -614,7 +605,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     private fun notifyEnterAnimEnd() {
         getHandler().post(mNotifyEnterAnimEndRunnable)
-        mSupport?.getSupportDelegate()?.mFragmentClickable = true
+        mSupportA?.getSupportDelegate()?.mFragmentClickable = true
     }
 
     private fun getHandler(): Handler {

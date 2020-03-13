@@ -1,6 +1,7 @@
 package me.yokeyword.sample.demo_flow.base
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
@@ -32,9 +33,9 @@ abstract class MySupportFragment : Fragment(), ISupportFragment {
         return mDelegate.extraTransaction()
     }
 
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
-        mDelegate.onAttach(activity)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mDelegate.onAttach()
         mActivity = mDelegate.getActivity()
     }
 
@@ -85,21 +86,6 @@ abstract class MySupportFragment : Fragment(), ISupportFragment {
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         mDelegate.setUserVisibleHint(isVisibleToUser)
-    }
-
-    /**
-     * Causes the Runnable r to be added to the action queue.
-     *
-     *
-     * The runnable will be run after all the previous action has been run.
-     *
-     *
-     * 前面的事务全部执行后 执行该Action
-     *
-     */
-    @Deprecated("Use {@link #post(Runnable)} instead.")
-    override fun enqueueAction(runnable: Runnable) {
-        mDelegate.enqueueAction(runnable)
     }
 
     /**

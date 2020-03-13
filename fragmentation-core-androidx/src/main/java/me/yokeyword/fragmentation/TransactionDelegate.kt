@@ -166,6 +166,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
 
     /**
      * Remove
+     * Only allowed in interfaces  {@link [ExtraTransaction.DontAddToBackStackTransaction] # [ExtraTransaction.remove] }
      */
     internal fun remove(fm: FragmentManager?, fragment: Fragment, showPreFragment: Boolean) {
         enqueue(fm, object : Action(ACTION_POP, fm) {
@@ -404,7 +405,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
 
         val ft = fm?.beginTransaction()?.show(showFragment as Fragment)
         if (hideFragment == null) {
-            val fragmentList = FragmentationMagician.getActiveFragments(fm) ?: return
+            val fragmentList = FragmentationMagician.getAddedFragments(fm) ?: return
             for (fragment in fragmentList) {
                 if (fragment != null && fragment !== showFragment) {
                     ft?.hide(fragment)
