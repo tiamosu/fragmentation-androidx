@@ -32,7 +32,6 @@ class DemoDialogFragment : DialogFragment() {
     /**
      * Enqueue the Fragmentation Queue.
      *
-     *
      * 如果是SupportFragment打开，可以不用复写该方法， 放到post()中show亦可
      */
     override fun show(manager: FragmentManager, tag: String?) {

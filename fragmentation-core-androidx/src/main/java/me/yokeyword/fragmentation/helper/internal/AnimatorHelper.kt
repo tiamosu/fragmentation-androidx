@@ -15,8 +15,10 @@ class AnimatorHelper(private val context: Context, fragmentAnimator: FragmentAni
     var exitAnim: Animation? = null
     var popEnterAnim: Animation? = null
     var popExitAnim: Animation? = null
-    private var noneAnim: Animation? = null
-    private var noneAnimFixed: Animation? = null
+
+    val noneAnim: Animation by lazy { AnimationUtils.loadAnimation(context, R.anim.no_anim) }
+    val noneAnimFixed: Animation by lazy { object : Animation() {} }
+
     private var fragmentAnimator: FragmentAnimator? = null
 
     init {
@@ -31,26 +33,12 @@ class AnimatorHelper(private val context: Context, fragmentAnimator: FragmentAni
         initPopExitAnim()
     }
 
-    fun getNoneAnim(): Animation {
-        if (noneAnim == null) {
-            noneAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim)
-        }
-        return noneAnim!!
-    }
-
-    fun getNoneAnimFixed(): Animation {
-        if (noneAnimFixed == null) {
-            noneAnimFixed = object : Animation() {}
-        }
-        return noneAnimFixed!!
-    }
-
+    @Suppress("DEPRECATION")
     fun compatChildFragmentExitAnim(fragment: Fragment?): Animation? {
-        if ((fragment?.tag != null
-                        && fragment.tag!!.startsWith("android:switcher:")
-                        && fragment.userVisibleHint) || (fragment?.parentFragment != null
-                        && fragment.parentFragment!!.isRemoving
-                        && !fragment.isHidden)) {
+        fragment ?: return null
+
+        if ((fragment.tag?.startsWith("android:switcher:") == true && fragment.userVisibleHint)
+                || (fragment.parentFragment?.isRemoving == true && !fragment.isHidden)) {
             val animation = object : Animation() {}
             animation.duration = exitAnim?.duration ?: 0
             return animation
@@ -59,37 +47,37 @@ class AnimatorHelper(private val context: Context, fragmentAnimator: FragmentAni
     }
 
     private fun initEnterAnim(): Animation? {
-        enterAnim = if (fragmentAnimator!!.getEnter() == 0) {
+        enterAnim = if (fragmentAnimator?.getEnter() == 0) {
             AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getEnter())
+            AnimationUtils.loadAnimation(context, fragmentAnimator?.getEnter() ?: 0)
         }
         return enterAnim
     }
 
     private fun initExitAnim(): Animation? {
-        exitAnim = if (fragmentAnimator!!.getExit() == 0) {
+        exitAnim = if (fragmentAnimator?.getExit() == 0) {
             AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getExit())
+            AnimationUtils.loadAnimation(context, fragmentAnimator?.getExit() ?: 0)
         }
         return exitAnim
     }
 
     private fun initPopEnterAnim(): Animation? {
-        popEnterAnim = if (fragmentAnimator!!.getPopEnter() == 0) {
+        popEnterAnim = if (fragmentAnimator?.getPopEnter() == 0) {
             AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getPopEnter())
+            AnimationUtils.loadAnimation(context, fragmentAnimator?.getPopEnter() ?: 0)
         }
         return popEnterAnim
     }
 
     private fun initPopExitAnim(): Animation? {
-        popExitAnim = if (fragmentAnimator!!.getPopExit() == 0) {
+        popExitAnim = if (fragmentAnimator?.getPopExit() == 0) {
             AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getPopExit())
+            AnimationUtils.loadAnimation(context, fragmentAnimator?.getPopExit() ?: 0)
         }
         return popExitAnim
     }

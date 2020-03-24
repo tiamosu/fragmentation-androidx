@@ -31,7 +31,6 @@ import android.util.Log
  * //        finish();
  * //    }
  *
- *
  * Created by YoKey on 17/12/26.
  */
 class AfterSaveStateTransactionWarning(action: String) : RuntimeException("Warning: Perform this $action action after onSaveInstanceState!") {

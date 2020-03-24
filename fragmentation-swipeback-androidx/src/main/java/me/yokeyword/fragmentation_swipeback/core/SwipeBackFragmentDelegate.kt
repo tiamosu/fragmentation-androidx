@@ -83,13 +83,12 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
     }
 
     private fun onFragmentCreate() {
-        if (fragment.context == null) {
-            return
-        }
+        if (fragment.context == null) return
+
         swipeBackLayout = SwipeBackLayout(fragment.context!!)
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        swipeBackLayout!!.layoutParams = params
-        swipeBackLayout!!.setBackgroundColor(Color.TRANSPARENT)
+        swipeBackLayout?.layoutParams = params
+        swipeBackLayout?.setBackgroundColor(Color.TRANSPARENT)
     }
 }

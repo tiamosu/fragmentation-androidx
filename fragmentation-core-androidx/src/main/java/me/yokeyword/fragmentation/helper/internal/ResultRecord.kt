@@ -9,7 +9,7 @@ import android.os.Parcelable
  * Created by YoKeyword on 16/6/2.
  */
 class ResultRecord : Parcelable {
-    var requestCode: Int = 0
+    var requestCode = 0
     var resultCode = 0
     var resultBundle: Bundle? = null
 

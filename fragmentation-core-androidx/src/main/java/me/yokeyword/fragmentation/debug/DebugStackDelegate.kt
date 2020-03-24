@@ -24,43 +24,41 @@ import me.yokeyword.fragmentation.R
 import java.util.*
 import kotlin.math.abs
 
-
 /**
  * Created by YoKey on 17/6/13.
  */
-
-class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventListener {
+class DebugStackDelegate(private val activity: FragmentActivity) : SensorEventListener {
     private var sensorManager: SensorManager? = null
     private var stackDialog: AlertDialog? = null
 
     fun onCreate(mode: Int) {
-        if (mode != Fragmentation.SHAKE) {
-            return
+        if (mode != Fragmentation.SHAKE) return
+
+        sensorManager = (activity.getSystemService(Context.SENSOR_SERVICE) as? SensorManager)?.also {
+            it.registerListener(this,
+                    sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                    SensorManager.SENSOR_DELAY_NORMAL)
         }
-        sensorManager = mActivity.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
-        sensorManager?.registerListener(this,
-                sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun onPostCreate(mode: Int) {
-        if (mode != Fragmentation.BUBBLE) {
-            return
-        }
-        val root = mActivity.findViewById<View>(android.R.id.content)
+        if (mode != Fragmentation.BUBBLE) return
+
+        val root = activity.findViewById<View>(android.R.id.content)
         if (root is FrameLayout) {
-            val stackView = AppCompatImageView(mActivity)
+            val stackView = AppCompatImageView(activity)
             stackView.setImageResource(R.drawable.fragmentation_ic_stack)
             val params = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             params.gravity = Gravity.END
             val dp18 = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 18f, mActivity.resources.displayMetrics).toInt()
+                    TypedValue.COMPLEX_UNIT_DIP, 18f, activity.resources.displayMetrics).toInt()
             params.topMargin = dp18 * 7
             params.rightMargin = dp18
             stackView.layoutParams = params
             root.addView(stackView)
+
             stackView.setOnTouchListener(StackViewTouchListener(stackView, dp18 / 4))
             stackView.setOnClickListener { showFragmentStackHierarchyView() }
         }
@@ -87,20 +85,20 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
      * 调试相关:以dialog形式 显示 栈视图
      */
     fun showFragmentStackHierarchyView() {
-        if (stackDialog?.isShowing == true) {
-            return
-        }
-        val container = DebugHierarchyViewContainer(mActivity)
+        if (stackDialog?.isShowing == true) return
+
+        val container = DebugHierarchyViewContainer(activity)
         container.bindFragmentRecords(getFragmentRecords())
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         container.layoutParams = params
-        stackDialog = AlertDialog.Builder(mActivity)
+
+        stackDialog = AlertDialog.Builder(activity)
                 .setView(container)
                 .setPositiveButton(android.R.string.cancel, null)
                 .setCancelable(true)
                 .create()
-        stackDialog!!.show()
+        stackDialog?.show()
     }
 
     /**
@@ -108,7 +106,6 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
      */
     fun logFragmentRecords(tag: String) {
         val fragmentRecordList = getFragmentRecords() ?: return
-
         val builder = StringBuilder()
         for (i in fragmentRecordList.indices.reversed()) {
             val fragmentRecord = fragmentRecordList[i]
@@ -136,7 +133,8 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
     }
 
     private fun getFragmentRecords(): List<DebugFragmentRecord>? {
-        val fragmentList = FragmentationMagician.getAddedFragments(mActivity.supportFragmentManager)
+        val fragmentList = FragmentationMagician
+                .getAddedFragments(activity.supportFragmentManager)
         if (fragmentList == null || fragmentList.isEmpty()) {
             return null
         }
@@ -148,12 +146,14 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
         return fragmentRecordList
     }
 
-    private fun processChildLog(fragmentRecordList: List<DebugFragmentRecord>?, builder: StringBuilder, childHierarchy: Int) {
-        var childHierarchyTemp = childHierarchy
+    private fun processChildLog(fragmentRecordList: List<DebugFragmentRecord>?,
+                                builder: StringBuilder,
+                                childHierarchy: Int) {
         if (fragmentRecordList == null || fragmentRecordList.isEmpty()) {
             return
         }
 
+        var childHierarchyTemp = childHierarchy
         for (j in fragmentRecordList.indices) {
             val childFragmentRecord = fragmentRecordList[j]
             for (k in 0 until childHierarchyTemp) {
@@ -174,12 +174,12 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
     }
 
     private fun getChildFragmentRecords(parentFragment: Fragment): List<DebugFragmentRecord>? {
-        val fragmentRecords = ArrayList<DebugFragmentRecord>()
         val fragmentList = FragmentationMagician.getAddedFragments(parentFragment.childFragmentManager)
         if (fragmentList == null || fragmentList.isEmpty()) {
             return null
         }
 
+        val fragmentRecords = ArrayList<DebugFragmentRecord>()
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             addDebugFragmentRecord(fragmentRecords, fragment)
@@ -188,31 +188,29 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
     }
 
     private fun addDebugFragmentRecord(fragmentRecords: MutableList<DebugFragmentRecord>, fragment: Fragment?) {
-        if (fragment != null) {
-            var backStackCount = 0
-            if (fragment.fragmentManager != null) {
-                backStackCount = fragment.fragmentManager!!.backStackEntryCount
-            }
-            var name: CharSequence = fragment.javaClass.simpleName
-            if (backStackCount == 0) {
-                name = span(name, " *")
-            } else {
-                for (j in 0 until backStackCount) {
-                    val entry = fragment.fragmentManager!!.getBackStackEntryAt(j)
-                    if (entry.name != null && entry.name == fragment.tag || entry.name == null && fragment.tag == null) {
-                        break
-                    }
-                    if (j == backStackCount - 1) {
-                        name = span(name, " *")
-                    }
+        if (fragment == null) return
+
+        val backStackCount = fragment.fragmentManager?.backStackEntryCount ?: 0
+        var name: CharSequence = fragment.javaClass.simpleName
+        if (backStackCount == 0) {
+            name = span(name, " *")
+        } else {
+            for (j in 0 until backStackCount) {
+                val entry = fragment.fragmentManager?.getBackStackEntryAt(j)
+                val entryName = entry?.name
+                if (entryName != null && entryName == fragment.tag || entryName == null && fragment.tag == null) {
+                    break
+                }
+                if (j == backStackCount - 1) {
+                    name = span(name, " *")
                 }
             }
-
-            if ((fragment as? ISupportFragment)?.isSupportVisible() == true) {
-                name = span(name, " ☀")
-            }
-            fragmentRecords.add(DebugFragmentRecord(name, getChildFragmentRecords(fragment)))
         }
+
+        if ((fragment as? ISupportFragment)?.isSupportVisible() == true) {
+            name = span(name, " ☀")
+        }
+        fragmentRecords.add(DebugFragmentRecord(name, getChildFragmentRecords(fragment)))
     }
 
     private fun span(name: CharSequence, string: String): CharSequence {
@@ -223,11 +221,11 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
 
     private inner class StackViewTouchListener internal constructor(
             private val stackView: View, private val clickLimitValue: Int) : View.OnTouchListener {
-        private var dx: Float = 0.toFloat()
+        private var dx = 0f
         private var dy = 0f
-        private var downX: Float = 0.toFloat()
+        private var downX = 0f
         private var downY = 0f
-        private var isClickState: Boolean = false
+        private var isClickState = false
 
         override fun onTouch(v: View, event: MotionEvent): Boolean {
             val x = event.rawX
@@ -248,9 +246,10 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
                     stackView.x = event.rawX + dx
                     stackView.y = event.rawY + dy
                 }
-                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> if (x - downX < clickLimitValue && isClickState) {
-                    stackView.performClick()
-                }
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP ->
+                    if (x - downX < clickLimitValue && isClickState) {
+                        stackView.performClick()
+                    }
                 else -> return false
             }
             return true

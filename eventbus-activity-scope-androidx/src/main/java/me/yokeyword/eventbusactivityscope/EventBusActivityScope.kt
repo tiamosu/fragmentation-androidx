@@ -65,18 +65,18 @@ object EventBusActivityScope {
     fun getDefault(activity: Activity?): EventBus {
         if (activity == null) {
             Log.e(tag, "Can't find the Activity, the Activity is null!")
-            return invalidEventBus()!!
+            return invalidEventBus()
         }
 
         val lazyEventBusInstance = activityEventBusScopePool[activity]
         if (lazyEventBusInstance == null) {
             Log.e(tag, "Can't find the Activity, it has been removed!")
-            return invalidEventBus()!!
+            return invalidEventBus()
         }
-        return lazyEventBusInstance.getInstance()!!
+        return lazyEventBusInstance.getInstance()
     }
 
-    private fun invalidEventBus(): EventBus? {
+    private fun invalidEventBus(): EventBus {
         if (invalidEventBus == null) {
             synchronized(EventBusActivityScope::class.java) {
                 if (invalidEventBus == null) {
@@ -84,14 +84,14 @@ object EventBusActivityScope {
                 }
             }
         }
-        return invalidEventBus
+        return invalidEventBus!!
     }
 
     internal class LazyEventBusInstance {
         @Volatile
         private var eventBus: EventBus? = null
 
-        fun getInstance(): EventBus? {
+        fun getInstance(): EventBus {
             if (eventBus == null) {
                 synchronized(this) {
                     if (eventBus == null) {
@@ -99,7 +99,7 @@ object EventBusActivityScope {
                     }
                 }
             }
-            return eventBus
+            return eventBus!!
         }
     }
 }

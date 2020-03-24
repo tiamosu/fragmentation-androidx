@@ -154,7 +154,7 @@ class SwipeBackLayout : FrameLayout {
         if (listeners == null) {
             listeners = ArrayList()
         }
-        listeners!!.add(listener)
+        listeners?.add(listener)
     }
 
     /**
@@ -181,15 +181,19 @@ class SwipeBackLayout : FrameLayout {
         child.getHitRect(childRect)
 
         if (currentSwipeOrientation and EDGE_LEFT != 0) {
-            shadowLeft!!.setBounds(childRect.left - shadowLeft!!.intrinsicWidth,
-                    childRect.top, childRect.left, childRect.bottom)
-            shadowLeft!!.alpha = (scrimOpacity * FULL_ALPHA).toInt()
-            shadowLeft!!.draw(canvas)
+            shadowLeft?.also {
+                it.setBounds(childRect.left - it.intrinsicWidth,
+                        childRect.top, childRect.left, childRect.bottom)
+                it.alpha = (scrimOpacity * FULL_ALPHA).toInt()
+                it.draw(canvas)
+            }
         } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
-            shadowRight!!.setBounds(childRect.right, childRect.top,
-                    childRect.right + shadowRight!!.intrinsicWidth, childRect.bottom)
-            shadowRight!!.alpha = (scrimOpacity * FULL_ALPHA).toInt()
-            shadowRight!!.draw(canvas)
+            shadowRight?.also {
+                it.setBounds(childRect.right, childRect.top,
+                        childRect.right + it.intrinsicWidth, childRect.bottom)
+                it.alpha = (scrimOpacity * FULL_ALPHA).toInt()
+                it.draw(canvas)
+            }
         }
     }
 
@@ -231,13 +235,13 @@ class SwipeBackLayout : FrameLayout {
             }
             if (preFragment?.view != null) {
                 if (callOnDestroyView) {
-                    preFragment!!.view!!.x = 0f
+                    preFragment?.view?.x = 0f
                     return
                 }
                 if (viewDragHelper.capturedView != null) {
                     val leftOffset = ((viewDragHelper.capturedView!!.left - width).toFloat()
                             * parallaxOffset * scrimOpacity).toInt()
-                    preFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
+                    preFragment?.view?.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
                 }
             }
         }
@@ -256,9 +260,7 @@ class SwipeBackLayout : FrameLayout {
     }
 
     fun hiddenFragment() {
-        if (preFragment?.view != null) {
-            preFragment!!.view!!.visibility = View.GONE
-        }
+        preFragment?.view?.visibility = View.GONE
     }
 
     fun attachToActivity(activity: FragmentActivity) {
@@ -321,8 +323,8 @@ class SwipeBackLayout : FrameLayout {
     }
 
     private fun onDragFinished() {
-        if (listeners != null) {
-            for (listener in listeners!!) {
+        listeners?.also {
+            for (listener in it) {
                 listener.onDragStateChange(STATE_FINISHED)
             }
         }
@@ -409,31 +411,29 @@ class SwipeBackLayout : FrameLayout {
                 currentSwipeOrientation = EDGE_RIGHT
             }
 
-            if (listeners != null) {
-                for (listener in listeners!!) {
+            listeners?.also {
+                for (listener in it) {
                     listener.onEdgeTouch(currentSwipeOrientation)
                 }
             }
 
             if (preFragment == null) {
-                if (fragmentF != null) {
-                    val fragmentTemp = fragmentF as Fragment
-                    val fragmentList = FragmentationMagician.getAddedFragments(
-                            fragmentTemp.fragmentManager)
-                    if (fragmentList != null && fragmentList.size > 1) {
-                        val index = fragmentList.indexOf(fragmentTemp)
-                        for (i in index - 1 downTo 0) {
-                            val fragment = fragmentList[i]
-                            if (fragment?.view != null) {
-                                fragment.view!!.visibility = View.VISIBLE
-                                preFragment = fragment
-                                break
-                            }
+                val fragmentTemp = fragmentF as? Fragment
+                val fragmentList = FragmentationMagician
+                        .getAddedFragments(fragmentTemp?.fragmentManager)
+                if (fragmentList != null && fragmentList.size > 1) {
+                    val index = fragmentList.indexOf(fragmentTemp)
+                    for (i in index - 1 downTo 0) {
+                        val fragment = fragmentList[i]
+                        if (fragment?.view != null) {
+                            fragment.view?.visibility = View.VISIBLE
+                            preFragment = fragment
+                            break
                         }
                     }
                 }
             } else {
-                val preView = preFragment!!.view
+                val preView = preFragment?.view
                 if (preView != null && preView.visibility != View.VISIBLE) {
                     preView.visibility = View.VISIBLE
                 }
@@ -454,11 +454,12 @@ class SwipeBackLayout : FrameLayout {
         override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
             super.onViewPositionChanged(changedView, left, top, dx, dy)
 
-            if (currentSwipeOrientation and EDGE_LEFT != 0) {
+            if (currentSwipeOrientation and EDGE_LEFT != 0 && contentView != null && shadowLeft != null) {
                 scrollPercent = abs(left.toFloat() / (contentView!!.width + shadowLeft!!.intrinsicWidth))
-            } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
+            } else if (currentSwipeOrientation and EDGE_RIGHT != 0 && contentView != null && shadowRight != null) {
                 scrollPercent = abs(left.toFloat() / (contentView!!.width + shadowRight!!.intrinsicWidth))
             }
+
             contentLeft = left
             contentTop = top
             invalidate()
@@ -477,15 +478,15 @@ class SwipeBackLayout : FrameLayout {
                     if (callOnDestroyView) {
                         return
                     }
-                    if (!(fragmentF as Fragment).isDetached) {
+                    if ((fragmentF as? Fragment)?.isDetached == false) {
                         onDragFinished()
-                        fragmentF!!.getSupportDelegate().popQuiet()
+                        fragmentF?.getSupportDelegate()?.popQuiet()
                     }
                 } else {
-                    if (!activity!!.isFinishing) {
+                    if (activity?.isFinishing == false) {
                         onDragFinished()
-                        activity!!.finish()
-                        activity!!.overridePendingTransition(0, 0)
+                        activity?.finish()
+                        activity?.overridePendingTransition(0, 0)
                     }
                 }
             }
@@ -504,12 +505,12 @@ class SwipeBackLayout : FrameLayout {
             val childWidth = releasedChild.width
             var left = 0
             val top = 0
-            if (currentSwipeOrientation and EDGE_LEFT != 0) {
+            if (currentSwipeOrientation and EDGE_LEFT != 0 && shadowLeft != null) {
                 left = if (xvel > 0 || xvel == 0f && scrollPercent > scrollFinishThreshold)
                     childWidth + shadowLeft!!.intrinsicWidth + OVERSCROLL_DISTANCE
                 else
                     0
-            } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
+            } else if (currentSwipeOrientation and EDGE_RIGHT != 0 && shadowRight != null) {
                 left = if (xvel < 0 || xvel == 0f && scrollPercent > scrollFinishThreshold)
                     -(childWidth + shadowRight!!.intrinsicWidth + OVERSCROLL_DISTANCE)
                 else
@@ -522,8 +523,9 @@ class SwipeBackLayout : FrameLayout {
 
         override fun onViewDragStateChanged(state: Int) {
             super.onViewDragStateChanged(state)
-            if (listeners != null) {
-                for (listener in listeners!!) {
+
+            listeners?.also {
+                for (listener in it) {
                     listener.onDragStateChange(state)
                 }
             }

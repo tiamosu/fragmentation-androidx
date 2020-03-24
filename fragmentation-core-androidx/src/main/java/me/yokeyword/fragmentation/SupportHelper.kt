@@ -20,9 +20,8 @@ object SupportHelper {
      */
     @JvmStatic
     fun showSoftInput(view: View?) {
-        if (view == null || view.context == null) {
-            return
-        }
+        if (view == null || view.context == null) return
+
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         view.requestFocus()
         view.postDelayed({ imm?.showSoftInput(view, InputMethodManager.SHOW_FORCED) }, SHOW_SPACE)
@@ -33,31 +32,30 @@ object SupportHelper {
      */
     @JvmStatic
     fun hideSoftInput(view: View?) {
-        if (view == null || view.context == null) {
-            return
-        }
+        if (view == null || view.context == null) return
+
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**
-     * 显示栈视图dialog,调试时使用
+     * 显示栈视图 dialog，调试时使用
      */
     @JvmStatic
-    fun showFragmentStackHierarchyView(support: ISupportActivity) {
-        support.getSupportDelegate().showFragmentStackHierarchyView()
+    fun showFragmentStackHierarchyView(support: ISupportActivity?) {
+        support?.getSupportDelegate()?.showFragmentStackHierarchyView()
     }
 
     /**
-     * 显示栈视图日志,调试时使用
+     * 显示栈视图日志，调试时使用
      */
     @JvmStatic
-    fun logFragmentStackHierarchy(support: ISupportActivity, tag: String) {
-        support.getSupportDelegate().logFragmentStackHierarchy(tag)
+    fun logFragmentStackHierarchy(support: ISupportActivity?, tag: String) {
+        support?.getSupportDelegate()?.logFragmentStackHierarchy(tag)
     }
 
     /**
-     * 获得栈顶SupportFragment
+     * 获得栈顶 SupportFragment
      */
     @JvmStatic
     fun getTopFragment(fragmentManager: FragmentManager?): ISupportFragment? {
@@ -79,9 +77,9 @@ object SupportHelper {
     }
 
     /**
-     * 获取目标Fragment的前一个SupportFragment
+     * 获取目标 Fragment 的前一个 SupportFragment
      *
-     * @param fragment 目标Fragment
+     * @param fragment 目标 Fragment
      */
     @JvmStatic
     fun getPreFragment(fragment: Fragment?): ISupportFragment? {
@@ -102,14 +100,13 @@ object SupportHelper {
      * find Fragment from FragmentStack
      */
     @JvmStatic
-    fun <T : ISupportFragment> findFragment(fragmentManager: FragmentManager?, fragmentClass: Class<T>?): T? {
+    fun <T : ISupportFragment> findFragment(fragmentManager: FragmentManager?,
+                                            fragmentClass: Class<T>?): T? {
         return findAddedFragment(fragmentClass, null, fragmentManager)
     }
 
     /**
      * Same as fragmentManager.findFragmentByTag(fragmentTag);
-     *
-     *
      * find Fragment from FragmentStack
      */
     @JvmStatic
@@ -118,7 +115,7 @@ object SupportHelper {
     }
 
     /**
-     * 从栈顶开始，寻找FragmentManager以及其所有子栈, 直到找到状态为show & userVisible的Fragment
+     * 从栈顶开始，寻找 FragmentManager 以及其所有子栈, 直到找到状态为 show & userVisible 的 Fragment
      */
     @JvmStatic
     fun getAddedFragment(fragmentManager: FragmentManager): ISupportFragment? {
@@ -126,13 +123,13 @@ object SupportHelper {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : ISupportFragment> findAddedFragment(
-            fragmentClass: Class<T>?, toFragmentTag: String?, fragmentManager: FragmentManager?): T? {
+    private fun <T : ISupportFragment> findAddedFragment(fragmentClass: Class<T>?,
+                                                         toFragmentTag: String?,
+                                                         fragmentManager: FragmentManager?): T? {
 
         var fragment: Fragment? = null
         if (toFragmentTag == null) {
-            val fragmentList = getAddedFragments(fragmentManager)
-                    ?: return null
+            val fragmentList = getAddedFragments(fragmentManager) ?: return null
             val sizeChildFrgList = fragmentList.size
             for (i in sizeChildFrgList - 1 downTo 0) {
                 val brotherFragment = fragmentList[i]
@@ -207,20 +204,22 @@ object SupportHelper {
         return null
     }
 
+    @Suppress("DEPRECATION")
     private fun isFragmentVisible(fragment: Fragment): Boolean {
         return !fragment.isHidden && fragment.userVisibleHint
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal fun <T : ISupportFragment> findBackStackFragment(
-            fragmentClass: Class<T>?, toFragmentTag: String?, fragmentManager: FragmentManager?): T? {
+    internal fun <T : ISupportFragment> findBackStackFragment(fragmentClass: Class<T>?,
+                                                              toFragmentTag: String?,
+                                                              fragmentManager: FragmentManager?): T? {
 
         var toFragmentTagTemp = toFragmentTag
-        val count = fragmentManager?.backStackEntryCount ?: 0
         if (toFragmentTagTemp == null) {
             toFragmentTagTemp = fragmentClass?.name
         }
 
+        val count = fragmentManager?.backStackEntryCount ?: 0
         for (i in count - 1 downTo 0) {
             val entry = fragmentManager?.getBackStackEntryAt(i)
             if (toFragmentTagTemp == entry?.name) {
@@ -257,7 +256,7 @@ object SupportHelper {
 
         for (i in size - 1 downTo startIndex) {
             val fragment = fragmentList[i]
-            if (fragment != null && fragment.view != null) {
+            if (fragment?.view != null) {
                 willPopFragments.add(fragment)
             }
         }

@@ -64,6 +64,6 @@ class SwipeBackActivityDelegate(swipeBackActivity: ISwipeBackActivity) {
         swipeBackLayout = SwipeBackLayout(activity)
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        swipeBackLayout!!.layoutParams = params
+        swipeBackLayout?.layoutParams = params
     }
 }

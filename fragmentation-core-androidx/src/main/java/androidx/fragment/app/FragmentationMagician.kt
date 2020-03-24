@@ -23,7 +23,7 @@ object FragmentationMagician {
     }
 
     /**
-     * Like [FragmentManager.popBackStack]} but allows the commit to be executed after an
+     * Like [FragmentManager.popBackStack] but allows the commit to be executed after an
      * activity's state is saved.  This is dangerous because the action can
      * be lost if the activity needs to later be restored from its state, so
      * this should only be used for cases where it is okay for the UI state
@@ -34,15 +34,15 @@ object FragmentationMagician {
     }
 
     /**
-     * Like [FragmentManager.popBackStackImmediate]} but allows the commit to be executed after an
+     * Like [FragmentManager.popBackStackImmediate] but allows the commit to be executed after an
      * activity's state is saved.
      */
-    fun popBackStackImmediateAllowingStateLoss(fragmentManager: FragmentManager) {
-        hookStateSaved(fragmentManager, Runnable { fragmentManager.popBackStackImmediate() })
+    fun popBackStackImmediateAllowingStateLoss(fragmentManager: FragmentManager?) {
+        hookStateSaved(fragmentManager, Runnable { fragmentManager?.popBackStackImmediate() })
     }
 
     /**
-     * Like [FragmentManager.popBackStackImmediate]} but allows the commit to be executed after an
+     * Like [FragmentManager.popBackStackImmediate] but allows the commit to be executed after an
      * activity's state is saved.
      */
     fun popBackStackAllowingStateLoss(fragmentManager: FragmentManager?, name: String?, flags: Int) {
@@ -62,12 +62,10 @@ object FragmentationMagician {
     }
 
     private fun hookStateSaved(fragmentManager: FragmentManager?, runnable: Runnable) {
-        if (fragmentManager !is FragmentManagerImpl) {
-            return
-        }
+        if (fragmentManager !is FragmentManagerImpl) return
         if (isStateSaved(fragmentManager)) {
             val tempStateSaved = fragmentManager.mStateSaved
-            val tempStopped: Boolean = fragmentManager.mStopped
+            val tempStopped = fragmentManager.mStopped
             fragmentManager.mStateSaved = false
             fragmentManager.mStopped = false
 

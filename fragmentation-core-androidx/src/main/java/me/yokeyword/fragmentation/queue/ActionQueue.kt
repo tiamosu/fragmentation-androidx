@@ -15,11 +15,10 @@ class ActionQueue(private val mainHandler: Handler) {
     private val queue = LinkedList<Action>()
 
     fun enqueue(action: Action) {
-        if (isThrottleBACK(action)) {
-            return
-        }
+        if (isThrottleBACK(action)) return
+
         if (action.action == Action.ACTION_LOAD && queue.isEmpty()
-                && Thread.currentThread() === Looper.getMainLooper().thread) {
+                && Thread.currentThread() == Looper.getMainLooper().thread) {
             action.run()
             return
         }
@@ -35,9 +34,7 @@ class ActionQueue(private val mainHandler: Handler) {
     }
 
     private fun handleAction() {
-        if (queue.isEmpty()) {
-            return
-        }
+        if (queue.isEmpty()) return
 
         val action = queue.peek()
         action?.apply {

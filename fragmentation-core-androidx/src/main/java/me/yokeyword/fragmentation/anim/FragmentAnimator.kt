@@ -12,16 +12,16 @@ import androidx.annotation.AnimRes
 @Suppress("unused")
 open class FragmentAnimator : Parcelable {
     @AnimRes
-    protected var enterAnim: Int = 0
+    protected var enterAnim = 0
 
     @AnimRes
-    protected var exitAnim: Int = 0
+    protected var exitAnim = 0
 
     @AnimRes
-    protected var popEnterAnim: Int = 0
+    protected var popEnterAnim = 0
 
     @AnimRes
-    protected var popExitAnim: Int = 0
+    protected var popExitAnim = 0
 
     constructor()
 
