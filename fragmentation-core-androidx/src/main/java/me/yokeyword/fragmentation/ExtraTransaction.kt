@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import me.yokeyword.fragmentation.ISupportFragment.LaunchMode
 import me.yokeyword.fragmentation.helper.internal.TransactionRecord
 import java.util.*
 
@@ -64,9 +65,9 @@ abstract class ExtraTransaction {
 
     abstract fun startDontHideSelf(toFragment: ISupportFragment)
 
-    abstract fun startDontHideSelf(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int)
+    abstract fun startDontHideSelf(toFragment: ISupportFragment, @LaunchMode launchMode: Int)
 
-    abstract fun start(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int)
+    abstract fun start(toFragment: ISupportFragment, @LaunchMode launchMode: Int)
 
     abstract fun startForResult(toFragment: ISupportFragment, requestCode: Int)
 
@@ -103,7 +104,7 @@ abstract class ExtraTransaction {
     abstract fun dontAddToBackStack(): DontAddToBackStackTransaction
 
     /**
-     * 使用dontAddToBackStack() 加载Fragment时， 使用remove()移除Fragment
+     * 使用 dontAddToBackStack() 加载 Fragment 时， 使用 remove() 移除 Fragment
      */
     abstract fun remove(fragment: ISupportFragment, showPreFragment: Boolean)
 
@@ -114,7 +115,7 @@ abstract class ExtraTransaction {
         fun start(toFragment: ISupportFragment)
 
         /**
-         * Only add()
+         * only add()
          */
         fun add(toFragment: ISupportFragment)
 
@@ -125,33 +126,33 @@ abstract class ExtraTransaction {
     }
 
     internal class ExtraTransactionImpl<T : ISupportFragment>(
-            private val mActivity: FragmentActivity?, private val mSupportF: T,
-            private val mTransactionDelegate: TransactionDelegate?, private val mFromActivity: Boolean)
+            private val activity: FragmentActivity?, private val supportF: T,
+            private val transactionDelegate: TransactionDelegate?, private val fromActivity: Boolean)
         : ExtraTransaction(), DontAddToBackStackTransaction {
 
-        private val mFragment: Fragment?
-        private val mRecord: TransactionRecord
+        private val fragment: Fragment?
+        private val transactionRecord: TransactionRecord
 
         private val fragmentManager: FragmentManager?
-            get() = if (mFragment == null) {
-                mActivity?.supportFragmentManager
-            } else mFragment.fragmentManager
+            get() = if (fragment == null) {
+                activity?.supportFragmentManager
+            } else fragment.fragmentManager
 
         init {
-            this.mFragment = mSupportF as Fragment
-            mRecord = TransactionRecord()
+            this.fragment = supportF as Fragment
+            transactionRecord = TransactionRecord()
         }
 
         override fun setTag(tag: String): ExtraTransaction {
-            mRecord.mTag = tag
+            transactionRecord.tag = tag
             return this
         }
 
         override fun setCustomAnimations(@AnimRes targetFragmentEnter: Int, @AnimRes currentFragmentPopExit: Int): ExtraTransaction {
-            mRecord.mTargetFragmentEnter = targetFragmentEnter
-            mRecord.mCurrentFragmentPopExit = currentFragmentPopExit
-            mRecord.mCurrentFragmentPopEnter = 0
-            mRecord.mTargetFragmentExit = 0
+            transactionRecord.targetFragmentEnter = targetFragmentEnter
+            transactionRecord.currentFragmentPopExit = currentFragmentPopExit
+            transactionRecord.currentFragmentPopEnter = 0
+            transactionRecord.targetFragmentExit = 0
             return this
         }
 
@@ -159,18 +160,18 @@ abstract class ExtraTransaction {
                                          @AnimRes currentFragmentPopExit: Int,
                                          @AnimRes currentFragmentPopEnter: Int,
                                          @AnimRes targetFragmentExit: Int): ExtraTransaction {
-            mRecord.mTargetFragmentEnter = targetFragmentEnter
-            mRecord.mCurrentFragmentPopExit = currentFragmentPopExit
-            mRecord.mCurrentFragmentPopEnter = currentFragmentPopEnter
-            mRecord.mTargetFragmentExit = targetFragmentExit
+            transactionRecord.targetFragmentEnter = targetFragmentEnter
+            transactionRecord.currentFragmentPopExit = currentFragmentPopExit
+            transactionRecord.currentFragmentPopEnter = currentFragmentPopEnter
+            transactionRecord.targetFragmentExit = targetFragmentExit
             return this
         }
 
         override fun addSharedElement(sharedElement: View, sharedName: String): ExtraTransaction {
-            if (mRecord.mSharedElementList == null) {
-                mRecord.mSharedElementList = ArrayList()
+            if (transactionRecord.sharedElementList == null) {
+                transactionRecord.sharedElementList = ArrayList()
             }
-            mRecord.mSharedElementList!!.add(TransactionRecord.SharedElement(sharedElement, sharedName))
+            transactionRecord.sharedElementList!!.add(TransactionRecord.SharedElement(sharedElement, sharedName))
             return this
         }
 
@@ -180,18 +181,18 @@ abstract class ExtraTransaction {
 
         override fun loadRootFragment(containerId: Int, toFragment: ISupportFragment,
                                       addToBackStack: Boolean, allowAnim: Boolean) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.loadRootTransaction(fragmentManager, containerId, toFragment,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.loadRootTransaction(fragmentManager, containerId, toFragment,
                     addToBackStack, allowAnim)
         }
 
         override fun dontAddToBackStack(): DontAddToBackStackTransaction {
-            mRecord.mDontAddToBackStack = true
+            transactionRecord.dontAddToBackStack = true
             return this
         }
 
         override fun remove(fragment: ISupportFragment, showPreFragment: Boolean) {
-            mTransactionDelegate?.remove(fragmentManager, fragment as Fragment, showPreFragment)
+            transactionDelegate?.remove(fragmentManager, fragment as Fragment, showPreFragment)
         }
 
         override fun popTo(targetFragmentTag: String, includeTargetFragment: Boolean) {
@@ -201,7 +202,7 @@ abstract class ExtraTransaction {
 
         override fun popTo(targetFragmentTag: String, includeTargetFragment: Boolean,
                            afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-            mTransactionDelegate?.popTo(targetFragmentTag, includeTargetFragment,
+            transactionDelegate?.popTo(targetFragmentTag, includeTargetFragment,
                     afterPopTransactionRunnable, fragmentManager, popAnim)
         }
 
@@ -212,17 +213,17 @@ abstract class ExtraTransaction {
 
         override fun popToChild(targetFragmentTag: String, includeTargetFragment: Boolean,
                                 afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-            if (mFromActivity) {
+            if (fromActivity) {
                 popTo(targetFragmentTag, includeTargetFragment, afterPopTransactionRunnable, popAnim)
             } else {
-                mTransactionDelegate?.popTo(targetFragmentTag, includeTargetFragment,
-                        afterPopTransactionRunnable, mFragment!!.childFragmentManager, popAnim)
+                transactionDelegate?.popTo(targetFragmentTag, includeTargetFragment,
+                        afterPopTransactionRunnable, fragment!!.childFragmentManager, popAnim)
             }
         }
 
         override fun add(toFragment: ISupportFragment) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF,
                     toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE)
         }
 
@@ -231,49 +232,49 @@ abstract class ExtraTransaction {
         }
 
         override fun startDontHideSelf(toFragment: ISupportFragment) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF,
                     toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE)
         }
 
-        override fun startDontHideSelf(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF,
+        override fun startDontHideSelf(toFragment: ISupportFragment, @LaunchMode launchMode: Int) {
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF,
                     toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD_WITHOUT_HIDE)
         }
 
-        override fun start(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF, toFragment,
+        override fun start(toFragment: ISupportFragment, @LaunchMode launchMode: Int) {
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF, toFragment,
                     0, launchMode, TransactionDelegate.TYPE_ADD)
         }
 
         override fun startForResult(toFragment: ISupportFragment, requestCode: Int) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF, toFragment,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF, toFragment,
                     requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT)
         }
 
         override fun startForResultDontHideSelf(toFragment: ISupportFragment, requestCode: Int) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF, toFragment,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF, toFragment,
                     requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT_WITHOUT_HIDE)
         }
 
         override fun startWithPop(toFragment: ISupportFragment) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.startWithPop(fragmentManager, mSupportF, toFragment)
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.startWithPop(fragmentManager, supportF, toFragment)
         }
 
         override fun startWithPopTo(toFragment: ISupportFragment, targetFragmentTag: String, includeTargetFragment: Boolean) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.startWithPopTo(fragmentManager, mSupportF, toFragment,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.startWithPopTo(fragmentManager, supportF, toFragment,
                     targetFragmentTag, includeTargetFragment)
         }
 
         override fun replace(toFragment: ISupportFragment) {
-            toFragment.getSupportDelegate().mTransactionRecord = mRecord
-            mTransactionDelegate?.dispatchStartTransaction(fragmentManager, mSupportF,
+            toFragment.getSupportDelegate().transactionRecord = transactionRecord
+            transactionDelegate?.dispatchStartTransaction(fragmentManager, supportF,
                     toFragment, 0, ISupportFragment.STANDARD, TransactionDelegate.TYPE_REPLACE)
         }
     }

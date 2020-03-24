@@ -9,26 +9,26 @@ import android.os.Parcelable
  * Created by YoKeyword on 16/6/2.
  */
 class ResultRecord : Parcelable {
-    var mRequestCode: Int = 0
-    var mResultCode = 0
-    var mResultBundle: Bundle? = null
+    var requestCode: Int = 0
+    var resultCode = 0
+    var resultBundle: Bundle? = null
 
     override fun describeContents(): Int {
         return 0
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(this.mRequestCode)
-        dest.writeInt(this.mResultCode)
-        dest.writeBundle(this.mResultBundle)
+        dest.writeInt(this.requestCode)
+        dest.writeInt(this.resultCode)
+        dest.writeBundle(this.resultBundle)
     }
 
     constructor()
 
     private constructor(`in`: Parcel) {
-        this.mRequestCode = `in`.readInt()
-        this.mResultCode = `in`.readInt()
-        this.mResultBundle = `in`.readBundle(javaClass.classLoader)
+        this.requestCode = `in`.readInt()
+        this.resultCode = `in`.readInt()
+        this.resultBundle = `in`.readBundle(javaClass.classLoader)
     }
 
     companion object {

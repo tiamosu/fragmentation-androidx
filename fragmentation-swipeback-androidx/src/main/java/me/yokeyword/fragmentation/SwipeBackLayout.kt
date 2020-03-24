@@ -30,54 +30,55 @@ import kotlin.math.abs
  * Created by YoKey on 16/4/19.
  */
 @Suppress("unused")
-class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
-                                                attrs: AttributeSet? = null,
-                                                defStyleAttr: Int = 0) : FrameLayout(mContext, attrs, defStyleAttr) {
+class SwipeBackLayout : FrameLayout {
 
-    private var mScrollFinishThreshold = DEFAULT_SCROLL_THRESHOLD
+    private var scrollFinishThreshold = DEFAULT_SCROLL_THRESHOLD
 
     /**
      * Get ViewDragHelper
      */
-    private var mViewDragHelper: ViewDragHelper
-    private var mScrollPercent: Float = 0.toFloat()
-    private var mScrimOpacity: Float = 0.toFloat()
+    private var viewDragHelper: ViewDragHelper
+    private var scrollPercent = 0f
+    private var scrimOpacity = 0f
 
-    private var mActivity: FragmentActivity? = null
-    private var mContentView: View? = null
-    private var mFragment: ISupportFragment? = null
-    private var mPreFragment: Fragment? = null
+    private var activity: FragmentActivity? = null
+    private var contentView: View? = null
+    private var fragmentF: ISupportFragment? = null
+    private var preFragment: Fragment? = null
 
-    private var mShadowLeft: Drawable? = null
-    private var mShadowRight: Drawable? = null
-    private val mTmpRect = Rect()
+    private var shadowLeft: Drawable? = null
+    private var shadowRight: Drawable? = null
+    private val tmpRect = Rect()
 
-    private var mEdgeFlag: Int = 0
-    private var mEnable = true
-    private var mCurrentSwipeOrientation: Int = 0
-    private var mParallaxOffset = DEFAULT_PARALLAX
+    private var edgeFlag = 0
+    private var enable = true
+    private var currentSwipeOrientation = 0
+    private var parallaxOffset = DEFAULT_PARALLAX
 
-    private var mCallOnDestroyView: Boolean = false
+    private var callOnDestroyView = false
+    private var inLayout = false
 
-    private var mInLayout: Boolean = false
-
-    private var mContentLeft: Int = 0
-    private var mContentTop: Int = 0
-    private var mSwipeAlpha = 0.5f
+    private var contentLeft = 0
+    private var contentTop = 0
+    private var swipeAlpha = 0.5f
 
     /**
      * The set of listeners to be sent events through.
      */
-    private var mListeners: MutableList<OnSwipeListener>? = null
+    private var listeners: MutableList<OnSwipeListener>? = null
 
-    init {
-        mViewDragHelper = ViewDragHelper.create(this, ViewDragCallback())
+    constructor(context: Context) : this(context, null)
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        viewDragHelper = ViewDragHelper.create(this, ViewDragCallback())
         setEdgeOrientation(EDGE_LEFT)
         setShadow(R.drawable.shadow_left, EDGE_LEFT)
     }
 
     fun getViewDragHelper(): ViewDragHelper {
-        return mViewDragHelper
+        return viewDragHelper
     }
 
     /**
@@ -86,7 +87,7 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * @param alpha 0.0f:无阴影, 1.0f:较重的阴影, 默认:0.5f
      */
     fun setSwipeAlpha(@FloatRange(from = 0.0, to = 1.0) alpha: Float) {
-        this.mSwipeAlpha = alpha
+        this.swipeAlpha = alpha
     }
 
     /**
@@ -97,11 +98,11 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      */
     fun setScrollThresHold(@FloatRange(from = 0.0, to = 1.0) threshold: Float) {
         require(!(threshold >= 1.0f || threshold <= 0)) { "Threshold value should be between 0 and 1.0" }
-        mScrollFinishThreshold = threshold
+        scrollFinishThreshold = threshold
     }
 
     fun setParallaxOffset(offset: Float) {
-        this.mParallaxOffset = offset
+        this.parallaxOffset = offset
     }
 
     /**
@@ -116,8 +117,8 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * @see EDGE_RIGHT
      */
     fun setEdgeOrientation(@EdgeOrientation orientation: Int) {
-        mEdgeFlag = orientation
-        mViewDragHelper.setEdgeTrackingEnabled(orientation)
+        edgeFlag = orientation
+        viewDragHelper.setEdgeTrackingEnabled(orientation)
 
         if (orientation == EDGE_RIGHT || orientation == EDGE_ALL) {
             setShadow(R.drawable.shadow_right, EDGE_RIGHT)
@@ -137,9 +138,9 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      */
     fun setShadow(shadow: Drawable, edgeFlag: Int) {
         if (edgeFlag and EDGE_LEFT != 0) {
-            mShadowLeft = shadow
+            shadowLeft = shadow
         } else if (edgeFlag and EDGE_RIGHT != 0) {
-            mShadowRight = shadow
+            shadowRight = shadow
         }
         invalidate()
     }
@@ -150,10 +151,10 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * @param listener the swipe listener to attach to this view
      */
     fun addSwipeListener(listener: OnSwipeListener) {
-        if (mListeners == null) {
-            mListeners = ArrayList()
+        if (listeners == null) {
+            listeners = ArrayList()
         }
-        mListeners!!.add(listener)
+        listeners!!.add(listener)
     }
 
     /**
@@ -162,13 +163,13 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * @param listener
      */
     fun removeSwipeListener(listener: OnSwipeListener) {
-        mListeners?.remove(listener)
+        listeners?.remove(listener)
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
-        val isDrawView = child === mContentView
+        val isDrawView = child === contentView
         val drawChild = super.drawChild(canvas, child, drawingTime)
-        if (isDrawView && mScrimOpacity > 0 && mViewDragHelper.viewDragState != ViewDragHelper.STATE_IDLE) {
+        if (isDrawView && scrimOpacity > 0 && viewDragHelper.viewDragState != ViewDragHelper.STATE_IDLE) {
             drawShadow(canvas, child)
             drawScrim(canvas, child)
         }
@@ -176,67 +177,67 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     }
 
     private fun drawShadow(canvas: Canvas, child: View) {
-        val childRect = mTmpRect
+        val childRect = tmpRect
         child.getHitRect(childRect)
 
-        if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
-            mShadowLeft!!.setBounds(childRect.left - mShadowLeft!!.intrinsicWidth,
+        if (currentSwipeOrientation and EDGE_LEFT != 0) {
+            shadowLeft!!.setBounds(childRect.left - shadowLeft!!.intrinsicWidth,
                     childRect.top, childRect.left, childRect.bottom)
-            mShadowLeft!!.alpha = (mScrimOpacity * FULL_ALPHA).toInt()
-            mShadowLeft!!.draw(canvas)
-        } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
-            mShadowRight!!.setBounds(childRect.right, childRect.top,
-                    childRect.right + mShadowRight!!.intrinsicWidth, childRect.bottom)
-            mShadowRight!!.alpha = (mScrimOpacity * FULL_ALPHA).toInt()
-            mShadowRight!!.draw(canvas)
+            shadowLeft!!.alpha = (scrimOpacity * FULL_ALPHA).toInt()
+            shadowLeft!!.draw(canvas)
+        } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
+            shadowRight!!.setBounds(childRect.right, childRect.top,
+                    childRect.right + shadowRight!!.intrinsicWidth, childRect.bottom)
+            shadowRight!!.alpha = (scrimOpacity * FULL_ALPHA).toInt()
+            shadowRight!!.draw(canvas)
         }
     }
 
     private fun drawScrim(canvas: Canvas, child: View) {
         val baseAlpha = (DEFAULT_SCRIM_COLOR and -0x1000000).ushr(24)
-        val alpha = (baseAlpha * mScrimOpacity * mSwipeAlpha).toInt()
+        val alpha = (baseAlpha * scrimOpacity * swipeAlpha).toInt()
         val color = alpha shl 24
 
-        if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
+        if (currentSwipeOrientation and EDGE_LEFT != 0) {
             canvas.clipRect(0, 0, child.left, height)
-        } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
+        } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
             canvas.clipRect(child.right, 0, right, height)
         }
         canvas.drawColor(color)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        mInLayout = true
-        mContentView?.apply {
-            layout(mContentLeft, mContentTop, mContentLeft + measuredWidth, mContentTop + measuredHeight)
+        inLayout = true
+        contentView?.apply {
+            layout(contentLeft, contentTop, contentLeft + measuredWidth, contentTop + measuredHeight)
         }
-        mInLayout = false
+        inLayout = false
     }
 
     override fun requestLayout() {
-        if (!mInLayout) {
+        if (!inLayout) {
             super.requestLayout()
         }
     }
 
     override fun computeScroll() {
-        if (mEnable) {
-            mScrimOpacity = 1 - mScrollPercent
-            if (mScrimOpacity < 0) {
+        if (enable) {
+            scrimOpacity = 1 - scrollPercent
+            if (scrimOpacity < 0) {
                 return
             }
-            if (mViewDragHelper.continueSettling(true)) {
+            if (viewDragHelper.continueSettling(true)) {
                 ViewCompat.postInvalidateOnAnimation(this)
             }
-            if (mPreFragment?.view != null) {
-                if (mCallOnDestroyView) {
-                    mPreFragment!!.view!!.x = 0f
+            if (preFragment?.view != null) {
+                if (callOnDestroyView) {
+                    preFragment!!.view!!.x = 0f
                     return
                 }
-                if (mViewDragHelper.capturedView != null) {
-                    val leftOffset = ((mViewDragHelper.capturedView!!.left - width).toFloat()
-                            * mParallaxOffset * mScrimOpacity).toInt()
-                    mPreFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
+                if (viewDragHelper.capturedView != null) {
+                    val leftOffset = ((viewDragHelper.capturedView!!.left - width).toFloat()
+                            * parallaxOffset * scrimOpacity).toInt()
+                    preFragment!!.view!!.x = (if (leftOffset > 0) 0 else leftOffset).toFloat()
                 }
             }
         }
@@ -246,22 +247,22 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
      * hide
      */
     fun internalCallOnDestroyView() {
-        mCallOnDestroyView = true
+        callOnDestroyView = true
     }
 
     fun setFragment(fragment: ISupportFragment, view: View) {
-        this.mFragment = fragment
-        mContentView = view
+        this.fragmentF = fragment
+        contentView = view
     }
 
     fun hiddenFragment() {
-        if (mPreFragment?.view != null) {
-            mPreFragment!!.view!!.visibility = View.GONE
+        if (preFragment?.view != null) {
+            preFragment!!.view!!.visibility = View.GONE
         }
     }
 
     fun attachToActivity(activity: FragmentActivity) {
-        mActivity = activity
+        this.activity = activity
         val typedArray = activity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
         val background = typedArray.getResourceId(0, 0)
         typedArray.recycle()
@@ -281,11 +282,11 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     }
 
     private fun setContentView(view: View) {
-        mContentView = view
+        contentView = view
     }
 
     fun setEnableGesture(enable: Boolean) {
-        mEnable = enable
+        this.enable = enable
     }
 
     fun setEdgeLevel(edgeLevel: EdgeLevel) {
@@ -299,17 +300,17 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     private fun validateEdgeLevel(widthPixel: Int, edgeLevel: EdgeLevel?) {
         try {
             val metrics = DisplayMetrics()
-            val windowManager = mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             windowManager.defaultDisplay.getMetrics(metrics)
-            val mEdgeSize = mViewDragHelper.javaClass.getDeclaredField("mEdgeSize")
+            val mEdgeSize = viewDragHelper.javaClass.getDeclaredField("mEdgeSize")
             mEdgeSize.isAccessible = true
             if (widthPixel >= 0) {
-                mEdgeSize.setInt(mViewDragHelper, widthPixel)
+                mEdgeSize.setInt(viewDragHelper, widthPixel)
             } else {
                 when (edgeLevel) {
-                    EdgeLevel.MAX -> mEdgeSize.setInt(mViewDragHelper, metrics.widthPixels)
-                    EdgeLevel.MED -> mEdgeSize.setInt(mViewDragHelper, metrics.widthPixels / 2)
-                    else -> mEdgeSize.setInt(mViewDragHelper, (20 * metrics.density + 0.5f).toInt())
+                    EdgeLevel.MAX -> mEdgeSize.setInt(viewDragHelper, metrics.widthPixels)
+                    EdgeLevel.MED -> mEdgeSize.setInt(viewDragHelper, metrics.widthPixels / 2)
+                    else -> mEdgeSize.setInt(viewDragHelper, (20 * metrics.density + 0.5f).toInt())
                 }
             }
         } catch (e: NoSuchFieldException) {
@@ -320,19 +321,19 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     }
 
     private fun onDragFinished() {
-        if (mListeners != null) {
-            for (listener in mListeners!!) {
+        if (listeners != null) {
+            for (listener in listeners!!) {
                 listener.onDragStateChange(STATE_FINISHED)
             }
         }
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (!mEnable) {
+        if (!enable) {
             return super.onInterceptTouchEvent(ev)
         }
         try {
-            return mViewDragHelper.shouldInterceptTouchEvent(ev)
+            return viewDragHelper.shouldInterceptTouchEvent(ev)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -341,11 +342,11 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!mEnable) {
+        if (!enable) {
             return super.onTouchEvent(event)
         }
         try {
-            mViewDragHelper.processTouchEvent(event)
+            viewDragHelper.processTouchEvent(event)
             return true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -397,26 +398,26 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
     private inner class ViewDragCallback : ViewDragHelper.Callback() {
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-            val dragEnable = mViewDragHelper.isEdgeTouched(mEdgeFlag, pointerId)
+            val dragEnable = viewDragHelper.isEdgeTouched(edgeFlag, pointerId)
             if (!dragEnable) {
                 return false
             }
 
-            if (mViewDragHelper.isEdgeTouched(EDGE_LEFT, pointerId)) {
-                mCurrentSwipeOrientation = EDGE_LEFT
-            } else if (mViewDragHelper.isEdgeTouched(EDGE_RIGHT, pointerId)) {
-                mCurrentSwipeOrientation = EDGE_RIGHT
+            if (viewDragHelper.isEdgeTouched(EDGE_LEFT, pointerId)) {
+                currentSwipeOrientation = EDGE_LEFT
+            } else if (viewDragHelper.isEdgeTouched(EDGE_RIGHT, pointerId)) {
+                currentSwipeOrientation = EDGE_RIGHT
             }
 
-            if (mListeners != null) {
-                for (listener in mListeners!!) {
-                    listener.onEdgeTouch(mCurrentSwipeOrientation)
+            if (listeners != null) {
+                for (listener in listeners!!) {
+                    listener.onEdgeTouch(currentSwipeOrientation)
                 }
             }
 
-            if (mPreFragment == null) {
-                if (mFragment != null) {
-                    val fragmentTemp = mFragment as Fragment
+            if (preFragment == null) {
+                if (fragmentF != null) {
+                    val fragmentTemp = fragmentF as Fragment
                     val fragmentList = FragmentationMagician.getAddedFragments(
                             fragmentTemp.fragmentManager)
                     if (fragmentList != null && fragmentList.size > 1) {
@@ -425,14 +426,14 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
                             val fragment = fragmentList[i]
                             if (fragment?.view != null) {
                                 fragment.view!!.visibility = View.VISIBLE
-                                mPreFragment = fragment
+                                preFragment = fragment
                                 break
                             }
                         }
                     }
                 }
             } else {
-                val preView = mPreFragment!!.view
+                val preView = preFragment!!.view
                 if (preView != null && preView.visibility != View.VISIBLE) {
                     preView.visibility = View.VISIBLE
                 }
@@ -442,9 +443,9 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
         override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
             var ret = 0
-            if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
+            if (currentSwipeOrientation and EDGE_LEFT != 0) {
                 ret = child.width.coerceAtMost(left.coerceAtLeast(0))
-            } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
+            } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
                 ret = 0.coerceAtMost(left.coerceAtLeast(-child.width))
             }
             return ret
@@ -453,48 +454,48 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
         override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
             super.onViewPositionChanged(changedView, left, top, dx, dy)
 
-            if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
-                mScrollPercent = abs(left.toFloat() / (mContentView!!.width + mShadowLeft!!.intrinsicWidth))
-            } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
-                mScrollPercent = abs(left.toFloat() / (mContentView!!.width + mShadowRight!!.intrinsicWidth))
+            if (currentSwipeOrientation and EDGE_LEFT != 0) {
+                scrollPercent = abs(left.toFloat() / (contentView!!.width + shadowLeft!!.intrinsicWidth))
+            } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
+                scrollPercent = abs(left.toFloat() / (contentView!!.width + shadowRight!!.intrinsicWidth))
             }
-            mContentLeft = left
-            mContentTop = top
+            contentLeft = left
+            contentTop = top
             invalidate()
 
-            if (mListeners != null
-                    && mViewDragHelper.viewDragState == STATE_DRAGGING
-                    && mScrollPercent <= 1
-                    && mScrollPercent > 0) {
-                for (listener in mListeners!!) {
-                    listener.onDragScrolled(mScrollPercent)
+            if (listeners != null
+                    && viewDragHelper.viewDragState == STATE_DRAGGING
+                    && scrollPercent <= 1
+                    && scrollPercent > 0) {
+                for (listener in listeners!!) {
+                    listener.onDragScrolled(scrollPercent)
                 }
             }
 
-            if (mScrollPercent > 1) {
-                if (mFragment != null) {
-                    if (mCallOnDestroyView) {
+            if (scrollPercent > 1) {
+                if (fragmentF != null) {
+                    if (callOnDestroyView) {
                         return
                     }
-                    if (!(mFragment as Fragment).isDetached) {
+                    if (!(fragmentF as Fragment).isDetached) {
                         onDragFinished()
-                        mFragment!!.getSupportDelegate().popQuiet()
+                        fragmentF!!.getSupportDelegate().popQuiet()
                     }
                 } else {
-                    if (!mActivity!!.isFinishing) {
+                    if (!activity!!.isFinishing) {
                         onDragFinished()
-                        mActivity!!.finish()
-                        mActivity!!.overridePendingTransition(0, 0)
+                        activity!!.finish()
+                        activity!!.overridePendingTransition(0, 0)
                     }
                 }
             }
         }
 
         override fun getViewHorizontalDragRange(child: View): Int {
-            if (mFragment != null) {
+            if (fragmentF != null) {
                 return 1
             }
-            return if (mActivity is ISwipeBackActivity && (mActivity as ISwipeBackActivity).swipeBackPriority()) {
+            return if (activity is ISwipeBackActivity && (activity as ISwipeBackActivity).swipeBackPriority()) {
                 1
             } else 0
         }
@@ -503,26 +504,26 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
             val childWidth = releasedChild.width
             var left = 0
             val top = 0
-            if (mCurrentSwipeOrientation and EDGE_LEFT != 0) {
-                left = if (xvel > 0 || xvel == 0f && mScrollPercent > mScrollFinishThreshold)
-                    childWidth + mShadowLeft!!.intrinsicWidth + OVERSCROLL_DISTANCE
+            if (currentSwipeOrientation and EDGE_LEFT != 0) {
+                left = if (xvel > 0 || xvel == 0f && scrollPercent > scrollFinishThreshold)
+                    childWidth + shadowLeft!!.intrinsicWidth + OVERSCROLL_DISTANCE
                 else
                     0
-            } else if (mCurrentSwipeOrientation and EDGE_RIGHT != 0) {
-                left = if (xvel < 0 || xvel == 0f && mScrollPercent > mScrollFinishThreshold)
-                    -(childWidth + mShadowRight!!.intrinsicWidth + OVERSCROLL_DISTANCE)
+            } else if (currentSwipeOrientation and EDGE_RIGHT != 0) {
+                left = if (xvel < 0 || xvel == 0f && scrollPercent > scrollFinishThreshold)
+                    -(childWidth + shadowRight!!.intrinsicWidth + OVERSCROLL_DISTANCE)
                 else
                     0
             }
 
-            mViewDragHelper.settleCapturedViewAt(left, top)
+            viewDragHelper.settleCapturedViewAt(left, top)
             invalidate()
         }
 
         override fun onViewDragStateChanged(state: Int) {
             super.onViewDragStateChanged(state)
-            if (mListeners != null) {
-                for (listener in mListeners!!) {
+            if (listeners != null) {
+                for (listener in listeners!!) {
                     listener.onDragStateChange(state)
                 }
             }
@@ -530,8 +531,8 @@ class SwipeBackLayout @JvmOverloads constructor(private val mContext: Context,
 
         override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
             super.onEdgeTouched(edgeFlags, pointerId)
-            if (mEdgeFlag and edgeFlags != 0) {
-                mCurrentSwipeOrientation = edgeFlags
+            if (edgeFlag and edgeFlags != 0) {
+                currentSwipeOrientation = edgeFlags
             }
         }
     }

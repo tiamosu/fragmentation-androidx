@@ -9,10 +9,10 @@ import android.os.Parcelable
 class DefaultNoAnimator : FragmentAnimator, Parcelable {
 
     constructor() {
-        mEnter = 0
-        mExit = 0
-        mPopEnter = 0
-        mPopExit = 0
+        enterAnim = 0
+        exitAnim = 0
+        popEnterAnim = 0
+        popExitAnim = 0
     }
 
     override fun describeContents(): Int {

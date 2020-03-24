@@ -16,29 +16,29 @@ import me.yokeyword.fragmentation_swipeback.core.SwipeBackFragmentDelegate
  * Created by YoKey on 16/4/19.
  */
 open class SwipeBackFragment : SupportFragment(), ISwipeBackFragment {
-    private val mDelegate = SwipeBackFragmentDelegate(apply { })
+    private val delegate = SwipeBackFragmentDelegate(apply { })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDelegate.onCreate(savedInstanceState)
+        delegate.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mDelegate.onViewCreated(view, savedInstanceState)
+        delegate.onViewCreated(view, savedInstanceState)
     }
 
     override fun attachToSwipeBack(view: View): View? {
-        return mDelegate.attachToSwipeBack(view)
+        return delegate.attachToSwipeBack(view)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        mDelegate.onHiddenChanged(hidden)
+        delegate.onHiddenChanged(hidden)
     }
 
     override fun getSwipeBackLayout(): SwipeBackLayout? {
-        return mDelegate.getSwipeBackLayout()
+        return delegate.getSwipeBackLayout()
     }
 
     /**
@@ -47,26 +47,26 @@ open class SwipeBackFragment : SupportFragment(), ISwipeBackFragment {
      * @param enable
      */
     override fun setSwipeBackEnable(enable: Boolean) {
-        mDelegate.setSwipeBackEnable(enable)
+        delegate.setSwipeBackEnable(enable)
     }
 
     override fun setEdgeLevel(edgeLevel: SwipeBackLayout.EdgeLevel) {
-        mDelegate.setEdgeLevel(edgeLevel)
+        delegate.setEdgeLevel(edgeLevel)
     }
 
     override fun setEdgeLevel(widthPixel: Int) {
-        mDelegate.setEdgeLevel(widthPixel)
+        delegate.setEdgeLevel(widthPixel)
     }
 
     /**
      * Set the offset of the parallax slip.
      */
     override fun setParallaxOffset(@FloatRange(from = 0.0, to = 1.0) offset: Float) {
-        mDelegate.setParallaxOffset(offset)
+        delegate.setParallaxOffset(offset)
     }
 
     override fun onDestroyView() {
-        mDelegate.onDestroyView()
+        delegate.onDestroyView()
         super.onDestroyView()
     }
 }

@@ -30,16 +30,16 @@ import kotlin.math.abs
  */
 
 class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventListener {
-    private var mSensorManager: SensorManager? = null
-    private var mStackDialog: AlertDialog? = null
+    private var sensorManager: SensorManager? = null
+    private var stackDialog: AlertDialog? = null
 
     fun onCreate(mode: Int) {
         if (mode != Fragmentation.SHAKE) {
             return
         }
-        mSensorManager = mActivity.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
-        mSensorManager?.registerListener(this,
-                mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+        sensorManager = mActivity.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+        sensorManager?.registerListener(this,
+                sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL)
     }
 
@@ -67,7 +67,7 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
     }
 
     fun onDestroy() {
-        mSensorManager?.unregisterListener(this)
+        sensorManager?.unregisterListener(this)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -87,7 +87,7 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
      * 调试相关:以dialog形式 显示 栈视图
      */
     fun showFragmentStackHierarchyView() {
-        if (mStackDialog?.isShowing == true) {
+        if (stackDialog?.isShowing == true) {
             return
         }
         val container = DebugHierarchyViewContainer(mActivity)
@@ -95,12 +95,12 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         container.layoutParams = params
-        mStackDialog = AlertDialog.Builder(mActivity)
+        stackDialog = AlertDialog.Builder(mActivity)
                 .setView(container)
                 .setPositiveButton(android.R.string.cancel, null)
                 .setCancelable(true)
                 .create()
-        mStackDialog!!.show()
+        stackDialog!!.show()
     }
 
     /**
@@ -116,22 +116,22 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
             if (i == fragmentRecordList.size - 1) {
                 builder.append("═══════════════════════════════════════════════════════════════════════════════════\n")
                 if (i == 0) {
-                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.mFragmentName).append("\n")
+                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.fragmentName).append("\n")
                     builder.append("═══════════════════════════════════════════════════════════════════════════════════")
                 } else {
-                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.mFragmentName).append("\n\n")
+                    builder.append("\t栈顶\t\t\t").append(fragmentRecord.fragmentName).append("\n\n")
                 }
             } else if (i == 0) {
-                builder.append("\t栈底\t\t\t").append(fragmentRecord.mFragmentName).append("\n\n")
-                processChildLog(fragmentRecord.mChildFragmentRecord, builder, 1)
+                builder.append("\t栈底\t\t\t").append(fragmentRecord.fragmentName).append("\n\n")
+                processChildLog(fragmentRecord.childFragmentRecord, builder, 1)
                 builder.append("═══════════════════════════════════════════════════════════════════════════════════")
                 Log.i(tag, builder.toString())
                 return
             } else {
-                builder.append("\t↓\t\t\t").append(fragmentRecord.mFragmentName).append("\n\n")
+                builder.append("\t↓\t\t\t").append(fragmentRecord.fragmentName).append("\n\n")
             }
 
-            processChildLog(fragmentRecord.mChildFragmentRecord, builder, 1)
+            processChildLog(fragmentRecord.childFragmentRecord, builder, 1)
         }
     }
 
@@ -160,16 +160,16 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
                 builder.append("\t\t\t")
             }
             when (j) {
-                0 -> builder.append("\t子栈顶\t\t").append(childFragmentRecord.mFragmentName).append("\n\n")
+                0 -> builder.append("\t子栈顶\t\t").append(childFragmentRecord.fragmentName).append("\n\n")
                 fragmentRecordList.size - 1 -> {
-                    builder.append("\t子栈底\t\t").append(childFragmentRecord.mFragmentName).append("\n\n")
-                    processChildLog(childFragmentRecord.mChildFragmentRecord, builder, ++childHierarchyTemp)
+                    builder.append("\t子栈底\t\t").append(childFragmentRecord.fragmentName).append("\n\n")
+                    processChildLog(childFragmentRecord.childFragmentRecord, builder, ++childHierarchyTemp)
                     return
                 }
-                else -> builder.append("\t↓\t\t\t").append(childFragmentRecord.mFragmentName).append("\n\n")
+                else -> builder.append("\t↓\t\t\t").append(childFragmentRecord.fragmentName).append("\n\n")
             }
 
-            processChildLog(childFragmentRecord.mChildFragmentRecord, builder, childHierarchyTemp)
+            processChildLog(childFragmentRecord.childFragmentRecord, builder, childHierarchyTemp)
         }
     }
 
@@ -222,34 +222,34 @@ class DebugStackDelegate(private val mActivity: FragmentActivity) : SensorEventL
     }
 
     private inner class StackViewTouchListener internal constructor(
-            private val mStackView: View, private val mClickLimitValue: Int) : View.OnTouchListener {
-        private var mDX: Float = 0.toFloat()
-        private var mDY = 0f
-        private var mDownX: Float = 0.toFloat()
-        private var mDownY = 0f
-        private var mIsClickState: Boolean = false
+            private val stackView: View, private val clickLimitValue: Int) : View.OnTouchListener {
+        private var dx: Float = 0.toFloat()
+        private var dy = 0f
+        private var downX: Float = 0.toFloat()
+        private var downY = 0f
+        private var isClickState: Boolean = false
 
         override fun onTouch(v: View, event: MotionEvent): Boolean {
             val x = event.rawX
             val y = event.rawY
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    mIsClickState = true
-                    mDownX = x
-                    mDownY = y
-                    mDX = mStackView.x - event.rawX
-                    mDY = mStackView.y - event.rawY
+                    isClickState = true
+                    downX = x
+                    downY = y
+                    dx = stackView.x - event.rawX
+                    dy = stackView.y - event.rawY
                 }
-                MotionEvent.ACTION_MOVE -> if (abs(x - mDownX) < mClickLimitValue
-                        && abs(y - mDownY) < mClickLimitValue && mIsClickState) {
-                    mIsClickState = true
+                MotionEvent.ACTION_MOVE -> if (abs(x - downX) < clickLimitValue
+                        && abs(y - downY) < clickLimitValue && isClickState) {
+                    isClickState = true
                 } else {
-                    mIsClickState = false
-                    mStackView.x = event.rawX + mDX
-                    mStackView.y = event.rawY + mDY
+                    isClickState = false
+                    stackView.x = event.rawX + dx
+                    stackView.y = event.rawY + dy
                 }
-                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> if (x - mDownX < mClickLimitValue && mIsClickState) {
-                    mStackView.performClick()
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> if (x - downX < clickLimitValue && isClickState) {
+                    stackView.performClick()
                 }
                 else -> return false
             }

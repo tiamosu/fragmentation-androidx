@@ -8,13 +8,13 @@ import java.util.ArrayList
  * @hide Created by YoKey on 16/11/25.
  */
 class TransactionRecord {
-    var mTag: String? = null
-    var mTargetFragmentEnter = Integer.MIN_VALUE
-    var mCurrentFragmentPopExit = Integer.MIN_VALUE
-    var mCurrentFragmentPopEnter = Integer.MIN_VALUE
-    var mTargetFragmentExit = Integer.MIN_VALUE
-    var mDontAddToBackStack = false
-    var mSharedElementList: ArrayList<SharedElement>? = null
+    var tag: String? = null
+    var targetFragmentEnter = Integer.MIN_VALUE
+    var currentFragmentPopExit = Integer.MIN_VALUE
+    var currentFragmentPopEnter = Integer.MIN_VALUE
+    var targetFragmentExit = Integer.MIN_VALUE
+    var dontAddToBackStack = false
+    var sharedElementList: ArrayList<SharedElement>? = null
 
-    class SharedElement(var mSharedElement: View, var mSharedName: String)
+    class SharedElement(var sharedElement: View, var sharedName: String)
 }

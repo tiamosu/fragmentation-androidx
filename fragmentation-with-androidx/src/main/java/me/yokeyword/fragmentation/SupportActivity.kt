@@ -16,10 +16,10 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
  */
 @Suppress("unused")
 open class SupportActivity : AppCompatActivity(), ISupportActivity {
-    private val mDelegate = SupportActivityDelegate(apply { })
+    private val delegate = SupportActivityDelegate(apply { })
 
     override fun getSupportDelegate(): SupportActivityDelegate {
-        return mDelegate
+        return delegate
     }
 
     open fun getContext(): SupportActivity {
@@ -31,21 +31,21 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * 额外的事务：自定义Tag，添加SharedElement动画，操作非回退栈Fragment
      */
     override fun extraTransaction(): ExtraTransaction {
-        return mDelegate.extraTransaction()
+        return delegate.extraTransaction()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDelegate.onCreate()
+        delegate.onCreate()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        mDelegate.onPostCreate()
+        delegate.onPostCreate()
     }
 
     override fun onDestroy() {
-        mDelegate.onDestroy()
+        delegate.onDestroy()
         super.onDestroy()
     }
 
@@ -53,14 +53,14 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * Note： return mDelegate.dispatchTouchEvent(ev) || super.dispatchTouchEvent(ev);
      */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        return mDelegate.dispatchTouchEvent() || super.dispatchTouchEvent(ev)
+        return delegate.dispatchTouchEvent() || super.dispatchTouchEvent(ev)
     }
 
     /**
      * 不建议复写该方法,请使用 [onBackPressedSupport] 代替
      */
     override fun onBackPressed() {
-        mDelegate.onBackPressed()
+        delegate.onBackPressed()
     }
 
     /**
@@ -68,7 +68,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * 请尽量复写该方法,避免复写onBackPress(),以保证SupportFragment内的onBackPressedSupport()回退事件正常执行
      */
     override fun onBackPressedSupport() {
-        mDelegate.onBackPressedSupport()
+        delegate.onBackPressedSupport()
     }
 
     /**
@@ -77,7 +77,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @return FragmentAnimator
      */
     override fun getFragmentAnimator(): FragmentAnimator? {
-        return mDelegate.getFragmentAnimator()
+        return delegate.getFragmentAnimator()
     }
 
     /**
@@ -85,7 +85,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * 设置Fragment内的全局动画
      */
     override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
-        mDelegate.setFragmentAnimator(fragmentAnimator)
+        delegate.setFragmentAnimator(fragmentAnimator)
     }
 
     /**
@@ -99,11 +99,11 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @return FragmentAnimator对象
      */
     override fun onCreateFragmentAnimator(): FragmentAnimator? {
-        return mDelegate.onCreateFragmentAnimator()
+        return delegate.onCreateFragmentAnimator()
     }
 
     override fun post(runnable: Runnable) {
-        mDelegate.post(runnable)
+        delegate.post(runnable)
     }
 
     /****************************************以下为可选方法(Optional methods)******************************************************/
@@ -115,12 +115,12 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @param toFragment  目标Fragment
      */
     fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?) {
-        mDelegate.loadRootFragment(containerId, toFragment)
+        delegate.loadRootFragment(containerId, toFragment)
     }
 
     fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?,
                          addToBackStack: Boolean, allowAnimation: Boolean) {
-        mDelegate.loadRootFragment(containerId, toFragment, addToBackStack, allowAnimation)
+        delegate.loadRootFragment(containerId, toFragment, addToBackStack, allowAnimation)
     }
 
     /**
@@ -128,7 +128,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      */
     fun loadMultipleRootFragment(containerId: Int, showPosition: Int,
                                  toFragments: Array<out ISupportFragment?>) {
-        mDelegate.loadMultipleRootFragment(containerId, showPosition, toFragments)
+        delegate.loadMultipleRootFragment(containerId, showPosition, toFragments)
     }
 
     /**
@@ -141,21 +141,21 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @param showFragment 需要show的Fragment
      */
     fun showHideFragment(showFragment: ISupportFragment?) {
-        mDelegate.showHideFragment(showFragment)
+        delegate.showHideFragment(showFragment)
     }
 
     /**
      * show一个Fragment,hide一个Fragment ; 主要用于类似微信主页那种 切换tab的情况
      */
     fun showHideFragment(showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
-        mDelegate.showHideFragment(showFragment, hideFragment)
+        delegate.showHideFragment(showFragment, hideFragment)
     }
 
     /**
      * It is recommended to use [SupportFragment.start].
      */
     fun start(toFragment: ISupportFragment?) {
-        mDelegate.start(toFragment)
+        delegate.start(toFragment)
     }
 
     /**
@@ -164,7 +164,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @param launchMode Similar to Activity's LaunchMode.
      */
     fun start(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
-        mDelegate.start(toFragment, launchMode)
+        delegate.start(toFragment, launchMode)
     }
 
     /**
@@ -172,7 +172,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * Launch an fragment for which you would like a result when it poped.
      */
     fun startForResult(toFragment: ISupportFragment?, requestCode: Int) {
-        mDelegate.startForResult(toFragment, requestCode)
+        delegate.startForResult(toFragment, requestCode)
     }
 
     /**
@@ -180,7 +180,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * Start the target Fragment and pop itself
      */
     fun startWithPop(toFragment: ISupportFragment?) {
-        mDelegate.startWithPop(toFragment)
+        delegate.startWithPop(toFragment)
     }
 
     /**
@@ -191,21 +191,21 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      */
     fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>?,
                        includeTargetFragment: Boolean) {
-        mDelegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
+        delegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
     }
 
     /**
      * It is recommended to use [SupportFragment.replaceFragment].
      */
     fun replaceFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
-        mDelegate.replaceFragment(toFragment, addToBackStack)
+        delegate.replaceFragment(toFragment, addToBackStack)
     }
 
     /**
      * Pop the fragment.
      */
     fun pop() {
-        mDelegate.pop()
+        delegate.pop()
     }
 
     /**
@@ -219,7 +219,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * @param includeTargetFragment 是否包含该fragment
      */
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
-        mDelegate.popTo(targetFragmentClass, includeTargetFragment)
+        delegate.popTo(targetFragmentClass, includeTargetFragment)
     }
 
     /**
@@ -228,12 +228,12 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      */
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
               afterPopTransactionRunnable: Runnable?) {
-        mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
+        delegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
     }
 
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
               afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
+        delegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
     }
 
     /**
@@ -242,7 +242,7 @@ open class SupportActivity : AppCompatActivity(), ISupportActivity {
      * 可以通过该方法改变其内所有Fragment的默认背景。
      */
     fun setDefaultFragmentBackground(@DrawableRes backgroundRes: Int) {
-        mDelegate.setDefaultFragmentBackground(backgroundRes)
+        delegate.setDefaultFragmentBackground(backgroundRes)
     }
 
     /**

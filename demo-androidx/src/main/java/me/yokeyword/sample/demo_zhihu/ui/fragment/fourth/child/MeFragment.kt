@@ -23,7 +23,7 @@ class MeFragment : SupportFragment() {
 
     private fun initView(view: View) {
         mTvBtnSettings = view.findViewById(R.id.tv_btn_settings)
-        mTvBtnSettings!!.setOnClickListener { v -> start(SettingsFragment.newInstance()) }
+        mTvBtnSettings!!.setOnClickListener { start(SettingsFragment.newInstance()) }
     }
 
     override fun onBackPressedSupport(): Boolean {

@@ -14,20 +14,20 @@ import me.yokeyword.fragmentation_swipeback.core.SwipeBackActivityDelegate
  * Created by YoKey on 16/4/19.
  */
 open class SwipeBackActivity : SupportActivity(), ISwipeBackActivity {
-    private val mDelegate = SwipeBackActivityDelegate(apply { })
+    private val delegate = SwipeBackActivityDelegate(apply { })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDelegate.onCreate(savedInstanceState)
+        delegate.onCreate(savedInstanceState)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        mDelegate.onPostCreate(savedInstanceState)
+        delegate.onPostCreate(savedInstanceState)
     }
 
     override fun getSwipeBackLayout(): SwipeBackLayout? {
-        return mDelegate.getSwipeBackLayout()
+        return delegate.getSwipeBackLayout()
     }
 
     /**
@@ -36,15 +36,15 @@ open class SwipeBackActivity : SupportActivity(), ISwipeBackActivity {
      * @param enable
      */
     override fun setSwipeBackEnable(enable: Boolean) {
-        mDelegate.setSwipeBackEnable(enable)
+        delegate.setSwipeBackEnable(enable)
     }
 
     override fun setEdgeLevel(edgeLevel: SwipeBackLayout.EdgeLevel) {
-        mDelegate.setEdgeLevel(edgeLevel)
+        delegate.setEdgeLevel(edgeLevel)
     }
 
     override fun setEdgeLevel(widthPixel: Int) {
-        mDelegate.setEdgeLevel(widthPixel)
+        delegate.setEdgeLevel(widthPixel)
     }
 
     /**
@@ -53,6 +53,6 @@ open class SwipeBackActivity : SupportActivity(), ISwipeBackActivity {
      * @return true: Activity优先滑动退出;  false: Fragment优先滑动退出
      */
     override fun swipeBackPriority(): Boolean {
-        return mDelegate.swipeBackPriority()
+        return delegate.swipeBackPriority()
     }
 }

@@ -17,14 +17,15 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by YoKey on 17/10/17.
  */
 object EventBusActivityScope {
-    private val TAG = EventBusActivityScope::class.java.simpleName
-    private val ACTIVITY_EVENT_BUS_SCOPE_POOL = ConcurrentHashMap<Activity, LazyEventBusInstance>()
-    private val mInitialized = AtomicBoolean(false)
+    private val tag = EventBusActivityScope::class.java.simpleName
+    private val activityEventBusScopePool = ConcurrentHashMap<Activity, LazyEventBusInstance>()
+    private val initialized = AtomicBoolean(false)
+
     @Volatile
-    private var mInvalidEventBus: EventBus? = null
+    private var invalidEventBus: EventBus? = null
 
     internal fun init(context: Context?) {
-        if (mInitialized.getAndSet(true)) {
+        if (initialized.getAndSet(true)) {
             return
         }
         (context?.applicationContext as? Application)
@@ -32,7 +33,7 @@ object EventBusActivityScope {
                     private val mainHandler = Handler(Looper.getMainLooper())
 
                     override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
-                        ACTIVITY_EVENT_BUS_SCOPE_POOL[activity] = LazyEventBusInstance()
+                        activityEventBusScopePool[activity] = LazyEventBusInstance()
                     }
 
                     override fun onActivityStarted(activity: Activity) {}
@@ -46,12 +47,12 @@ object EventBusActivityScope {
                     override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle?) {}
 
                     override fun onActivityDestroyed(activity: Activity) {
-                        if (!ACTIVITY_EVENT_BUS_SCOPE_POOL.containsKey(activity)) {
+                        if (!activityEventBusScopePool.containsKey(activity)) {
                             return
                         }
                         // Make sure Fragment's onDestroy() has been called.
                         mainHandler.post {
-                            ACTIVITY_EVENT_BUS_SCOPE_POOL.remove(activity)
+                            activityEventBusScopePool.remove(activity)
                         }
                     }
                 })
@@ -63,42 +64,42 @@ object EventBusActivityScope {
     @JvmStatic
     fun getDefault(activity: Activity?): EventBus {
         if (activity == null) {
-            Log.e(TAG, "Can't find the Activity, the Activity is null!")
+            Log.e(tag, "Can't find the Activity, the Activity is null!")
             return invalidEventBus()!!
         }
 
-        val lazyEventBusInstance = ACTIVITY_EVENT_BUS_SCOPE_POOL[activity]
+        val lazyEventBusInstance = activityEventBusScopePool[activity]
         if (lazyEventBusInstance == null) {
-            Log.e(TAG, "Can't find the Activity, it has been removed!")
+            Log.e(tag, "Can't find the Activity, it has been removed!")
             return invalidEventBus()!!
         }
         return lazyEventBusInstance.getInstance()!!
     }
 
     private fun invalidEventBus(): EventBus? {
-        if (mInvalidEventBus == null) {
+        if (invalidEventBus == null) {
             synchronized(EventBusActivityScope::class.java) {
-                if (mInvalidEventBus == null) {
-                    mInvalidEventBus = EventBus()
+                if (invalidEventBus == null) {
+                    invalidEventBus = EventBus()
                 }
             }
         }
-        return mInvalidEventBus
+        return invalidEventBus
     }
 
     internal class LazyEventBusInstance {
         @Volatile
-        private var mEventBus: EventBus? = null
+        private var eventBus: EventBus? = null
 
         fun getInstance(): EventBus? {
-            if (mEventBus == null) {
+            if (eventBus == null) {
                 synchronized(this) {
-                    if (mEventBus == null) {
-                        mEventBus = EventBus()
+                    if (eventBus == null) {
+                        eventBus = EventBus()
                     }
                 }
             }
-            return mEventBus
+            return eventBus
         }
     }
 }

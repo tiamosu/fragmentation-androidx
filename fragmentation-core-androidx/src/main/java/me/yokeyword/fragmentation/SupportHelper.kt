@@ -52,8 +52,8 @@ object SupportHelper {
      * 显示栈视图日志,调试时使用
      */
     @JvmStatic
-    fun logFragmentStackHierarchy(support: ISupportActivity, TAG: String) {
-        support.getSupportDelegate().logFragmentStackHierarchy(TAG)
+    fun logFragmentStackHierarchy(support: ISupportActivity, tag: String) {
+        support.getSupportDelegate().logFragmentStackHierarchy(tag)
     }
 
     /**
@@ -70,7 +70,7 @@ object SupportHelper {
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
-                if (containerId == 0 || containerId == fragment.getSupportDelegate().mContainerId) {
+                if (containerId == 0 || containerId == fragment.getSupportDelegate().containerId) {
                     return fragment
                 }
             }
@@ -155,7 +155,7 @@ object SupportHelper {
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
-                if (fragment.isResumed && !fragment.isHidden && fragment.userVisibleHint) {
+                if (fragment.isResumed && isFragmentVisible(fragment)) {
                     return getAddedFragment(fragment.childFragmentManager, fragment)
                 }
             }
@@ -182,7 +182,7 @@ object SupportHelper {
             val fragment = fragmentManager?.findFragmentByTag(entry?.name)
             if (fragment is ISupportFragment) {
                 val supportFragment = fragment as? ISupportFragment
-                if (containerId == 0 || containerId == supportFragment?.getSupportDelegate()?.mContainerId) {
+                if (containerId == 0 || containerId == supportFragment?.getSupportDelegate()?.containerId) {
                     return supportFragment
                 }
             }
@@ -200,11 +200,15 @@ object SupportHelper {
         }
         val fragment = fragmentList[0]
         if (fragment is ISupportFragment) {
-            if (fragment.isResumed && !fragment.isHidden && fragment.userVisibleHint) {
+            if (fragment.isResumed && isFragmentVisible(fragment)) {
                 return fragment
             }
         }
         return null
+    }
+
+    private fun isFragmentVisible(fragment: Fragment): Boolean {
+        return !fragment.isHidden && fragment.userVisibleHint
     }
 
     @Suppress("UNCHECKED_CAST")

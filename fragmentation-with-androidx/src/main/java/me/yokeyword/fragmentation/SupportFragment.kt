@@ -17,15 +17,15 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
  */
 @Suppress("unused")
 open class SupportFragment : Fragment(), ISupportFragment {
-    private val mDelegate = SupportFragmentDelegate(apply { })
-    private lateinit var mActivity: SupportActivity
+    private val delegate = SupportFragmentDelegate(apply { })
+    private lateinit var activity: SupportActivity
 
     override fun getSupportDelegate(): SupportFragmentDelegate {
-        return mDelegate
+        return delegate
     }
 
     override fun getContext(): FragmentActivity {
-        return mActivity
+        return activity
     }
 
     /**
@@ -33,63 +33,63 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 额外的事务：自定义Tag，添加SharedElement动画，操作非回退栈Fragment
      */
     override fun extraTransaction(): ExtraTransaction {
-        return mDelegate.extraTransaction()
+        return delegate.extraTransaction()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mDelegate.onAttach()
-        mActivity = mDelegate.getActivity() as SupportActivity
+        delegate.onAttach()
+        activity = delegate.getActivity() as SupportActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDelegate.onCreate(savedInstanceState)
+        delegate.onCreate(savedInstanceState)
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        return mDelegate.onCreateAnimation(transit, enter, nextAnim)
+        return delegate.onCreateAnimation(transit, enter, nextAnim)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mDelegate.onActivityCreated(savedInstanceState)
+        delegate.onActivityCreated(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mDelegate.onSaveInstanceState(outState)
+        delegate.onSaveInstanceState(outState)
     }
 
     override fun onResume() {
         super.onResume()
-        mDelegate.onResume()
+        delegate.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mDelegate.onPause()
+        delegate.onPause()
     }
 
     override fun onDestroyView() {
-        mDelegate.onDestroyView()
+        delegate.onDestroyView()
         super.onDestroyView()
     }
 
     override fun onDestroy() {
-        mDelegate.onDestroy()
+        delegate.onDestroy()
         super.onDestroy()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        mDelegate.onHiddenChanged(hidden)
+        delegate.onHiddenChanged(hidden)
     }
 
     @Suppress("DEPRECATION")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        mDelegate.setUserVisibleHint(isVisibleToUser)
+        delegate.setUserVisibleHint(isVisibleToUser)
     }
 
     /**
@@ -102,7 +102,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 前面的事务全部执行后 执行该Action
      */
     override fun post(runnable: Runnable) {
-        mDelegate.post(runnable)
+        delegate.post(runnable)
     }
 
     /**
@@ -110,7 +110,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 入栈动画 结束时,回调
      */
     override fun onEnterAnimationEnd(savedInstanceState: Bundle?) {
-        mDelegate.onEnterAnimationEnd(savedInstanceState)
+        delegate.onEnterAnimationEnd(savedInstanceState)
     }
 
     /**
@@ -120,7 +120,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 同级下的 懒加载 ＋ ViewPager下的懒加载  的结合回调方法
      */
     override fun onLazyInitView(savedInstanceState: Bundle?) {
-        mDelegate.onLazyInitView(savedInstanceState)
+        delegate.onLazyInitView(savedInstanceState)
     }
 
     /**
@@ -131,7 +131,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * Is the combination of  [onHiddenChanged() + onResume()/onPause() + setUserVisibleHint()]
      */
     override fun onSupportVisible() {
-        mDelegate.onSupportVisible()
+        delegate.onSupportVisible()
     }
 
     /**
@@ -141,14 +141,14 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * Is the combination of  [onHiddenChanged() + onResume()/onPause() + setUserVisibleHint()]
      */
     override fun onSupportInvisible() {
-        mDelegate.onSupportInvisible()
+        delegate.onSupportInvisible()
     }
 
     /**
      * Return true if the fragment has been supportVisible.
      */
     override fun isSupportVisible(): Boolean {
-        return mDelegate.isSupportVisible()
+        return delegate.isSupportVisible()
     }
 
     /**
@@ -156,7 +156,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 设定当前Fragmemt动画,优先级比在SupportActivity里高
      */
     override fun onCreateFragmentAnimator(): FragmentAnimator? {
-        return mDelegate.onCreateFragmentAnimator()
+        return delegate.onCreateFragmentAnimator()
     }
 
     /**
@@ -165,14 +165,14 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @return FragmentAnimator
      */
     override fun getFragmentAnimator(): FragmentAnimator? {
-        return mDelegate.getFragmentAnimator()
+        return delegate.getFragmentAnimator()
     }
 
     /**
      * 设置Fragment内的全局动画
      */
     override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
-        mDelegate.setFragmentAnimator(fragmentAnimator)
+        delegate.setFragmentAnimator(fragmentAnimator)
     }
 
     /**
@@ -181,7 +181,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @return false则继续向上传递, true则消费掉该事件
      */
     override fun onBackPressedSupport(): Boolean {
-        return mDelegate.onBackPressedSupport()
+        return delegate.onBackPressedSupport()
     }
 
     /**
@@ -193,7 +193,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @see .startForResult
      */
     override fun setFragmentResult(resultCode: Int, bundle: Bundle?) {
-        mDelegate.setFragmentResult(resultCode, bundle)
+        delegate.setFragmentResult(resultCode, bundle)
     }
 
     /**
@@ -205,7 +205,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @see .startForResult
      */
     override fun onFragmentResult(requestCode: Int, resultCode: Int, data: Bundle?) {
-        mDelegate.onFragmentResult(requestCode, resultCode, data)
+        delegate.onFragmentResult(requestCode, resultCode, data)
     }
 
     /**
@@ -219,7 +219,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @see .start
      */
     override fun onNewBundle(args: Bundle) {
-        mDelegate.onNewBundle(args)
+        delegate.onNewBundle(args)
     }
 
     /**
@@ -228,7 +228,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @see .start
      */
     override fun putNewBundle(newBundle: Bundle?) {
-        mDelegate.putNewBundle(newBundle)
+        delegate.putNewBundle(newBundle)
     }
 
 
@@ -238,14 +238,14 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * 隐藏软键盘
      */
     protected fun hideSoftInput() {
-        mDelegate.hideSoftInput()
+        delegate.hideSoftInput()
     }
 
     /**
      * 显示软键盘,调用该方法后,会在onPause时自动隐藏软键盘
      */
     protected fun showSoftInput(view: View) {
-        mDelegate.showSoftInput(view)
+        delegate.showSoftInput(view)
     }
 
     /**
@@ -255,12 +255,12 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @param toFragment  目标Fragment
      */
     fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?) {
-        mDelegate.loadRootFragment(containerId, toFragment)
+        delegate.loadRootFragment(containerId, toFragment)
     }
 
     fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?,
                          addToBackStack: Boolean, allowAnim: Boolean) {
-        mDelegate.loadRootFragment(containerId, toFragment, addToBackStack, allowAnim)
+        delegate.loadRootFragment(containerId, toFragment, addToBackStack, allowAnim)
     }
 
     /**
@@ -268,7 +268,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      */
     fun loadMultipleRootFragment(containerId: Int, showPosition: Int,
                                  toFragments: Array<out ISupportFragment?>) {
-        mDelegate.loadMultipleRootFragment(containerId, showPosition, toFragments)
+        delegate.loadMultipleRootFragment(containerId, showPosition, toFragments)
     }
 
     /**
@@ -281,64 +281,64 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @param showFragment 需要show的Fragment
      */
     fun showHideFragment(showFragment: ISupportFragment?) {
-        mDelegate.showHideFragment(showFragment)
+        delegate.showHideFragment(showFragment)
     }
 
     /**
      * show一个Fragment,hide一个Fragment ; 主要用于类似微信主页那种 切换tab的情况
      */
     fun showHideFragment(showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
-        mDelegate.showHideFragment(showFragment, hideFragment)
+        delegate.showHideFragment(showFragment, hideFragment)
     }
 
     fun start(toFragment: ISupportFragment?) {
-        mDelegate.start(toFragment)
+        delegate.start(toFragment)
     }
 
     /**
      * @param launchMode Similar to Activity's LaunchMode.
      */
     fun start(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
-        mDelegate.start(toFragment, launchMode)
+        delegate.start(toFragment, launchMode)
     }
 
     /**
      * Launch an fragment for which you would like a result when it poped.
      */
     fun startForResult(toFragment: ISupportFragment?, requestCode: Int) {
-        mDelegate.startForResult(toFragment, requestCode)
+        delegate.startForResult(toFragment, requestCode)
     }
 
     /**
      * Start the target Fragment and pop itself
      */
     fun startWithPop(toFragment: ISupportFragment?) {
-        mDelegate.startWithPop(toFragment)
+        delegate.startWithPop(toFragment)
     }
 
     /**
-     * @see .popTo
-     * @see .start
+     * @see [popTo]
+     * @see [start]
      */
     fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>?,
                        includeTargetFragment: Boolean) {
-        mDelegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
+        delegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment)
     }
 
 
     fun replaceFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
-        mDelegate.replaceFragment(toFragment, addToBackStack)
+        delegate.replaceFragment(toFragment, addToBackStack)
     }
 
     fun pop() {
-        mDelegate.pop()
+        delegate.pop()
     }
 
     /**
      * Pop the child fragment.
      */
     fun popChild() {
-        mDelegate.popChild()
+        delegate.popChild()
     }
 
     /**
@@ -352,7 +352,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * @param includeTargetFragment 是否包含该fragment
      */
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
-        mDelegate.popTo(targetFragmentClass, includeTargetFragment)
+        delegate.popTo(targetFragmentClass, includeTargetFragment)
     }
 
     /**
@@ -361,26 +361,26 @@ open class SupportFragment : Fragment(), ISupportFragment {
      */
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
               afterPopTransactionRunnable: Runnable?) {
-        mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
+        delegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
     }
 
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
               afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
+        delegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
     }
 
     fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
-        mDelegate.popToChild(targetFragmentClass, includeTargetFragment)
+        delegate.popToChild(targetFragmentClass, includeTargetFragment)
     }
 
     fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
                    afterPopTransactionRunnable: Runnable?) {
-        mDelegate.popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
+        delegate.popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable)
     }
 
     fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
                    afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mDelegate.popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
+        delegate.popToChild(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim)
     }
 
     /**

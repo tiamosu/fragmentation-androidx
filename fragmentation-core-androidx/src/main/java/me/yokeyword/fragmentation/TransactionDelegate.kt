@@ -20,17 +20,21 @@ import java.util.*
  * Controller
  * Created by YoKeyword on 16/1/22.
  */
-class TransactionDelegate internal constructor(private val mSupport: ISupportActivity) {
-    private val mActivity: FragmentActivity = mSupport as FragmentActivity
-    private var mHandler: Handler = Handler(Looper.getMainLooper())
-    internal var mActionQueue: ActionQueue
+class TransactionDelegate internal constructor(private val supportA: ISupportActivity) {
+    private val activity: FragmentActivity
+    private var handler: Handler = Handler(Looper.getMainLooper())
+    internal var actionQueue: ActionQueue
 
     init {
-        mActionQueue = ActionQueue(mHandler)
+        if (supportA !is FragmentActivity) {
+            throw RuntimeException("must extends FragmentActivity/AppCompatActivity")
+        }
+        this.activity = supportA
+        actionQueue = ActionQueue(handler)
     }
 
     internal fun post(runnable: Runnable) {
-        mActionQueue.enqueue(object : Action() {
+        actionQueue.enqueue(object : Action() {
             override fun run() {
                 runnable.run()
             }
@@ -44,10 +48,10 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 bindContainerId(containerId, to)
 
                 var toFragmentTag: String? = to?.javaClass?.name
-                val transactionRecord = to?.getSupportDelegate()?.mTransactionRecord
+                val transactionRecord = to?.getSupportDelegate()?.transactionRecord
                 if (transactionRecord != null) {
-                    if (transactionRecord.mTag != null) {
-                        toFragmentTag = transactionRecord.mTag
+                    if (transactionRecord.tag != null) {
+                        toFragmentTag = transactionRecord.tag
                     }
                 }
 
@@ -112,14 +116,14 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 val top = getTopFragmentForStart(from, fm)
                         ?: throw NullPointerException("There is no Fragment in the FragmentManager, maybe you need to call loadRootFragment() first!")
 
-                val containerId = top.getSupportDelegate().mContainerId
+                val containerId = top.getSupportDelegate().containerId
                 bindContainerId(containerId, to)
 
                 handleAfterSaveInStateTransactionException(fm, "popTo()")
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-                top.getSupportDelegate().mLockAnim = true
+                top.getSupportDelegate().lockAnim = true
                 if (!FragmentationMagician.isStateSaved(fm)) {
-                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().mAnimHelper!!.mPopExitAnim)
+                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().animHelper!!.popExitAnim)
                 }
 
                 removeTopFragment(fm)
@@ -144,7 +148,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 val top = getTopFragmentForStart(from, fm)
                         ?: throw NullPointerException("There is no Fragment in the FragmentManager, maybe you need to call loadRootFragment() first!")
 
-                val containerId = top.getSupportDelegate().mContainerId
+                val containerId = top.getSupportDelegate().containerId
                 bindContainerId(containerId, to)
 
                 if (willPopFragments.isEmpty()) {
@@ -154,7 +158,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 handleAfterSaveInStateTransactionException(fm, "startWithPopTo()")
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
                 if (!FragmentationMagician.isStateSaved(fm)) {
-                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().mAnimHelper!!.mPopExitAnim)
+                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm), to, top.getSupportDelegate().animHelper!!.popExitAnim)
                 }
 
                 safePopTo(fragmentTag, fm, flag, willPopFragments)
@@ -215,12 +219,12 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     internal fun popQuiet(fm: FragmentManager?, fragment: Fragment?) {
         enqueue(fm, object : Action(ACTION_POP_MOCK) {
             override fun run() {
-                mSupport.getSupportDelegate().mPopMultipleNoAnim = true
+                supportA.getSupportDelegate().popMultipleNoAnim = true
                 removeTopFragment(fm)
                 FragmentationMagician.popBackStackAllowingStateLoss(fm, fragment?.tag, 0)
                 FragmentationMagician.popBackStackAllowingStateLoss(fm)
                 FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-                mSupport.getSupportDelegate().mPopMultipleNoAnim = false
+                supportA.getSupportDelegate().popMultipleNoAnim = false
             }
         })
     }
@@ -269,7 +273,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 targetFragment = from.fragmentManager!!
                         .getFragment(from.arguments!!, FRAGMENTATION_STATE_SAVE_RESULT) as? ISupportFragment
             }
-            targetFragment?.onFragmentResult(resultRecord.mRequestCode, resultRecord.mResultCode, resultRecord.mResultBundle)
+            targetFragment?.onFragmentResult(resultRecord.requestCode, resultRecord.resultCode, resultRecord.resultBundle)
         } catch (ignored: IllegalStateException) {
             // Fragment no longer exists
         }
@@ -280,7 +284,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             Log.w(TAG, "FragmentManager is null, skip the action!")
             return
         }
-        mActionQueue.enqueue(action)
+        actionQueue.enqueue(action)
     }
 
     private fun doDispatchStartTransaction(fm: FragmentManager?, from: ISupportFragment?,
@@ -303,21 +307,21 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         }
 
         if (fromTemp != null && containerId == 0) {
-            bindContainerId(fromTemp.getSupportDelegate().mContainerId, to)
+            bindContainerId(fromTemp.getSupportDelegate().containerId, to)
         }
 
         // process ExtraTransaction
         var toFragmentTag: String? = to?.javaClass?.name
         var dontAddToBackStack = false
         var sharedElementList: ArrayList<TransactionRecord.SharedElement>? = null
-        val transactionRecord = to?.getSupportDelegate()?.mTransactionRecord
+        val transactionRecord = to?.getSupportDelegate()?.transactionRecord
         if (transactionRecord != null) {
-            if (transactionRecord.mTag != null) {
-                toFragmentTag = transactionRecord.mTag
+            if (transactionRecord.tag != null) {
+                toFragmentTag = transactionRecord.tag
             }
-            dontAddToBackStack = transactionRecord.mDontAddToBackStack
-            if (transactionRecord.mSharedElementList != null) {
-                sharedElementList = transactionRecord.mSharedElementList
+            dontAddToBackStack = transactionRecord.dontAddToBackStack
+            if (transactionRecord.sharedElementList != null) {
+                sharedElementList = transactionRecord.sharedElementList
             }
         }
 
@@ -333,11 +337,11 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         top = if (from == null) {
             SupportHelper.getTopFragment(fm)
         } else {
-            if (from.getSupportDelegate().mContainerId == 0) {
+            if (from.getSupportDelegate().containerId == 0) {
                 val fromF = from as? Fragment
                 check(!(fromF?.tag != null && !fromF.tag!!.startsWith("android:switcher:"))) { "Can't find container, please call loadRootFragment() first!" }
             }
-            SupportHelper.getTopFragment(fm, from.getSupportDelegate().mContainerId)
+            SupportHelper.getTopFragment(fm, from.getSupportDelegate().containerId)
         }
         return top
     }
@@ -353,13 +357,13 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
 
         if (sharedElementList == null) {
             if (addMode) { // Replace mode forbidden animation, the replace animations exist overlapping Bug on support-v4.
-                val record = to.getSupportDelegate().mTransactionRecord
-                if (record != null && record.mTargetFragmentEnter != Integer.MIN_VALUE) {
-                    ft?.setCustomAnimations(record.mTargetFragmentEnter, record.mCurrentFragmentPopExit,
-                            record.mCurrentFragmentPopEnter, record.mTargetFragmentExit)
-                    args.putInt(FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM, record.mTargetFragmentEnter)
-                    args.putInt(FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM, record.mTargetFragmentExit)
-                    args.putInt(FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM, record.mCurrentFragmentPopExit)
+                val record = to.getSupportDelegate().transactionRecord
+                if (record != null && record.targetFragmentEnter != Integer.MIN_VALUE) {
+                    ft?.setCustomAnimations(record.targetFragmentEnter, record.currentFragmentPopExit,
+                            record.currentFragmentPopEnter, record.targetFragmentExit)
+                    args.putInt(FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM, record.targetFragmentEnter)
+                    args.putInt(FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM, record.targetFragmentExit)
+                    args.putInt(FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM, record.currentFragmentPopExit)
                 } else {
                     ft?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 }
@@ -369,7 +373,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         } else {
             args.putBoolean(FRAGMENTATION_ARG_IS_SHARED_ELEMENT, true)
             for (item in sharedElementList) {
-                ft?.addSharedElement(item.mSharedElement, item.mSharedName)
+                ft?.addSharedElement(item.sharedElement, item.sharedName)
             }
         }
         if (from == null) {
@@ -383,12 +387,12 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             }
         } else {
             if (addMode) {
-                ft?.add(from.getSupportDelegate().mContainerId, toF, toFragmentTag)
+                ft?.add(from.getSupportDelegate().containerId, toF, toFragmentTag)
                 if (type != TYPE_ADD_WITHOUT_HIDE && type != TYPE_ADD_RESULT_WITHOUT_HIDE) {
                     ft?.hide(fromF!!)
                 }
             } else {
-                ft?.replace(from.getSupportDelegate().mContainerId, toF, toFragmentTag)
+                ft?.replace(from.getSupportDelegate().containerId, toF, toFragmentTag)
             }
         }
 
@@ -451,14 +455,14 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             }
         } else if (launchMode == ISupportFragment.SINGLETASK) {
             doPopTo(toFragmentTag, false, fm, DEFAULT_POPTO_ANIM)
-            mHandler.post { handleNewBundle(to, stackToFragment) }
+            handler.post { handleNewBundle(to, stackToFragment) }
             return true
         }
         return false
     }
 
     private fun handleNewBundle(toFragment: ISupportFragment?, stackToFragment: ISupportFragment?) {
-        val argsNewBundle = toFragment?.getSupportDelegate()?.mNewBundle
+        val argsNewBundle = toFragment?.getSupportDelegate()?.newBundle
         val args = getArguments(toFragment as? Fragment)
         if (args.containsKey(FRAGMENTATION_ARG_CONTAINER)) {
             args.remove(FRAGMENTATION_ARG_CONTAINER)
@@ -477,7 +481,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     private fun saveRequestCode(fm: FragmentManager?, from: Fragment, to: Fragment?, requestCode: Int) {
         val bundle = getArguments(to)
         val resultRecord = ResultRecord()
-        resultRecord.mRequestCode = requestCode
+        resultRecord.requestCode = requestCode
         bundle.putParcelable(FRAGMENTATION_ARG_RESULT_RECORD, resultRecord)
         fm?.putFragment(bundle, FRAGMENTATION_STATE_SAVE_RESULT, from)
     }
@@ -506,7 +510,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     }
 
     private fun safePopTo(fragmentTag: String?, fm: FragmentManager?, flag: Int, willPopFragments: List<Fragment>) {
-        mSupport.getSupportDelegate().mPopMultipleNoAnim = true
+        supportA.getSupportDelegate().popMultipleNoAnim = true
 
         val transaction = fm?.beginTransaction()
                 ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
@@ -517,7 +521,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
 
         FragmentationMagician.popBackStackAllowingStateLoss(fm, fragmentTag, flag)
         FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-        mSupport.getSupportDelegate().mPopMultipleNoAnim = false
+        supportA.getSupportDelegate().popMultipleNoAnim = false
     }
 
     private fun mockPopToAnim(from: Fragment, targetFragmentTag: String?, fm: FragmentManager?,
@@ -528,7 +532,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         }
 
         val fromSupport = from as ISupportFragment
-        val container = findContainerById(from, fromSupport.getSupportDelegate().mContainerId)
+        val container = findContainerById(from, fromSupport.getSupportDelegate().containerId)
                 ?: return
 
         val fromView = from.view ?: return
@@ -550,11 +554,11 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
         } else if (popAnim == 0) {
             animation = object : Animation() {}
         } else {
-            animation = AnimationUtils.loadAnimation(mActivity, popAnim)
+            animation = AnimationUtils.loadAnimation(activity, popAnim)
         }
 
         mock.startAnimation(animation)
-        mHandler.postDelayed({
+        handler.postDelayed({
             try {
                 mock.clearAnimation()
                 mock.removeViewInLayout(fromView)
@@ -571,14 +575,14 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
             fromView.clearAnimation()
         }
 
-        val container = findContainerById(fromF, from.getSupportDelegate().mContainerId) ?: return
+        val container = findContainerById(fromF, from.getSupportDelegate().containerId) ?: return
         container.removeViewInLayout(fromView)
         val mock = addMockView(fromView, container)
 
-        to?.getSupportDelegate()?.mEnterAnimListener = object : SupportFragmentDelegate.EnterAnimListener {
+        to?.getSupportDelegate()?.enterAnimListener = object : SupportFragmentDelegate.EnterAnimListener {
             override fun onEnterAnimStart() {
                 mock.startAnimation(exitAnim)
-                mHandler.postDelayed({
+                handler.postDelayed({
                     try {
                         mock.clearAnimation()
                         mock.removeViewInLayout(fromView)
@@ -591,7 +595,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
     }
 
     private fun addMockView(fromView: View, container: ViewGroup): ViewGroup {
-        val mock = object : ViewGroup(mActivity) {
+        val mock = object : ViewGroup(activity) {
             override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {}
         }
 
@@ -613,7 +617,7 @@ class TransactionDelegate internal constructor(private val mSupport: ISupportAct
                 findContainerById(parentFragment, containerId)
             }
         } else {
-            mActivity.findViewById(containerId)
+            activity.findViewById(containerId)
         }
 
         return if (container is ViewGroup) {

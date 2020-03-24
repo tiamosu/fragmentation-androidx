@@ -8,42 +8,42 @@ import me.yokeyword.fragmentation.helper.ExceptionHandler
  */
 @Suppress("unused")
 class Fragmentation internal constructor(builder: FragmentationBuilder) {
-    private var mIsDebug: Boolean = false
-    private var mMode: Int = 0
-    private var mExceptionHandler: ExceptionHandler? = null
+    private var isDebug: Boolean = false
+    private var mode = 0
+    private var exceptionHandler: ExceptionHandler? = null
 
     init {
-        mIsDebug = builder.debug
-        mMode = if (mIsDebug) {
+        isDebug = builder.debug
+        mode = if (isDebug) {
             builder.mode
         } else {
             NONE
         }
-        mExceptionHandler = builder.handler
+        exceptionHandler = builder.handler
     }
 
     fun isDebug(): Boolean {
-        return mIsDebug
+        return isDebug
     }
 
     fun setDebug(debug: Boolean) {
-        this.mIsDebug = debug
+        this.isDebug = debug
     }
 
     fun getExceptionHandler(): ExceptionHandler? {
-        return mExceptionHandler
+        return exceptionHandler
     }
 
     fun setExceptionHandler(exceptionHandler: ExceptionHandler) {
-        this.mExceptionHandler = exceptionHandler
+        this.exceptionHandler = exceptionHandler
     }
 
     fun getMode(): Int {
-        return mMode
+        return mode
     }
 
     fun setMode(@StackViewMode mode: Int) {
-        this.mMode = mode
+        this.mode = mode
     }
 
     @IntDef(NONE, SHAKE, BUBBLE)
@@ -94,10 +94,12 @@ class Fragmentation internal constructor(builder: FragmentationBuilder) {
          * Dont display stack view.
          */
         const val NONE = 0
+
         /**
          * Shake it to display stack view.
          */
         const val SHAKE = 1
+
         /**
          * As a bubble display stack view.
          */

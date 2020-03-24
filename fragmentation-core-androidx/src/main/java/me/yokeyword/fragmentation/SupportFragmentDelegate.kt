@@ -18,57 +18,70 @@ import me.yokeyword.fragmentation.helper.internal.TransactionRecord
 import me.yokeyword.fragmentation.helper.internal.VisibleDelegate
 
 @Suppress("unused", "UNUSED_PARAMETER")
-class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
-    private lateinit var mActivity: FragmentActivity
-    internal var mFragmentAnimator: FragmentAnimator? = null
-    internal var mAnimHelper: AnimatorHelper? = null
-    internal var mLockAnim = false
-    internal var mContainerId = 0
-    internal var mTransactionRecord: TransactionRecord? = null
-    internal var mNewBundle: Bundle? = null
-    internal var mAnimByActivity = true
-    internal var mEnterAnimListener: EnterAnimListener? = null
-    private var mRootStatus = STATUS_UN_ROOT
-    private var mIsSharedElement = false
-    private var mCustomEnterAnim = Integer.MIN_VALUE
-    private var mCustomExitAnim = Integer.MIN_VALUE
-    private var mCustomPopExitAnim = Integer.MIN_VALUE
-    private var mHandler: Handler? = null
-    private var mFirstCreateView = true
-    private var mReplaceMode = false
-    private var mIsHidden = true
-    private var mTransactionDelegate: TransactionDelegate? = null
+class SupportFragmentDelegate(private val supportF: ISupportFragment) {
+    private lateinit var activity: FragmentActivity
+    internal var fragmentAnimator: FragmentAnimator? = null
+    internal var animHelper: AnimatorHelper? = null
+    internal var lockAnim = false
+    internal var containerId = 0
+    internal var transactionRecord: TransactionRecord? = null
+    internal var newBundle: Bundle? = null
+    internal var animByActivity = true
+    internal var enterAnimListener: EnterAnimListener? = null
+    private var rootStatus = STATUS_UN_ROOT
+    private var isSharedElement = false
+    private var customEnterAnim = Integer.MIN_VALUE
+    private var customExitAnim = Integer.MIN_VALUE
+    private var customPopExitAnim = Integer.MIN_VALUE
+    private var handler: Handler? = null
+    private var firstCreateView = true
+    private var replaceMode = false
+    private var isHidden = true
+    private var transactionDelegate: TransactionDelegate? = null
 
     // SupportVisible
-    private var mVisibleDelegate: VisibleDelegate? = null
-    private var mSaveInstanceState: Bundle? = null
-    private var mFragment: Fragment? = null
-    private var mSupportA: ISupportActivity? = null
-    private var mRootViewClickable = false
+    private var visibleDelegate: VisibleDelegate? = null
+    private var saveInstanceState: Bundle? = null
+    private var fragment: Fragment? = null
+    private var supportA: ISupportActivity? = null
+    private var rootViewClickable = false
 
-    private val mNotifyEnterAnimEndRunnable = Runnable {
-        if (mFragment == null) {
-            return@Runnable
+    private val notifyEnterAnimEndRunnable by lazy {
+        Runnable {
+            if (fragment == null) {
+                return@Runnable
+            }
+            supportF.onEnterAnimationEnd(saveInstanceState)
+
+            if (rootViewClickable) {
+                return@Runnable
+            }
+            val view = fragment?.view ?: return@Runnable
+            val preFragment = SupportHelper.getPreFragment(fragment) ?: return@Runnable
+
+            val prePopExitDuration = preFragment.getSupportDelegate().getPopExitAnimDuration()
+            val enterDuration = getEnterAnimDuration()
+
+            getHandler().postDelayed({ view.isClickable = false }, prePopExitDuration - enterDuration)
         }
-        mSupportF.onEnterAnimationEnd(mSaveInstanceState)
-
-        if (mRootViewClickable) {
-            return@Runnable
-        }
-        val view = mFragment?.view ?: return@Runnable
-        val preFragment = SupportHelper.getPreFragment(mFragment) ?: return@Runnable
-
-        val prePopExitDuration = preFragment.getSupportDelegate().getPopExitAnimDuration()
-        val enterDuration = getEnterAnimDuration()
-
-        getHandler().postDelayed({ view.isClickable = false }, prePopExitDuration - enterDuration)
     }
 
     init {
-        if (mSupportF !is Fragment) {
+        if (supportF !is Fragment) {
             throw RuntimeException("Must extends Fragment")
         }
-        this.mFragment = mSupportF
+        this.fragment = supportF
+    }
+
+    fun onAttach() {
+        val activity = fragment?.activity
+        if (activity !is ISupportActivity) {
+            throw RuntimeException(activity?.javaClass?.simpleName
+                    ?: "fragment" + " must impl ISupportActivity!")
+        }
+        this.supportA = activity
+        this.activity = activity
+        transactionDelegate = supportA?.getSupportDelegate()?.getTransactionDelegate()
     }
 
     /**
@@ -76,56 +89,44 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * 额外的事务：自定义Tag，添加SharedElement动画，操作非回退栈Fragment
      */
     fun extraTransaction(): ExtraTransaction {
-        if (mTransactionDelegate == null) {
-            throw RuntimeException(mFragment?.javaClass?.simpleName + " not attach!")
+        if (transactionDelegate == null) {
+            throw RuntimeException(fragment?.javaClass?.simpleName + " not attach!")
         }
-        return ExtraTransaction.ExtraTransactionImpl((mSupportA as? FragmentActivity),
-                mSupportF, mTransactionDelegate, false)
-    }
-
-    fun onAttach() {
-        val activity = mFragment?.activity
-        if (activity !is ISupportActivity) {
-            throw RuntimeException(activity?.javaClass?.simpleName
-                    ?: "fragment" + " must impl ISupportActivity!")
-        }
-        this.mSupportA = activity
-        this.mActivity = activity
-        mTransactionDelegate = mSupportA?.getSupportDelegate()?.getTransactionDelegate()
+        return ExtraTransaction.ExtraTransactionImpl(activity, supportF, transactionDelegate, false)
     }
 
     fun onCreate(savedInstanceState: Bundle?) {
         getVisibleDelegate().onCreate(savedInstanceState)
 
-        mFragment?.arguments?.apply {
-            mRootStatus = getInt(TransactionDelegate.FRAGMENTATION_ARG_ROOT_STATUS, STATUS_UN_ROOT)
-            mIsSharedElement = getBoolean(TransactionDelegate.FRAGMENTATION_ARG_IS_SHARED_ELEMENT, false)
-            mContainerId = getInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER)
-            mReplaceMode = getBoolean(TransactionDelegate.FRAGMENTATION_ARG_REPLACE, false)
-            mCustomEnterAnim = getInt(TransactionDelegate.FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM, Integer.MIN_VALUE)
-            mCustomExitAnim = getInt(TransactionDelegate.FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM, Integer.MIN_VALUE)
-            mCustomPopExitAnim = getInt(TransactionDelegate.FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM, Integer.MIN_VALUE)
+        fragment?.arguments?.apply {
+            rootStatus = getInt(TransactionDelegate.FRAGMENTATION_ARG_ROOT_STATUS, STATUS_UN_ROOT)
+            isSharedElement = getBoolean(TransactionDelegate.FRAGMENTATION_ARG_IS_SHARED_ELEMENT, false)
+            containerId = getInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER)
+            replaceMode = getBoolean(TransactionDelegate.FRAGMENTATION_ARG_REPLACE, false)
+            customEnterAnim = getInt(TransactionDelegate.FRAGMENTATION_ARG_CUSTOM_ENTER_ANIM, Integer.MIN_VALUE)
+            customExitAnim = getInt(TransactionDelegate.FRAGMENTATION_ARG_CUSTOM_EXIT_ANIM, Integer.MIN_VALUE)
+            customPopExitAnim = getInt(TransactionDelegate.FRAGMENTATION_ARG_CUSTOM_POP_EXIT_ANIM, Integer.MIN_VALUE)
         }
 
         if (savedInstanceState == null) {
             getFragmentAnimator()
         } else {
             savedInstanceState.classLoader = javaClass.classLoader
-            mSaveInstanceState = savedInstanceState
-            mFragmentAnimator = savedInstanceState.getParcelable(TransactionDelegate.FRAGMENTATION_STATE_SAVE_ANIMATOR)
-            mIsHidden = savedInstanceState.getBoolean(TransactionDelegate.FRAGMENTATION_STATE_SAVE_IS_HIDDEN)
-            mContainerId = savedInstanceState.getInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER)
+            saveInstanceState = savedInstanceState
+            fragmentAnimator = savedInstanceState.getParcelable(TransactionDelegate.FRAGMENTATION_STATE_SAVE_ANIMATOR)
+            isHidden = savedInstanceState.getBoolean(TransactionDelegate.FRAGMENTATION_STATE_SAVE_IS_HIDDEN)
+            containerId = savedInstanceState.getInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER)
         }
 
-        mAnimHelper = AnimatorHelper(mActivity.applicationContext, mFragmentAnimator)
+        animHelper = AnimatorHelper(activity.applicationContext, fragmentAnimator)
 
         val enter = getEnterAnim() ?: return
 
         getEnterAnim()?.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                mSupportA?.getSupportDelegate()?.mFragmentClickable = false  // 开启防抖动
+                supportA?.getSupportDelegate()?.fragmentClickable = false  // 开启防抖动
 
-                getHandler().postDelayed({ mSupportA?.getSupportDelegate()?.mFragmentClickable = true }, enter.duration)
+                getHandler().postDelayed({ supportA?.getSupportDelegate()?.fragmentClickable = true }, enter.duration)
             }
 
             override fun onAnimationEnd(animation: Animation) {}
@@ -135,32 +136,32 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        if (mSupportA?.getSupportDelegate()?.mPopMultipleNoAnim == true || mLockAnim) {
+        if (supportA?.getSupportDelegate()?.popMultipleNoAnim == true || lockAnim) {
             return if (transit == FragmentTransaction.TRANSIT_FRAGMENT_CLOSE && enter) {
-                mAnimHelper?.getNoneAnimFixed()
-            } else mAnimHelper?.getNoneAnim()
+                animHelper?.getNoneAnimFixed()
+            } else animHelper?.getNoneAnim()
         }
         when (transit) {
             FragmentTransaction.TRANSIT_FRAGMENT_OPEN -> return if (enter) {
                 val enterAnim: Animation?
-                if (mRootStatus == STATUS_ROOT_ANIM_DISABLE) {
-                    enterAnim = mAnimHelper?.getNoneAnim()
+                if (rootStatus == STATUS_ROOT_ANIM_DISABLE) {
+                    enterAnim = animHelper?.getNoneAnim()
                 } else {
-                    enterAnim = mAnimHelper?.mEnterAnim
+                    enterAnim = animHelper?.enterAnim
                     fixAnimationListener(enterAnim)
                 }
                 enterAnim
             } else {
-                mAnimHelper?.mPopExitAnim
+                animHelper?.popExitAnim
             }
-            FragmentTransaction.TRANSIT_FRAGMENT_CLOSE -> return if (enter) mAnimHelper?.mPopEnterAnim else mAnimHelper?.mExitAnim
+            FragmentTransaction.TRANSIT_FRAGMENT_CLOSE -> return if (enter) animHelper?.popEnterAnim else animHelper?.exitAnim
             else -> {
-                if (mIsSharedElement && enter) {
+                if (isSharedElement && enter) {
                     compatSharedElements()
                 }
 
                 return if (!enter) {
-                    mAnimHelper?.compatChildFragmentExitAnim(mFragment)
+                    animHelper?.compatChildFragmentExitAnim(fragment)
                 } else null
             }
         }
@@ -168,35 +169,35 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     fun onSaveInstanceState(outState: Bundle) {
         getVisibleDelegate().onSaveInstanceState(outState)
-        outState.putParcelable(TransactionDelegate.FRAGMENTATION_STATE_SAVE_ANIMATOR, mFragmentAnimator)
-        outState.putBoolean(TransactionDelegate.FRAGMENTATION_STATE_SAVE_IS_HIDDEN, mFragment!!.isHidden)
-        outState.putInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER, mContainerId)
+        outState.putParcelable(TransactionDelegate.FRAGMENTATION_STATE_SAVE_ANIMATOR, fragmentAnimator)
+        outState.putBoolean(TransactionDelegate.FRAGMENTATION_STATE_SAVE_IS_HIDDEN, fragment!!.isHidden)
+        outState.putInt(TransactionDelegate.FRAGMENTATION_ARG_CONTAINER, containerId)
     }
 
     fun onActivityCreated(savedInstanceState: Bundle?) {
         getVisibleDelegate().onActivityCreated()
 
-        val view = mFragment?.view
+        val view = fragment?.view
         if (view != null) {
-            mRootViewClickable = view.isClickable
+            rootViewClickable = view.isClickable
             view.isClickable = true
             setBackground(view)
         }
 
         if (savedInstanceState != null
-                || mRootStatus == STATUS_ROOT_ANIM_DISABLE
-                || mFragment?.tag != null && mFragment!!.tag!!.startsWith("android:switcher:")
-                || mReplaceMode && !mFirstCreateView) {
+                || rootStatus == STATUS_ROOT_ANIM_DISABLE
+                || fragment?.tag != null && fragment!!.tag!!.startsWith("android:switcher:")
+                || replaceMode && !firstCreateView) {
             notifyEnterAnimEnd()
-        } else if (mCustomEnterAnim != Integer.MIN_VALUE) {
-            fixAnimationListener(if (mCustomEnterAnim == 0)
-                mAnimHelper?.getNoneAnim()
+        } else if (customEnterAnim != Integer.MIN_VALUE) {
+            fixAnimationListener(if (customEnterAnim == 0)
+                animHelper?.getNoneAnim()
             else
-                AnimationUtils.loadAnimation(mActivity, mCustomEnterAnim))
+                AnimationUtils.loadAnimation(activity, customEnterAnim))
         }
 
-        if (mFirstCreateView) {
-            mFirstCreateView = false
+        if (firstCreateView) {
+            firstCreateView = false
         }
     }
 
@@ -209,13 +210,13 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun onDestroyView() {
-        mSupportA?.getSupportDelegate()?.mFragmentClickable = true
+        supportA?.getSupportDelegate()?.fragmentClickable = true
         getVisibleDelegate().onDestroyView()
-        getHandler().removeCallbacks(mNotifyEnterAnimEndRunnable)
+        getHandler().removeCallbacks(notifyEnterAnimEndRunnable)
     }
 
     fun onDestroy() {
-        mTransactionDelegate?.handleResultRecord(mFragment)
+        transactionDelegate?.handleResultRecord(fragment)
     }
 
     fun onHiddenChanged(hidden: Boolean) {
@@ -236,7 +237,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * 前面的事务全部执行后 执行该Action
      */
     fun post(runnable: Runnable) {
-        mTransactionDelegate?.post(runnable)
+        transactionDelegate?.post(runnable)
     }
 
     /**
@@ -288,7 +289,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * 设定当前Fragmemt动画,优先级比在ISupportActivity里高
      */
     fun onCreateFragmentAnimator(): FragmentAnimator? {
-        return mSupportA!!.getFragmentAnimator()
+        return supportA!!.getFragmentAnimator()
     }
 
     /**
@@ -297,22 +298,22 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * @return FragmentAnimator
      */
     fun getFragmentAnimator(): FragmentAnimator? {
-        if (mFragmentAnimator == null) {
-            mFragmentAnimator = mSupportF.onCreateFragmentAnimator()
-            if (mFragmentAnimator == null) {
-                mFragmentAnimator = mSupportA?.getFragmentAnimator()
+        if (fragmentAnimator == null) {
+            fragmentAnimator = supportF.onCreateFragmentAnimator()
+            if (fragmentAnimator == null) {
+                fragmentAnimator = supportA?.getFragmentAnimator()
             }
         }
-        return mFragmentAnimator
+        return fragmentAnimator
     }
 
     /**
      * Set the fragment animation.
      */
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
-        this.mFragmentAnimator = fragmentAnimator
-        mAnimHelper?.notifyChanged(fragmentAnimator)
-        mAnimByActivity = false
+        this.fragmentAnimator = fragmentAnimator
+        animHelper?.notifyChanged(fragmentAnimator)
+        animByActivity = false
     }
 
     /**
@@ -324,15 +325,15 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * @see .startForResult
      */
     fun setFragmentResult(resultCode: Int, bundle: Bundle?) {
-        val args = mFragment?.arguments
+        val args = fragment?.arguments
         if (args == null || !args.containsKey(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD)) {
             return
         }
 
         val resultRecord = args.getParcelable<ResultRecord>(TransactionDelegate.FRAGMENTATION_ARG_RESULT_RECORD)
         if (resultRecord != null) {
-            resultRecord.mResultCode = resultCode
-            resultRecord.mResultBundle = bundle
+            resultRecord.resultCode = resultCode
+            resultRecord.resultBundle = bundle
         }
     }
 
@@ -364,7 +365,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * @see .start
      */
     fun putNewBundle(newBundle: Bundle?) {
-        this.mNewBundle = newBundle
+        this.newBundle = newBundle
     }
 
     /**********************************************************************************************/
@@ -382,7 +383,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * 隐藏软键盘
      */
     fun hideSoftInput() {
-        val activity = mFragment?.activity ?: return
+        val activity = fragment?.activity ?: return
         val view = activity.window.decorView
         SupportHelper.hideSoftInput(view)
     }
@@ -403,7 +404,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?,
                          addToBackStack: Boolean, allowAnim: Boolean) {
-        mTransactionDelegate?.loadRootTransaction(getChildFragmentManager(), containerId,
+        transactionDelegate?.loadRootTransaction(getChildFragmentManager(), containerId,
                 toFragment, addToBackStack, allowAnim)
     }
 
@@ -412,7 +413,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      */
     fun loadMultipleRootFragment(containerId: Int, showPosition: Int,
                                  toFragments: Array<out ISupportFragment?>) {
-        mTransactionDelegate?.loadMultipleRootTransaction(getChildFragmentManager(),
+        transactionDelegate?.loadMultipleRootTransaction(getChildFragmentManager(),
                 containerId, showPosition, toFragments)
     }
 
@@ -431,7 +432,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * show一个Fragment,hide一个Fragment ; 主要用于类似微信主页那种 切换tab的情况
      */
     fun showHideFragment(showFragment: ISupportFragment?, hideFragment: ISupportFragment?) {
-        mTransactionDelegate?.showHideFragment(getChildFragmentManager(), showFragment, hideFragment)
+        transactionDelegate?.showHideFragment(getChildFragmentManager(), showFragment, hideFragment)
     }
 
     fun start(toFragment: ISupportFragment?) {
@@ -442,7 +443,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * @param launchMode Similar to Activity's LaunchMode.
      */
     fun start(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
-        mTransactionDelegate?.dispatchStartTransaction(mFragment!!.fragmentManager, mSupportF,
+        transactionDelegate?.dispatchStartTransaction(fragment!!.fragmentManager, supportF,
                 toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD)
     }
 
@@ -450,7 +451,7 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * Launch an fragment for which you would like a result when it poped.
      */
     fun startForResult(toFragment: ISupportFragment?, requestCode: Int) {
-        mTransactionDelegate?.dispatchStartTransaction(mFragment!!.fragmentManager, mSupportF,
+        transactionDelegate?.dispatchStartTransaction(fragment!!.fragmentManager, supportF,
                 toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT)
     }
 
@@ -458,16 +459,16 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
      * Start the target Fragment and pop itself
      */
     fun startWithPop(toFragment: ISupportFragment?) {
-        mTransactionDelegate?.startWithPop(mFragment!!.fragmentManager, mSupportF, toFragment)
+        transactionDelegate?.startWithPop(fragment!!.fragmentManager, supportF, toFragment)
     }
 
     fun startWithPopTo(toFragment: ISupportFragment?, targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
-        mTransactionDelegate?.startWithPopTo(mFragment!!.fragmentManager, mSupportF, toFragment,
+        transactionDelegate?.startWithPopTo(fragment!!.fragmentManager, supportF, toFragment,
                 targetFragmentClass?.name, includeTargetFragment)
     }
 
     fun replaceFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
-        mTransactionDelegate?.dispatchStartTransaction(mFragment!!.fragmentManager, mSupportF,
+        transactionDelegate?.dispatchStartTransaction(fragment!!.fragmentManager, supportF,
                 toFragment, 0, ISupportFragment.STANDARD, if (addToBackStack)
             TransactionDelegate.TYPE_REPLACE else TransactionDelegate.TYPE_REPLACE_DONT_BACK)
     }
@@ -477,34 +478,34 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun startChild(toFragment: ISupportFragment?, @ISupportFragment.LaunchMode launchMode: Int) {
-        mTransactionDelegate?.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
+        transactionDelegate?.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
                 toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD)
     }
 
     fun startChildForResult(toFragment: ISupportFragment?, requestCode: Int) {
-        mTransactionDelegate?.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
+        transactionDelegate?.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
                 toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT)
     }
 
     fun startChildWithPop(toFragment: ISupportFragment?) {
-        mTransactionDelegate?.startWithPop(getChildFragmentManager(), getTopFragment(), toFragment)
+        transactionDelegate?.startWithPop(getChildFragmentManager(), getTopFragment(), toFragment)
     }
 
     fun replaceChildFragment(toFragment: ISupportFragment?, addToBackStack: Boolean) {
-        mTransactionDelegate?.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
+        transactionDelegate?.dispatchStartTransaction(getChildFragmentManager(), getTopFragment(),
                 toFragment, 0, ISupportFragment.STANDARD, if (addToBackStack)
             TransactionDelegate.TYPE_REPLACE else TransactionDelegate.TYPE_REPLACE_DONT_BACK)
     }
 
     fun pop() {
-        mTransactionDelegate?.pop(mFragment!!.fragmentManager)
+        transactionDelegate?.pop(fragment!!.fragmentManager)
     }
 
     /**
      * Pop the child fragment.
      */
     fun popChild() {
-        mTransactionDelegate?.pop(getChildFragmentManager())
+        transactionDelegate?.pop(getChildFragmentManager())
     }
 
     /**
@@ -532,8 +533,8 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     fun popTo(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
               afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mTransactionDelegate?.popTo(targetFragmentClass?.name, includeTargetFragment,
-                afterPopTransactionRunnable, mFragment?.fragmentManager, popAnim)
+        transactionDelegate?.popTo(targetFragmentClass?.name, includeTargetFragment,
+                afterPopTransactionRunnable, fragment?.fragmentManager, popAnim)
     }
 
     fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean) {
@@ -548,16 +549,16 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     fun popToChild(targetFragmentClass: Class<*>?, includeTargetFragment: Boolean,
                    afterPopTransactionRunnable: Runnable?, popAnim: Int) {
-        mTransactionDelegate?.popTo(targetFragmentClass?.name, includeTargetFragment,
+        transactionDelegate?.popTo(targetFragmentClass?.name, includeTargetFragment,
                 afterPopTransactionRunnable, getChildFragmentManager(), popAnim)
     }
 
     fun popQuiet() {
-        mTransactionDelegate?.popQuiet(mFragment?.fragmentManager, mFragment)
+        transactionDelegate?.popQuiet(fragment?.fragmentManager, fragment)
     }
 
     private fun getChildFragmentManager(): FragmentManager? {
-        return mFragment?.childFragmentManager
+        return fragment?.childFragmentManager
     }
 
     private fun getTopFragment(): ISupportFragment? {
@@ -566,13 +567,13 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
 
     private fun fixAnimationListener(enterAnim: Animation?) {
         // AnimationListener is not reliable.
-        getHandler().postDelayed(mNotifyEnterAnimEndRunnable, enterAnim?.duration ?: 0)
-        mSupportA?.getSupportDelegate()?.mFragmentClickable = true
+        getHandler().postDelayed(notifyEnterAnimEndRunnable, enterAnim?.duration ?: 0)
+        supportA?.getSupportDelegate()?.fragmentClickable = true
 
-        if (mEnterAnimListener != null) {
+        if (enterAnimListener != null) {
             getHandler().post {
-                mEnterAnimListener!!.onEnterAnimStart()
-                mEnterAnimListener = null
+                enterAnimListener!!.onEnterAnimStart()
+                enterAnimListener = null
             }
         }
     }
@@ -582,12 +583,12 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun setBackground(view: View) {
-        if (mFragment?.tag != null && mFragment!!.tag!!.startsWith("android:switcher:") ||
-                mRootStatus != STATUS_UN_ROOT || view.background != null) {
+        if (fragment?.tag != null && fragment!!.tag!!.startsWith("android:switcher:") ||
+                rootStatus != STATUS_UN_ROOT || view.background != null) {
             return
         }
 
-        val defaultBg = mSupportA?.getSupportDelegate()?.getDefaultFragmentBackground() ?: 0
+        val defaultBg = supportA?.getSupportDelegate()?.getDefaultFragmentBackground() ?: 0
         if (defaultBg == 0) {
             val background = getWindowBackground()
             view.setBackgroundResource(background)
@@ -597,43 +598,43 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     private fun getWindowBackground(): Int {
-        val a = mActivity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
+        val a = activity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
         val background = a.getResourceId(0, 0)
         a.recycle()
         return background
     }
 
     private fun notifyEnterAnimEnd() {
-        getHandler().post(mNotifyEnterAnimEndRunnable)
-        mSupportA?.getSupportDelegate()?.mFragmentClickable = true
+        getHandler().post(notifyEnterAnimEndRunnable)
+        supportA?.getSupportDelegate()?.fragmentClickable = true
     }
 
     private fun getHandler(): Handler {
-        if (mHandler == null) {
-            mHandler = Handler(Looper.getMainLooper())
+        if (handler == null) {
+            handler = Handler(Looper.getMainLooper())
         }
-        return mHandler!!
+        return handler!!
     }
 
     fun getVisibleDelegate(): VisibleDelegate {
-        if (mVisibleDelegate == null) {
-            mVisibleDelegate = VisibleDelegate(mSupportF)
+        if (visibleDelegate == null) {
+            visibleDelegate = VisibleDelegate(supportF)
         }
-        return mVisibleDelegate!!
+        return visibleDelegate!!
     }
 
     fun getActivity(): FragmentActivity {
-        return mActivity
+        return activity
     }
 
     private fun getEnterAnim(): Animation? {
-        if (mCustomEnterAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper?.mEnterAnim != null) {
-                return mAnimHelper!!.mEnterAnim
+        if (customEnterAnim == Integer.MIN_VALUE) {
+            if (animHelper?.enterAnim != null) {
+                return animHelper!!.enterAnim
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(mActivity, mCustomEnterAnim)
+                return AnimationUtils.loadAnimation(activity, customEnterAnim)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -647,13 +648,13 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     fun getExitAnimDuration(): Long {
-        if (mCustomExitAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper?.mExitAnim != null) {
-                return mAnimHelper!!.mExitAnim!!.duration
+        if (customExitAnim == Integer.MIN_VALUE) {
+            if (animHelper?.exitAnim != null) {
+                return animHelper!!.exitAnim!!.duration
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(mActivity, mCustomExitAnim).duration
+                return AnimationUtils.loadAnimation(activity, customExitAnim).duration
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -662,13 +663,13 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     private fun getPopExitAnimDuration(): Long {
-        if (mCustomPopExitAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper?.mPopExitAnim != null) {
-                return mAnimHelper!!.mPopExitAnim!!.duration
+        if (customPopExitAnim == Integer.MIN_VALUE) {
+            if (animHelper?.popExitAnim != null) {
+                return animHelper!!.popExitAnim!!.duration
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(mActivity, mCustomPopExitAnim).duration
+                return AnimationUtils.loadAnimation(activity, customPopExitAnim).duration
             } catch (ignore: Exception) {
             }
         }
@@ -676,13 +677,13 @@ class SupportFragmentDelegate(private val mSupportF: ISupportFragment) {
     }
 
     internal fun getExitAnim(): Animation? {
-        if (mCustomExitAnim == Integer.MIN_VALUE) {
-            if (mAnimHelper?.mExitAnim != null) {
-                return mAnimHelper!!.mExitAnim
+        if (customExitAnim == Integer.MIN_VALUE) {
+            if (animHelper?.exitAnim != null) {
+                return animHelper!!.exitAnim
             }
         } else {
             try {
-                return AnimationUtils.loadAnimation(mActivity, mCustomExitAnim)
+                return AnimationUtils.loadAnimation(activity, customExitAnim)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

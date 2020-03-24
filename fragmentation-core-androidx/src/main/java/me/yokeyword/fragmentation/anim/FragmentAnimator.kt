@@ -12,26 +12,29 @@ import androidx.annotation.AnimRes
 @Suppress("unused")
 open class FragmentAnimator : Parcelable {
     @AnimRes
-    protected var mEnter: Int = 0
+    protected var enterAnim: Int = 0
+
     @AnimRes
-    protected var mExit: Int = 0
+    protected var exitAnim: Int = 0
+
     @AnimRes
-    protected var mPopEnter: Int = 0
+    protected var popEnterAnim: Int = 0
+
     @AnimRes
-    protected var mPopExit: Int = 0
+    protected var popExitAnim: Int = 0
 
     constructor()
 
     constructor(enter: Int, exit: Int) {
-        this.mEnter = enter
-        this.mExit = exit
+        this.enterAnim = enter
+        this.exitAnim = exit
     }
 
     constructor(enter: Int, exit: Int, popEnter: Int, popExit: Int) {
-        this.mEnter = enter
-        this.mExit = exit
-        this.mPopEnter = popEnter
-        this.mPopExit = popExit
+        this.enterAnim = enter
+        this.exitAnim = exit
+        this.popEnterAnim = popEnter
+        this.popExitAnim = popExit
     }
 
     fun copy(): FragmentAnimator {
@@ -39,38 +42,38 @@ open class FragmentAnimator : Parcelable {
     }
 
     fun getEnter(): Int {
-        return mEnter
+        return enterAnim
     }
 
     fun setEnter(enter: Int): FragmentAnimator {
-        this.mEnter = enter
+        this.enterAnim = enter
         return this
     }
 
     fun getExit(): Int {
-        return mExit
+        return exitAnim
     }
 
     fun setExit(exit: Int): FragmentAnimator {
-        this.mExit = exit
+        this.exitAnim = exit
         return this
     }
 
     fun getPopEnter(): Int {
-        return mPopEnter
+        return popEnterAnim
     }
 
     fun setPopEnter(popEnter: Int): FragmentAnimator {
-        this.mPopEnter = popEnter
+        this.popEnterAnim = popEnter
         return this
     }
 
     fun getPopExit(): Int {
-        return mPopExit
+        return popExitAnim
     }
 
     fun setPopExit(popExit: Int): FragmentAnimator {
-        this.mPopExit = popExit
+        this.popExitAnim = popExit
         return this
     }
 
@@ -79,17 +82,17 @@ open class FragmentAnimator : Parcelable {
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(this.mEnter)
-        dest.writeInt(this.mExit)
-        dest.writeInt(this.mPopEnter)
-        dest.writeInt(this.mPopExit)
+        dest.writeInt(this.enterAnim)
+        dest.writeInt(this.exitAnim)
+        dest.writeInt(this.popEnterAnim)
+        dest.writeInt(this.popExitAnim)
     }
 
     protected constructor(`in`: Parcel) {
-        this.mEnter = `in`.readInt()
-        this.mExit = `in`.readInt()
-        this.mPopEnter = `in`.readInt()
-        this.mPopExit = `in`.readInt()
+        this.enterAnim = `in`.readInt()
+        this.exitAnim = `in`.readInt()
+        this.popEnterAnim = `in`.readInt()
+        this.popExitAnim = `in`.readInt()
     }
 
     companion object {

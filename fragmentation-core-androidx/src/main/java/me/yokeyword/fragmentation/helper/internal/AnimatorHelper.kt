@@ -10,21 +10,21 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
 /**
  * @Hide Created by YoKeyword on 16/7/26.
  */
-class AnimatorHelper(private val mContext: Context, fragmentAnimator: FragmentAnimator?) {
-    var mEnterAnim: Animation? = null
-    var mExitAnim: Animation? = null
-    var mPopEnterAnim: Animation? = null
-    var mPopExitAnim: Animation? = null
-    private var mNoneAnim: Animation? = null
-    private var mNoneAnimFixed: Animation? = null
-    private var mFragmentAnimator: FragmentAnimator? = null
+class AnimatorHelper(private val context: Context, fragmentAnimator: FragmentAnimator?) {
+    var enterAnim: Animation? = null
+    var exitAnim: Animation? = null
+    var popEnterAnim: Animation? = null
+    var popExitAnim: Animation? = null
+    private var noneAnim: Animation? = null
+    private var noneAnimFixed: Animation? = null
+    private var fragmentAnimator: FragmentAnimator? = null
 
     init {
         notifyChanged(fragmentAnimator)
     }
 
     fun notifyChanged(fragmentAnimator: FragmentAnimator?) {
-        this.mFragmentAnimator = fragmentAnimator
+        this.fragmentAnimator = fragmentAnimator
         initEnterAnim()
         initExitAnim()
         initPopEnterAnim()
@@ -32,17 +32,17 @@ class AnimatorHelper(private val mContext: Context, fragmentAnimator: FragmentAn
     }
 
     fun getNoneAnim(): Animation {
-        if (mNoneAnim == null) {
-            mNoneAnim = AnimationUtils.loadAnimation(mContext, R.anim.no_anim)
+        if (noneAnim == null) {
+            noneAnim = AnimationUtils.loadAnimation(context, R.anim.no_anim)
         }
-        return mNoneAnim!!
+        return noneAnim!!
     }
 
     fun getNoneAnimFixed(): Animation {
-        if (mNoneAnimFixed == null) {
-            mNoneAnimFixed = object : Animation() {}
+        if (noneAnimFixed == null) {
+            noneAnimFixed = object : Animation() {}
         }
-        return mNoneAnimFixed!!
+        return noneAnimFixed!!
     }
 
     fun compatChildFragmentExitAnim(fragment: Fragment?): Animation? {
@@ -52,45 +52,45 @@ class AnimatorHelper(private val mContext: Context, fragmentAnimator: FragmentAn
                         && fragment.parentFragment!!.isRemoving
                         && !fragment.isHidden)) {
             val animation = object : Animation() {}
-            animation.duration = mExitAnim?.duration ?: 0
+            animation.duration = exitAnim?.duration ?: 0
             return animation
         }
         return null
     }
 
     private fun initEnterAnim(): Animation? {
-        mEnterAnim = if (mFragmentAnimator!!.getEnter() == 0) {
-            AnimationUtils.loadAnimation(mContext, R.anim.no_anim)
+        enterAnim = if (fragmentAnimator!!.getEnter() == 0) {
+            AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(mContext, mFragmentAnimator!!.getEnter())
+            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getEnter())
         }
-        return mEnterAnim
+        return enterAnim
     }
 
     private fun initExitAnim(): Animation? {
-        mExitAnim = if (mFragmentAnimator!!.getExit() == 0) {
-            AnimationUtils.loadAnimation(mContext, R.anim.no_anim)
+        exitAnim = if (fragmentAnimator!!.getExit() == 0) {
+            AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(mContext, mFragmentAnimator!!.getExit())
+            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getExit())
         }
-        return mExitAnim
+        return exitAnim
     }
 
     private fun initPopEnterAnim(): Animation? {
-        mPopEnterAnim = if (mFragmentAnimator!!.getPopEnter() == 0) {
-            AnimationUtils.loadAnimation(mContext, R.anim.no_anim)
+        popEnterAnim = if (fragmentAnimator!!.getPopEnter() == 0) {
+            AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(mContext, mFragmentAnimator!!.getPopEnter())
+            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getPopEnter())
         }
-        return mPopEnterAnim
+        return popEnterAnim
     }
 
     private fun initPopExitAnim(): Animation? {
-        mPopExitAnim = if (mFragmentAnimator!!.getPopExit() == 0) {
-            AnimationUtils.loadAnimation(mContext, R.anim.no_anim)
+        popExitAnim = if (fragmentAnimator!!.getPopExit() == 0) {
+            AnimationUtils.loadAnimation(context, R.anim.no_anim)
         } else {
-            AnimationUtils.loadAnimation(mContext, mFragmentAnimator!!.getPopExit())
+            AnimationUtils.loadAnimation(context, fragmentAnimator!!.getPopExit())
         }
-        return mPopExitAnim
+        return popExitAnim
     }
 }

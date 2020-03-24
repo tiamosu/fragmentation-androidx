@@ -11,10 +11,10 @@ import me.yokeyword.fragmentation.R
 class DefaultHorizontalAnimator : FragmentAnimator, Parcelable {
 
     constructor() {
-        mEnter = R.anim.h_fragment_enter
-        mExit = R.anim.h_fragment_exit
-        mPopEnter = R.anim.h_fragment_pop_enter
-        mPopExit = R.anim.h_fragment_pop_exit
+        enterAnim = R.anim.h_fragment_enter
+        exitAnim = R.anim.h_fragment_exit
+        popEnterAnim = R.anim.h_fragment_pop_enter
+        popExitAnim = R.anim.h_fragment_pop_exit
     }
 
     override fun describeContents(): Int {

@@ -17,41 +17,40 @@ import me.yokeyword.fragmentation.R
 /**
  * Created by YoKeyword on 16/2/21.
  */
-class DebugHierarchyViewContainer @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null,
-        defStyleAttr: Int = android.R.attr.scrollViewStyle) : NestedScrollView(context, attrs, defStyleAttr) {
+class DebugHierarchyViewContainer : NestedScrollView {
+    private var linearLayout: LinearLayoutCompat? = null
+    private var titleLayout: LinearLayoutCompat? = null
+    private var itemHeight = 0
+    private var padding = 0
 
-    private var mContext: Context? = null
-    private var mLinearLayout: LinearLayoutCompat? = null
-    private var mTitleLayout: LinearLayoutCompat? = null
-    private var mItemHeight: Int = 0
-    private var mPadding: Int = 0
+    constructor(context: Context) : this(context, null)
 
-    init {
-        initView(context)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, android.R.attr.scrollViewStyle)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        initView()
     }
 
-    private fun initView(context: Context) {
-        mContext = context
+    private fun initView() {
         val hScrollView = HorizontalScrollView(context)
-        mLinearLayout = LinearLayoutCompat(context)
-        mLinearLayout!!.orientation = LinearLayoutCompat.VERTICAL
-        hScrollView.addView(mLinearLayout)
+        linearLayout = LinearLayoutCompat(context)
+        linearLayout!!.orientation = LinearLayoutCompat.VERTICAL
+        hScrollView.addView(linearLayout)
         addView(hScrollView)
 
-        mItemHeight = dip2px(50f)
-        mPadding = dip2px(16f)
+        itemHeight = dip2px(50f)
+        padding = dip2px(16f)
     }
 
     private fun dip2px(dp: Float): Int {
-        val scale = mContext!!.resources.displayMetrics.density
+        val scale = context!!.resources.displayMetrics.density
         return (dp * scale + 0.5f).toInt()
     }
 
     fun bindFragmentRecords(fragmentRecords: List<DebugFragmentRecord>?) {
-        mLinearLayout!!.removeAllViews()
+        linearLayout!!.removeAllViews()
         val ll = getTitleLayout()
-        mLinearLayout!!.addView(ll)
+        linearLayout!!.addView(ll)
 
         if (fragmentRecords == null) {
             return
@@ -61,39 +60,39 @@ class DebugHierarchyViewContainer @JvmOverloads constructor(
 
     @SuppressLint("SetTextI18n")
     private fun getTitleLayout(): LinearLayoutCompat {
-        if (mTitleLayout != null) {
-            return mTitleLayout!!
+        if (titleLayout != null) {
+            return titleLayout!!
         }
 
-        mTitleLayout = LinearLayoutCompat(mContext!!)
-        mTitleLayout!!.setPadding(dip2px(24f), dip2px(24f), 0, dip2px(8f))
-        mTitleLayout!!.orientation = LinearLayoutCompat.HORIZONTAL
+        titleLayout = LinearLayoutCompat(context!!)
+        titleLayout!!.setPadding(dip2px(24f), dip2px(24f), 0, dip2px(8f))
+        titleLayout!!.orientation = LinearLayoutCompat.HORIZONTAL
         val flParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        mTitleLayout!!.layoutParams = flParams
+        titleLayout!!.layoutParams = flParams
 
-        val title = AppCompatTextView(mContext!!)
-        title.text = mContext!!.getString(R.string.fragmentation_stack_view)
+        val title = AppCompatTextView(context!!)
+        title.text = context!!.getString(R.string.fragmentation_stack_view)
         title.textSize = 20f
         title.setTextColor(Color.BLACK)
         val p = LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         p.gravity = Gravity.CENTER_VERTICAL
         title.layoutParams = p
-        mTitleLayout!!.addView(title)
+        titleLayout!!.addView(title)
 
-        val img = AppCompatImageView(mContext!!)
+        val img = AppCompatImageView(context!!)
         img.setImageResource(R.drawable.fragmentation_help)
         val params = LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         params.leftMargin = dip2px(16f)
         params.gravity = Gravity.CENTER_VERTICAL
         img.layoutParams = params
-        mTitleLayout!!.setOnClickListener {
-            Toast.makeText(mContext, R.string.fragmentation_stack_help, Toast.LENGTH_LONG).show()
+        titleLayout!!.setOnClickListener {
+            Toast.makeText(context, R.string.fragmentation_stack_help, Toast.LENGTH_LONG).show()
         }
-        mTitleLayout!!.addView(img)
-        return mTitleLayout!!
+        titleLayout!!.addView(img)
+        return titleLayout!!
     }
 
     private fun setView(fragmentRecordList: List<DebugFragmentRecord>,
@@ -106,7 +105,7 @@ class DebugHierarchyViewContainer @JvmOverloads constructor(
             childTvItem = getTextView(child, tempHierarchy)
             childTvItem.setTag(R.id.hierarchy, tempHierarchy)
 
-            val childFragmentRecord = child.mChildFragmentRecord
+            val childFragmentRecord = child.childFragmentRecord
             if (childFragmentRecord != null && childFragmentRecord.isNotEmpty()) {
                 tempHierarchy++
                 childTvItem.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fragmentation_ic_right, 0, 0, 0)
@@ -127,13 +126,13 @@ class DebugHierarchyViewContainer @JvmOverloads constructor(
                     }
                 }
             } else {
-                childTvItem.setPadding(childTvItem.paddingLeft + mPadding, 0, mPadding, 0)
+                childTvItem.setPadding(childTvItem.paddingLeft + padding, 0, padding, 0)
             }
 
             if (tvItem == null) {
-                mLinearLayout!!.addView(childTvItem)
+                linearLayout!!.addView(childTvItem)
             } else {
-                mLinearLayout!!.addView(childTvItem, mLinearLayout!!.indexOfChild(tvItem) + 1)
+                linearLayout!!.addView(childTvItem, linearLayout!!.indexOfChild(tvItem) + 1)
             }
         }
     }
@@ -145,34 +144,34 @@ class DebugHierarchyViewContainer @JvmOverloads constructor(
     }
 
     private fun removeView(hierarchy: Int) {
-        val size = mLinearLayout!!.childCount
+        val size = linearLayout!!.childCount
         for (i in size - 1 downTo 0) {
-            val view = mLinearLayout!!.getChildAt(i)
+            val view = linearLayout!!.getChildAt(i)
             if (view.getTag(R.id.hierarchy) != null && view.getTag(R.id.hierarchy) as Int >= hierarchy) {
-                mLinearLayout!!.removeView(view)
+                linearLayout!!.removeView(view)
             }
         }
     }
 
     @Suppress("DEPRECATION")
     private fun getTextView(fragmentRecord: DebugFragmentRecord, hierarchy: Int): AppCompatTextView {
-        val tvItem = AppCompatTextView(mContext!!)
+        val tvItem = AppCompatTextView(context!!)
         val params = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, mItemHeight)
+                ViewGroup.LayoutParams.MATCH_PARENT, itemHeight)
         tvItem.layoutParams = params
         if (hierarchy == 0) {
             tvItem.setTextColor(Color.parseColor("#333333"))
             tvItem.textSize = 16f
         }
         tvItem.gravity = Gravity.CENTER_VERTICAL
-        tvItem.setPadding((mPadding + hierarchy.toDouble() * mPadding.toDouble() * 1.5).toInt(), 0, mPadding, 0)
-        tvItem.compoundDrawablePadding = mPadding / 2
+        tvItem.setPadding((padding + hierarchy.toDouble() * padding.toDouble() * 1.5).toInt(), 0, padding, 0)
+        tvItem.compoundDrawablePadding = padding / 2
 
-        val a = mContext!!.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
+        val a = context!!.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
         tvItem.setBackgroundDrawable(a.getDrawable(0))
         a.recycle()
 
-        tvItem.text = fragmentRecord.mFragmentName
+        tvItem.text = fragmentRecord.fragmentName
         return tvItem
     }
 }

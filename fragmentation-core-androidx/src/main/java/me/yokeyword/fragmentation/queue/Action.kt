@@ -6,18 +6,18 @@ import androidx.fragment.app.FragmentManager
  * Created by YoKey on 17/12/28.
  */
 abstract class Action {
-    var mFragmentManager: FragmentManager? = null
-    var mAction = ACTION_NORMAL
-    var mDuration: Long = 0
+    var fragmentManager: FragmentManager? = null
+    var action = ACTION_NORMAL
+    var duration = 0L
 
     constructor()
 
     constructor(action: Int) {
-        this.mAction = action
+        this.action = action
     }
 
     constructor(action: Int, fragmentManager: FragmentManager?) : this(action) {
-        this.mFragmentManager = fragmentManager
+        this.fragmentManager = fragmentManager
     }
 
     abstract fun run()

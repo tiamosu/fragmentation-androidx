@@ -1,11 +1,11 @@
 package androidx.fragment.app
 
 /**
- *
  * http://stackoverflow.com/questions/23504790/android-multiple-fragment-transaction-ordering
- * 这是一个历史性问题，在androidx之前，不同版本fragment的栈顺序会有不同，上面这个链接说明了如何解决该问题。
- * 现在使用了在androidx，没有这些问题了。
- * <p>
+ *
+ * 这是一个历史性问题，在 androidx 之前，不同版本 fragment 的栈顺序会有不同，上面这个链接说明了如何解决该问题。
+ * 现在使用了在 androidx，没有这些问题了。
+ *
  * Created by YoKey on 16/1/22.
  */
 object FragmentationMagician {

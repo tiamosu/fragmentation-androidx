@@ -13,14 +13,14 @@ import me.yokeyword.fragmentation.SwipeBackLayout
  * Created by YoKey on 17/6/29.
  */
 class SwipeBackActivityDelegate(swipeBackActivity: ISwipeBackActivity) {
-    private var mActivity: FragmentActivity
-    private var mSwipeBackLayout: SwipeBackLayout? = null
+    private var activity: FragmentActivity
+    private var swipeBackLayout: SwipeBackLayout? = null
 
     init {
         if (swipeBackActivity !is FragmentActivity || swipeBackActivity !is ISupportActivity) {
             throw RuntimeException("Must extends FragmentActivity/AppCompatActivity and implements ISupportActivity")
         }
-        mActivity = swipeBackActivity
+        activity = swipeBackActivity
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -30,23 +30,23 @@ class SwipeBackActivityDelegate(swipeBackActivity: ISwipeBackActivity) {
 
     @Suppress("UNUSED_PARAMETER")
     fun onPostCreate(savedInstanceState: Bundle?) {
-        mSwipeBackLayout?.attachToActivity(mActivity)
+        swipeBackLayout?.attachToActivity(activity)
     }
 
     fun getSwipeBackLayout(): SwipeBackLayout? {
-        return mSwipeBackLayout
+        return swipeBackLayout
     }
 
     fun setSwipeBackEnable(enable: Boolean) {
-        mSwipeBackLayout?.setEnableGesture(enable)
+        swipeBackLayout?.setEnableGesture(enable)
     }
 
     fun setEdgeLevel(edgeLevel: SwipeBackLayout.EdgeLevel) {
-        mSwipeBackLayout?.setEdgeLevel(edgeLevel)
+        swipeBackLayout?.setEdgeLevel(edgeLevel)
     }
 
     fun setEdgeLevel(widthPixel: Int) {
-        mSwipeBackLayout?.setEdgeLevel(widthPixel)
+        swipeBackLayout?.setEdgeLevel(widthPixel)
     }
 
     /**
@@ -55,15 +55,15 @@ class SwipeBackActivityDelegate(swipeBackActivity: ISwipeBackActivity) {
      * @return true: Activity可以滑动退出, 并且总是优先;  false: Fragment优先滑动退出
      */
     fun swipeBackPriority(): Boolean {
-        return mActivity.supportFragmentManager.backStackEntryCount <= 1
+        return activity.supportFragmentManager.backStackEntryCount <= 1
     }
 
     private fun onActivityCreate() {
-        mActivity.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        mActivity.window.decorView.setBackgroundColor(Color.TRANSPARENT)
-        mSwipeBackLayout = SwipeBackLayout(mActivity)
+        activity.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        activity.window.decorView.setBackgroundColor(Color.TRANSPARENT)
+        swipeBackLayout = SwipeBackLayout(activity)
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        mSwipeBackLayout!!.layoutParams = params
+        swipeBackLayout!!.layoutParams = params
     }
 }

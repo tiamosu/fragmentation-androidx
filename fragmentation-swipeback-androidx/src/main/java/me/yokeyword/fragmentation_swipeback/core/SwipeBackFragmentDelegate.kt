@@ -14,16 +14,16 @@ import me.yokeyword.fragmentation.SwipeBackLayout
  * Created by YoKey on 17/6/29.
  */
 class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
-    private var mFragment: Fragment
-    private var mSupport: ISupportFragment
-    private var mSwipeBackLayout: SwipeBackLayout? = null
+    private var fragment: Fragment
+    private var supportF: ISupportFragment
+    private var swipeBackLayout: SwipeBackLayout? = null
 
     init {
         if (swipeBackFragment !is Fragment || swipeBackFragment !is ISupportFragment) {
             throw RuntimeException("Must extends Fragment and implements ISupportFragment!")
         }
-        mFragment = swipeBackFragment
-        mSupport = swipeBackFragment
+        fragment = swipeBackFragment
+        supportF = swipeBackFragment
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -35,61 +35,61 @@ class SwipeBackFragmentDelegate(swipeBackFragment: ISwipeBackFragment) {
     fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (view is SwipeBackLayout) {
             val childView = view.getChildAt(0)
-            mSupport.getSupportDelegate().setBackground(childView)
+            supportF.getSupportDelegate().setBackground(childView)
         } else {
-            mSupport.getSupportDelegate().setBackground(view)
+            supportF.getSupportDelegate().setBackground(view)
         }
     }
 
     fun attachToSwipeBack(view: View): View? {
-        if (mSwipeBackLayout?.parent != null) {
+        if (swipeBackLayout?.parent != null) {
             onFragmentCreate()
         }
-        mSwipeBackLayout?.attachToFragment(mSupport, view)
-        return mSwipeBackLayout
+        swipeBackLayout?.attachToFragment(supportF, view)
+        return swipeBackLayout
     }
 
     fun setEdgeLevel(edgeLevel: SwipeBackLayout.EdgeLevel) {
-        mSwipeBackLayout?.setEdgeLevel(edgeLevel)
+        swipeBackLayout?.setEdgeLevel(edgeLevel)
     }
 
     fun setEdgeLevel(widthPixel: Int) {
-        mSwipeBackLayout?.setEdgeLevel(widthPixel)
+        swipeBackLayout?.setEdgeLevel(widthPixel)
     }
 
     fun onHiddenChanged(hidden: Boolean) {
         if (hidden) {
-            mSwipeBackLayout?.hiddenFragment()
+            swipeBackLayout?.hiddenFragment()
         }
     }
 
     fun getSwipeBackLayout(): SwipeBackLayout? {
-        return mSwipeBackLayout
+        return swipeBackLayout
     }
 
     fun setSwipeBackEnable(enable: Boolean) {
-        mSwipeBackLayout?.setEnableGesture(enable)
+        swipeBackLayout?.setEnableGesture(enable)
     }
 
     /**
      * Set the offset of the parallax slip.
      */
     fun setParallaxOffset(@FloatRange(from = 0.0, to = 1.0) offset: Float) {
-        mSwipeBackLayout?.setParallaxOffset(offset)
+        swipeBackLayout?.setParallaxOffset(offset)
     }
 
     fun onDestroyView() {
-        mSwipeBackLayout?.internalCallOnDestroyView()
+        swipeBackLayout?.internalCallOnDestroyView()
     }
 
     private fun onFragmentCreate() {
-        if (mFragment.context == null) {
+        if (fragment.context == null) {
             return
         }
-        mSwipeBackLayout = SwipeBackLayout(mFragment.context!!)
+        swipeBackLayout = SwipeBackLayout(fragment.context!!)
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        mSwipeBackLayout!!.layoutParams = params
-        mSwipeBackLayout!!.setBackgroundColor(Color.TRANSPARENT)
+        swipeBackLayout!!.layoutParams = params
+        swipeBackLayout!!.setBackgroundColor(Color.TRANSPARENT)
     }
 }
