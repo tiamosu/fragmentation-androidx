@@ -1,6 +1,9 @@
 # 用androidx彻底替换了原Fragmentation的support依赖
 ### 本项目fork自([YoKeyword/Fragmentation](https://github.com/YoKeyword/Fragmentation))
 
+## Wiki
+
+[详细使用方法及扩展功能，请参照 Wiki (开发前必看!!!)](https://github.com/tiamosu/fragmentation-androidx/wiki)
 
 ### fragmentation-core-androidx
 [ ![Download](https://api.bintray.com/packages/weixia/maven/fragmentation-core-androidx/images/download.svg) ](https://bintray.com/weixia/maven/fragmentation-core-androidx/_latestVersion)
