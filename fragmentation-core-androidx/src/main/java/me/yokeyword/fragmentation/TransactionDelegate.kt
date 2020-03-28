@@ -582,10 +582,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
             return
         }
 
-        val fromSupport = from as ISupportFragment
-        val container = findContainerById(from, fromSupport.getSupportDelegate().containerId)
-                ?: return
-
+        val container = findContainerById(from, from.getSupportDelegate().containerId) ?: return
         val fromView = from.view ?: return
         if (fromView.animation != null) {
             fromView.clearAnimation()
@@ -596,22 +593,24 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
 
         safePopTo(targetFragmentTag, fm, flag, willPopFragments)
 
-        var animation: Animation?
-        if (popAnim == DEFAULT_POPTO_ANIM) {
-            animation = fromSupport.getSupportDelegate().getExitAnim()
-            if (animation == null) {
-                animation = object : Animation() {}
+        val animation = when (popAnim) {
+            DEFAULT_POPTO_ANIM -> {
+                from.getSupportDelegate().getExitAnim() ?: object : Animation() {}
             }
-        } else if (popAnim == 0) {
-            animation = object : Animation() {}
-        } else {
-            animation = AnimationUtils.loadAnimation(activity, popAnim)
+            0 -> {
+                object : Animation() {}
+            }
+            else -> {
+                AnimationUtils.loadAnimation(activity, popAnim)
+            }
         }
 
         mock.startAnimation(animation)
         handler.postDelayed({
             try {
-                mock.clearAnimation()
+                if (mock.animation != null) {
+                    mock.clearAnimation()
+                }
                 mock.removeViewInLayout(fromView)
                 container.removeViewInLayout(mock)
             } catch (ignored: Exception) {
@@ -622,13 +621,14 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
     private fun mockStartWithPopAnim(from: ISupportFragment?,
                                      to: ISupportFragment?,
                                      exitAnim: Animation?) {
-        val fromF = from as? Fragment
-        val fromView = fromF?.view ?: return
+        val fromF = from as? Fragment ?: return
+        val container = findContainerById(fromF, from.getSupportDelegate().containerId) ?: return
+
+        val fromView = fromF.view ?: return
         if (fromView.animation != null) {
             fromView.clearAnimation()
         }
 
-        val container = findContainerById(fromF, from.getSupportDelegate().containerId) ?: return
         container.removeViewInLayout(fromView)
         val mock = addMockView(fromView, container)
 
@@ -637,7 +637,9 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
                 mock.startAnimation(exitAnim)
                 handler.postDelayed({
                     try {
-                        mock.clearAnimation()
+                        if (mock.animation != null) {
+                            mock.clearAnimation()
+                        }
                         mock.removeViewInLayout(fromView)
                         container.removeViewInLayout(mock)
                     } catch (ignored: Exception) {
