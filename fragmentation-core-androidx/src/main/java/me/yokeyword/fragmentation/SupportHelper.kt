@@ -126,12 +126,10 @@ object SupportHelper {
     private fun <T : ISupportFragment> findAddedFragment(fragmentClass: Class<T>?,
                                                          toFragmentTag: String?,
                                                          fragmentManager: FragmentManager?): T? {
-
         var fragment: Fragment? = null
         if (toFragmentTag == null) {
             val fragmentList = getAddedFragments(fragmentManager) ?: return null
-            val sizeChildFrgList = fragmentList.size
-            for (i in sizeChildFrgList - 1 downTo 0) {
+            for (i in fragmentList.indices.reversed()) {
                 val brotherFragment = fragmentList[i]
                 if (brotherFragment is ISupportFragment && brotherFragment.javaClass.name == fragmentClass?.name) {
                     fragment = brotherFragment
@@ -213,7 +211,6 @@ object SupportHelper {
     internal fun <T : ISupportFragment> findBackStackFragment(fragmentClass: Class<T>?,
                                                               toFragmentTag: String?,
                                                               fragmentManager: FragmentManager?): T? {
-
         var toFragmentTagTemp = toFragmentTag
         if (toFragmentTagTemp == null) {
             toFragmentTagTemp = fragmentClass?.name

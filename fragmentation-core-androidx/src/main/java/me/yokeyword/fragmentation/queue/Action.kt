@@ -16,7 +16,8 @@ abstract class Action {
         this.action = action
     }
 
-    constructor(action: Int, fragmentManager: FragmentManager?) : this(action) {
+    constructor(action: Int, fragmentManager: FragmentManager?) {
+        this.action = action
         this.fragmentManager = fragmentManager
     }
 

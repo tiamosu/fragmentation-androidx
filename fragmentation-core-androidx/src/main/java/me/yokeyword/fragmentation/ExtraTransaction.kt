@@ -179,7 +179,8 @@ abstract class ExtraTransaction {
             if (transactionRecord.sharedElementList == null) {
                 transactionRecord.sharedElementList = ArrayList()
             }
-            transactionRecord.sharedElementList?.add(TransactionRecord.SharedElement(sharedElement, sharedName))
+            transactionRecord.sharedElementList?.add(
+                    TransactionRecord.SharedElement(sharedElement, sharedName))
             return this
         }
 
@@ -192,8 +193,8 @@ abstract class ExtraTransaction {
                                       addToBackStack: Boolean,
                                       allowAnim: Boolean) {
             toFragment?.getSupportDelegate()?.transactionRecord = transactionRecord
-            transactionDelegate?.loadRootTransaction(fragmentManager, containerId, toFragment,
-                    addToBackStack, allowAnim)
+            transactionDelegate?.loadRootTransaction(
+                    fragmentManager, containerId, toFragment, addToBackStack, allowAnim)
         }
 
         override fun dontAddToBackStack(): DontAddToBackStackTransaction {
@@ -206,8 +207,8 @@ abstract class ExtraTransaction {
         }
 
         override fun popTo(targetFragmentTag: String, includeTargetFragment: Boolean) {
-            popTo(targetFragmentTag, includeTargetFragment, null,
-                    TransactionDelegate.DEFAULT_POPTO_ANIM)
+            popTo(targetFragmentTag, includeTargetFragment,
+                    null, TransactionDelegate.DEFAULT_POPTO_ANIM)
         }
 
         override fun popTo(targetFragmentTag: String,
@@ -219,8 +220,8 @@ abstract class ExtraTransaction {
         }
 
         override fun popToChild(targetFragmentTag: String, includeTargetFragment: Boolean) {
-            popToChild(targetFragmentTag, includeTargetFragment, null,
-                    TransactionDelegate.DEFAULT_POPTO_ANIM)
+            popToChild(targetFragmentTag, includeTargetFragment,
+                    null, TransactionDelegate.DEFAULT_POPTO_ANIM)
         }
 
         override fun popToChild(targetFragmentTag: String, includeTargetFragment: Boolean,

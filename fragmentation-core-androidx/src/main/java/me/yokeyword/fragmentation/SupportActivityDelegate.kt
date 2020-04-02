@@ -35,8 +35,8 @@ class SupportActivityDelegate(private val supportA: ISupportActivity) {
      * 额外的事务：自定义 tag，添加 SharedElement 动画，操作非回退栈 Fragment
      */
     fun extraTransaction(): ExtraTransaction {
-        return ExtraTransaction.ExtraTransactionImpl(activity, getTopFragment(),
-                transactionDelegate, true)
+        return ExtraTransaction.ExtraTransactionImpl(activity,
+                getTopFragment(), transactionDelegate, true)
     }
 
     fun onCreate() {

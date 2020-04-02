@@ -343,11 +343,10 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
             }
         }
 
-        if (handleLaunchMode(fm, fromTemp, to, toFragmentTag, launchMode)) {
-            return
-        }
+        if (handleLaunchMode(fm, fromTemp, to, toFragmentTag, launchMode)) return
 
-        start(fm, fromTemp, to, toFragmentTag, dontAddToBackStack, sharedElementList, false, type)
+        start(fm, fromTemp, to, toFragmentTag, dontAddToBackStack,
+                sharedElementList, false, type)
     }
 
     private fun getTopFragmentForStart(from: ISupportFragment?, fm: FragmentManager?): ISupportFragment? {
@@ -432,9 +431,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
     private fun doShowHideFragment(fm: FragmentManager?,
                                    showFragment: ISupportFragment?,
                                    hideFragment: ISupportFragment?) {
-        if (showFragment === hideFragment) {
-            return
-        }
+        if (showFragment === hideFragment) return
 
         val ft = (showFragment as? Fragment)?.let { fm?.beginTransaction()?.show(it) }
         if (hideFragment == null) {
