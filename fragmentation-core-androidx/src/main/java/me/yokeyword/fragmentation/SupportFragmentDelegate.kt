@@ -160,7 +160,6 @@ class SupportFragmentDelegate(private val supportF: ISupportFragment) {
                 if (isSharedElement && enter) {
                     compatSharedElements()
                 }
-
                 return if (!enter) {
                     animHelper?.compatChildFragmentExitAnim(fragment)
                 } else null
@@ -390,10 +389,12 @@ class SupportFragmentDelegate(private val supportF: ISupportFragment) {
         loadRootFragment(containerId, toFragment, true, false)
     }
 
-    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment?,
-                         addToBackStack: Boolean, allowAnim: Boolean) {
-        transactionDelegate?.loadRootTransaction(getChildFragmentManager(), containerId,
-                toFragment, addToBackStack, allowAnim)
+    fun loadRootFragment(containerId: Int,
+                         toFragment: ISupportFragment?,
+                         addToBackStack: Boolean,
+                         allowAnim: Boolean) {
+        transactionDelegate?.loadRootTransaction(
+                getChildFragmentManager(), containerId, toFragment, addToBackStack, allowAnim)
     }
 
     /**
@@ -402,8 +403,8 @@ class SupportFragmentDelegate(private val supportF: ISupportFragment) {
     fun loadMultipleRootFragment(containerId: Int,
                                  showPosition: Int,
                                  toFragments: Array<out ISupportFragment?>?) {
-        transactionDelegate?.loadMultipleRootTransaction(getChildFragmentManager(),
-                containerId, showPosition, toFragments)
+        transactionDelegate?.loadMultipleRootTransaction(
+                getChildFragmentManager(), containerId, showPosition, toFragments)
     }
 
     /**

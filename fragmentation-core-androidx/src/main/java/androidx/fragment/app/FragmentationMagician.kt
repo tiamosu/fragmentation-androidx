@@ -11,11 +11,9 @@ package androidx.fragment.app
 object FragmentationMagician {
 
     fun isStateSaved(fragmentManager: FragmentManager?): Boolean {
-        if (fragmentManager !is FragmentManagerImpl) {
-            return false
-        }
+        if (fragmentManager !is FragmentManagerImpl) return false
         try {
-            return fragmentManager.mStateSaved
+            return fragmentManager.isStateSaved
         } catch (e: Exception) {
             e.printStackTrace()
         }

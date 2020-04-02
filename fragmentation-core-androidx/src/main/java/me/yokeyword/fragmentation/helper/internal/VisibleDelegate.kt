@@ -198,7 +198,7 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
         val parentFragment = fragment.parentFragment
         return if (parentFragment is ISupportFragment) {
             !parentFragment.isSupportVisible()
-        } else parentFragment != null && !parentFragment.isVisible
+        } else parentFragment?.isVisible == false
     }
 
     private fun checkAddState(): Boolean {
