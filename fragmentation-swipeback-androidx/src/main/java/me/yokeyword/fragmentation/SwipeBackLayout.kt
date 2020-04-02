@@ -30,7 +30,11 @@ import kotlin.math.abs
  * Created by YoKey on 16/4/19.
  */
 @Suppress("unused")
-class SwipeBackLayout : FrameLayout {
+class SwipeBackLayout @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0)
+    : FrameLayout(context, attrs, defStyleAttr) {
 
     private var scrollFinishThreshold = DEFAULT_SCROLL_THRESHOLD
 
@@ -67,11 +71,7 @@ class SwipeBackLayout : FrameLayout {
      */
     private var listeners: MutableList<OnSwipeListener>? = null
 
-    constructor(context: Context) : this(context, null)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    init {
         viewDragHelper = ViewDragHelper.create(this, ViewDragCallback())
         setEdgeOrientation(EDGE_LEFT)
         setShadow(R.drawable.shadow_left, EDGE_LEFT)

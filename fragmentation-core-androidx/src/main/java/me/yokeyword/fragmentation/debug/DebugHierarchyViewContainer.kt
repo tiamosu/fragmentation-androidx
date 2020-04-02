@@ -17,17 +17,18 @@ import me.yokeyword.fragmentation.R
 /**
  * Created by YoKeyword on 16/2/21.
  */
-class DebugHierarchyViewContainer : NestedScrollView {
+class DebugHierarchyViewContainer @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = android.R.attr.scrollViewStyle)
+    : NestedScrollView(context, attrs, defStyleAttr) {
+
     private lateinit var linearLayout: LinearLayoutCompat
     private var titleLayout: LinearLayoutCompat? = null
     private var itemHeight = 0
     private var padding = 0
 
-    constructor(context: Context) : this(context, null)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, android.R.attr.scrollViewStyle)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    init {
         initView()
     }
 
