@@ -18,7 +18,6 @@ import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation_swipeback.R
 import me.yokeyword.fragmentation_swipeback.core.ISwipeBackActivity
 import java.util.*
@@ -419,8 +418,7 @@ class SwipeBackLayout @JvmOverloads constructor(
 
             if (preFragment == null) {
                 val fragmentTemp = fragmentF as? Fragment
-                val fragmentList = FragmentationMagician
-                        .getAddedFragments(fragmentTemp?.fragmentManager)
+                val fragmentList = fragmentTemp?.fragmentManager?.fragments
                 if (fragmentList != null && fragmentList.size > 1) {
                     val index = fragmentList.indexOf(fragmentTemp)
                     for (i in index - 1 downTo 0) {

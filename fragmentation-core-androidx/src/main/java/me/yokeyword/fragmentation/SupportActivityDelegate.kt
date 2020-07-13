@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation.ISupportFragment.LaunchMode
 import me.yokeyword.fragmentation.anim.DefaultVerticalAnimator
 import me.yokeyword.fragmentation.anim.FragmentAnimator
@@ -62,8 +61,7 @@ class SupportActivityDelegate(private val supportA: ISupportActivity) {
     fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
         this.fragmentAnimator = fragmentAnimator
 
-        val fragmentList = FragmentationMagician
-                .getAddedFragments(getSupportFragmentManager()) ?: return
+        val fragmentList = getSupportFragmentManager().fragments
         for (fragment in fragmentList) {
             if (fragment is ISupportFragment) {
                 val delegate = fragment.getSupportDelegate()
@@ -130,7 +128,7 @@ class SupportActivityDelegate(private val supportA: ISupportActivity) {
      * 不建议复写该方法,请使用 [onBackPressedSupport] 代替
      */
     fun onBackPressed() {
-        transactionDelegate.actionQueue.enqueue(object : Action(ACTION_BACK) {
+        transactionDelegate.actionQueue.enqueue(object : Action(ACTION_BACK, getSupportFragmentManager()) {
             override fun run() {
                 if (!fragmentClickable) {
                     fragmentClickable = true

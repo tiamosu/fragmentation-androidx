@@ -3,6 +3,7 @@ package me.yokeyword.fragmentation
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import androidx.fragment.app.Fragment
@@ -127,6 +128,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * Is the combination of  [onHiddenChanged() + onResume()/onPause() + setUserVisibleHint()]
      */
     override fun onSupportVisible() {
+        Log.e(this.javaClass.simpleName, "onSupportVisible")
         delegate.onSupportVisible()
     }
 
@@ -136,6 +138,7 @@ open class SupportFragment : Fragment(), ISupportFragment {
      * Is the combination of  [onHiddenChanged() + onResume()/onPause() + setUserVisibleHint()]
      */
     override fun onSupportInvisible() {
+        Log.e(this.javaClass.simpleName, "onSupportInvisible")
         delegate.onSupportInvisible()
     }
 

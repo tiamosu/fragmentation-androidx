@@ -8,10 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
+import me.yokeyword.fragmentation.Fragmentation.Companion.getDefault
+import me.yokeyword.fragmentation.SupportFragmentDelegate.EnterAnimListener
+import me.yokeyword.fragmentation.SupportHelper.getBackStackTopFragment
+import me.yokeyword.fragmentation.SupportHelper.getPreFragment
+import me.yokeyword.fragmentation.SupportHelper.getTopFragment
 import me.yokeyword.fragmentation.exception.AfterSaveStateTransactionWarning
 import me.yokeyword.fragmentation.helper.internal.ResultRecord
-import me.yokeyword.fragmentation.helper.internal.TransactionRecord
+import me.yokeyword.fragmentation.helper.internal.TransactionRecord.SharedElement
 import me.yokeyword.fragmentation.queue.Action
 import me.yokeyword.fragmentation.queue.ActionQueue
 import java.util.*
@@ -34,7 +42,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
     }
 
     internal fun post(runnable: Runnable) {
-        actionQueue.enqueue(object : Action() {
+        actionQueue.enqueue(object : Action(activity.supportFragmentManager) {
             override fun run() {
                 runnable.run()
             }
@@ -46,7 +54,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
                                      to: ISupportFragment?,
                                      addToBackStack: Boolean,
                                      allowAnimation: Boolean) {
-        enqueue(fm, object : Action(ACTION_LOAD) {
+        enqueue(fm, object : Action(ACTION_LOAD, fm) {
             override fun run() {
                 bindContainerId(containerId, to)
 
@@ -65,7 +73,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
                                              containerId: Int,
                                              showPosition: Int,
                                              tos: Array<out ISupportFragment?>?) {
-        enqueue(fm, object : Action(ACTION_LOAD) {
+        enqueue(fm, object : Action(ACTION_LOAD, fm) {
             override fun run() {
                 val ft = fm?.beginTransaction()
 
@@ -91,276 +99,16 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
     }
 
     /**
-     * Dispatch the start transaction.
-     */
-    internal fun dispatchStartTransaction(fm: FragmentManager?,
-                                          from: ISupportFragment?,
-                                          to: ISupportFragment?,
-                                          requestCode: Int,
-                                          launchMode: Int,
-                                          type: Int) {
-        enqueue(fm, object : Action(if (launchMode == ISupportFragment.SINGLETASK) ACTION_POP_MOCK else ACTION_NORMAL) {
-            override fun run() {
-                doDispatchStartTransaction(fm, from, to, requestCode, launchMode, type)
-            }
-        })
-    }
-
-    /**
      * Show showFragment then hide hideFragment
      */
     internal fun showHideFragment(fm: FragmentManager?,
                                   showFragment: ISupportFragment?,
                                   hideFragment: ISupportFragment?) {
-        enqueue(fm, object : Action() {
+        enqueue(fm, object : Action(fm) {
             override fun run() {
                 doShowHideFragment(fm, showFragment, hideFragment)
             }
         })
-    }
-
-    /**
-     * Start the target Fragment and pop itself
-     */
-    internal fun startWithPop(fm: FragmentManager?, from: ISupportFragment?, to: ISupportFragment?) {
-        enqueue(fm, object : Action(ACTION_POP_MOCK) {
-            override fun run() {
-                val top = getTopFragmentForStart(from, fm)
-                        ?: throw NullPointerException("There is no Fragment in the FragmentManager," +
-                                " maybe you need to call loadRootFragment() first!")
-
-                val containerId = top.getSupportDelegate().containerId
-                bindContainerId(containerId, to)
-
-                handleAfterSaveInStateTransactionException(fm, "popTo()")
-                FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-                top.getSupportDelegate().lockAnim = true
-                if (!FragmentationMagician.isStateSaved(fm)) {
-                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm),
-                            to, top.getSupportDelegate().animHelper?.popExitAnim)
-                }
-
-                removeTopFragment(fm)
-                FragmentationMagician.popBackStackAllowingStateLoss(fm)
-                FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-            }
-        })
-
-        dispatchStartTransaction(fm, from, to, 0, ISupportFragment.STANDARD, TYPE_ADD)
-    }
-
-    internal fun startWithPopTo(fm: FragmentManager?,
-                                from: ISupportFragment?,
-                                to: ISupportFragment?,
-                                fragmentTag: String?,
-                                includeTargetFragment: Boolean) {
-        enqueue(fm, object : Action(ACTION_POP_MOCK) {
-            override fun run() {
-                var flag = 0
-                if (includeTargetFragment) {
-                    flag = FragmentManager.POP_BACK_STACK_INCLUSIVE
-                }
-
-                val willPopFragments = SupportHelper
-                        .getWillPopFragments(fm, fragmentTag, includeTargetFragment)
-                val top = getTopFragmentForStart(from, fm)
-                        ?: throw NullPointerException("There is no Fragment in the FragmentManager," +
-                                " maybe you need to call loadRootFragment() first!")
-
-                val containerId = top.getSupportDelegate().containerId
-                bindContainerId(containerId, to)
-
-                if (willPopFragments.isEmpty()) return
-
-                handleAfterSaveInStateTransactionException(fm, "startWithPopTo()")
-                FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-                if (!FragmentationMagician.isStateSaved(fm)) {
-                    mockStartWithPopAnim(SupportHelper.getTopFragment(fm),
-                            to, top.getSupportDelegate().animHelper?.popExitAnim)
-                }
-
-                safePopTo(fragmentTag, fm, flag, willPopFragments)
-            }
-        })
-
-        dispatchStartTransaction(fm, from, to, 0, ISupportFragment.STANDARD, TYPE_ADD)
-    }
-
-    /**
-     * Remove
-     * Only allowed in interfaces  {@link [ExtraTransaction.DontAddToBackStackTransaction] # [ExtraTransaction.remove] }
-     */
-    internal fun remove(fm: FragmentManager?, fragment: Fragment, showPreFragment: Boolean) {
-        enqueue(fm, object : Action(ACTION_POP, fm) {
-            override fun run() {
-                val ft = fm?.beginTransaction()
-                        ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                        ?.remove(fragment)
-
-                if (showPreFragment) {
-                    val preFragment = SupportHelper.getPreFragment(fragment)
-                    if (preFragment is Fragment) {
-                        ft?.show(preFragment)
-                    }
-                }
-                supportCommit(fm, ft)
-            }
-        })
-    }
-
-    /**
-     * Pop
-     */
-    internal fun pop(fm: FragmentManager?) {
-        enqueue(fm, object : Action(ACTION_POP, fm) {
-            override fun run() {
-                handleAfterSaveInStateTransactionException(fm, "pop()")
-                FragmentationMagician.popBackStackAllowingStateLoss(fm)
-                removeTopFragment(fm)
-            }
-        })
-    }
-
-    private fun removeTopFragment(fm: FragmentManager?) {
-        try { // Safe popBackStack()
-            val top = SupportHelper.getBackStackTopFragment(fm)
-            if (top is Fragment) {
-                fm?.beginTransaction()
-                        ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                        ?.remove(top)
-                        ?.commitAllowingStateLoss()
-            }
-        } catch (ignored: Exception) {
-        }
-    }
-
-    internal fun popQuiet(fm: FragmentManager?, fragment: Fragment?) {
-        enqueue(fm, object : Action(ACTION_POP_MOCK) {
-            override fun run() {
-                supportA.getSupportDelegate().popMultipleNoAnim = true
-                removeTopFragment(fm)
-                FragmentationMagician.popBackStackAllowingStateLoss(fm, fragment?.tag, 0)
-                FragmentationMagician.popBackStackAllowingStateLoss(fm)
-                FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-                supportA.getSupportDelegate().popMultipleNoAnim = false
-            }
-        })
-    }
-
-    /**
-     * Pop the last fragment transition from the manager's fragment pop stack.
-     *
-     * @param targetFragmentTag     Tag
-     * @param includeTargetFragment Whether it includes targetFragment
-     */
-    internal fun popTo(targetFragmentTag: String?,
-                       includeTargetFragment: Boolean,
-                       afterPopTransactionRunnable: Runnable?,
-                       fm: FragmentManager?,
-                       popAnim: Int) {
-        enqueue(fm, object : Action(ACTION_POP_MOCK) {
-            override fun run() {
-                doPopTo(targetFragmentTag, includeTargetFragment, fm, popAnim)
-                afterPopTransactionRunnable?.run()
-            }
-        })
-    }
-
-    /**
-     * Dispatch the pop-event. Priority of the top of the stack of Fragment
-     */
-    internal fun dispatchBackPressedEvent(activeFragment: ISupportFragment?): Boolean {
-        if (activeFragment != null) {
-            if (activeFragment.onBackPressedSupport()) return true
-
-            val parentFragment = (activeFragment as? Fragment)?.parentFragment
-            return dispatchBackPressedEvent(parentFragment as? ISupportFragment)
-        }
-        return false
-    }
-
-    internal fun handleResultRecord(from: Fragment?) {
-        try {
-            val args = from?.arguments ?: return
-            val resultRecord = args
-                    .getParcelable<ResultRecord>(FRAGMENTATION_ARG_RESULT_RECORD) ?: return
-
-            val targetFragment = from.fragmentManager
-                    ?.getFragment(args, FRAGMENTATION_STATE_SAVE_RESULT) as? ISupportFragment
-            targetFragment?.onFragmentResult(
-                    resultRecord.requestCode, resultRecord.resultCode, resultRecord.resultBundle)
-        } catch (ignored: IllegalStateException) {
-            // Fragment no longer exists
-        }
-    }
-
-    private fun enqueue(fm: FragmentManager?, action: Action) {
-        if (fm == null) {
-            Log.w(TAG, "FragmentManager is null, skip the action!")
-            return
-        }
-        actionQueue.enqueue(action)
-    }
-
-    private fun doDispatchStartTransaction(fm: FragmentManager?,
-                                           from: ISupportFragment?,
-                                           to: ISupportFragment?,
-                                           requestCode: Int,
-                                           launchMode: Int,
-                                           type: Int) {
-        var fromTemp = from
-        if ((type == TYPE_ADD_RESULT || type == TYPE_ADD_RESULT_WITHOUT_HIDE) && fromTemp != null) {
-            if ((fromTemp as? Fragment)?.isAdded == false) {
-                Log.w(TAG, fromTemp.javaClass.simpleName + " has not been attached yet! startForResult() converted to start()")
-            } else {
-                saveRequestCode(fm, fromTemp as? Fragment, to as? Fragment, requestCode)
-            }
-        }
-
-        fromTemp = getTopFragmentForStart(fromTemp, fm)
-
-        val containerId = getArguments(to as? Fragment).getInt(FRAGMENTATION_ARG_CONTAINER, 0)
-        if (fromTemp == null && containerId == 0) {
-            Log.e(TAG, "There is no Fragment in the FragmentManager, maybe you need to call loadRootFragment()!")
-            return
-        }
-
-        if (fromTemp != null && containerId == 0) {
-            bindContainerId(fromTemp.getSupportDelegate().containerId, to)
-        }
-
-        // process ExtraTransaction
-        var toFragmentTag = to?.javaClass?.name
-        var dontAddToBackStack = false
-        var sharedElementList: ArrayList<TransactionRecord.SharedElement>? = null
-        to?.getSupportDelegate()?.transactionRecord?.also {
-            if (it.tag != null) {
-                toFragmentTag = it.tag
-            }
-            dontAddToBackStack = it.dontAddToBackStack
-            if (it.sharedElementList != null) {
-                sharedElementList = it.sharedElementList
-            }
-        }
-
-        if (handleLaunchMode(fm, fromTemp, to, toFragmentTag, launchMode)) return
-
-        start(fm, fromTemp, to, toFragmentTag, dontAddToBackStack,
-                sharedElementList, false, type)
-    }
-
-    private fun getTopFragmentForStart(from: ISupportFragment?, fm: FragmentManager?): ISupportFragment? {
-        return if (from == null) {
-            SupportHelper.getTopFragment(fm)
-        } else {
-            if (from.getSupportDelegate().containerId == 0) {
-                val fromF = from as? Fragment
-                check(fromF?.tag?.startsWith("android:switcher:") == false) {
-                    "Can't find container, please call loadRootFragment() first!"
-                }
-            }
-            SupportHelper.getTopFragment(fm, from.getSupportDelegate().containerId)
-        }
     }
 
     private fun start(fm: FragmentManager?,
@@ -368,7 +116,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
                       to: ISupportFragment?,
                       toFragmentTag: String?,
                       dontAddToBackStack: Boolean,
-                      sharedElementList: ArrayList<TransactionRecord.SharedElement>?,
+                      sharedElementList: ArrayList<SharedElement>?,
                       allowRootFragmentAnim: Boolean,
                       type: Int) {
         val ft = fm?.beginTransaction()
@@ -428,6 +176,200 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
         supportCommit(fm, ft)
     }
 
+    /**
+     * Start the target Fragment and pop itself
+     */
+    fun startWithPop(fm: FragmentManager?, from: ISupportFragment?, to: ISupportFragment?) {
+        enqueue(fm, object : Action(ACTION_POP_MOCK, fm) {
+            override fun run() {
+                val top = getTopFragmentForStart(from, fm)
+                        ?: throw NullPointerException("There is no Fragment in the FragmentManager," +
+                                " maybe you need to call loadRootFragment() first!")
+
+                val containerId = top.getSupportDelegate().containerId
+                bindContainerId(containerId, to)
+
+                top.getSupportDelegate().lockAnim = true
+                if (fm?.isStateSaved == false) {
+                    mockStartWithPopAnim(getTopFragment(fm), to, top.getSupportDelegate().animHelper?.popExitAnim)
+                }
+                handleAfterSaveInStateTransactionException(fm, "startWithPop()")
+                removeTopFragment(fm)
+                fm?.popBackStackImmediate()
+            }
+        })
+
+        dispatchStartTransaction(fm, from, to, 0, ISupportFragment.STANDARD, TYPE_ADD)
+    }
+
+    fun startWithPopTo(fm: FragmentManager?,
+                       from: ISupportFragment?,
+                       to: ISupportFragment?,
+                       fragmentTag: String?,
+                       includeTargetFragment: Boolean) {
+        enqueue(fm, object : Action(ACTION_POP_MOCK, fm) {
+            override fun run() {
+                var flag = 0
+                if (includeTargetFragment) {
+                    flag = FragmentManager.POP_BACK_STACK_INCLUSIVE
+                }
+                val willPopFragments = SupportHelper.getWillPopFragments(fm, fragmentTag, includeTargetFragment)
+                if (willPopFragments.isEmpty()) return
+                val top = getTopFragmentForStart(from, fm)
+                        ?: throw NullPointerException("There is no Fragment in the FragmentManager, maybe you need to call loadRootFragment() first!")
+                val containerId = top.getSupportDelegate().containerId
+                bindContainerId(containerId, to)
+                if (fm?.isStateSaved == false) {
+                    mockStartWithPopAnim(getTopFragment(fm), to, top.getSupportDelegate().animHelper?.popExitAnim)
+                }
+                handleAfterSaveInStateTransactionException(fm, "startWithPopTo()")
+                safePopTo(fragmentTag, fm, flag, willPopFragments)
+            }
+        })
+        dispatchStartTransaction(fm, from, to, 0, ISupportFragment.STANDARD, TYPE_ADD)
+    }
+
+    /**
+     * Remove
+     * Only allowed in interfaces  {@link [ExtraTransaction.DontAddToBackStackTransaction] # [ExtraTransaction.remove] }
+     */
+    internal fun remove(fm: FragmentManager?, fragment: Fragment, showPreFragment: Boolean) {
+        enqueue(fm, object : Action(ACTION_POP, fm) {
+            override fun run() {
+                val ft = fm?.beginTransaction()
+                        ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                        ?.remove(fragment)
+
+                if (showPreFragment) {
+                    val preFragment = getPreFragment(fragment)
+                    if (preFragment is Fragment) {
+                        ft?.show(preFragment)
+                    }
+                }
+                supportCommit(fm, ft)
+            }
+        })
+    }
+
+    /**
+     * Pop
+     */
+    fun pop(fm: FragmentManager?) {
+        enqueue(fm, object : Action(ACTION_POP, fm) {
+            override fun run() {
+                handleAfterSaveInStateTransactionException(fm, "pop()")
+                removeTopFragment(fm)
+                fm?.popBackStackImmediate()
+            }
+        })
+    }
+
+    fun popQuiet(fm: FragmentManager?, fragment: Fragment?) {
+        enqueue(fm, object : Action(ACTION_POP_MOCK, fm) {
+            override fun run() {
+                supportA.getSupportDelegate().popMultipleNoAnim = true
+                removeTopFragment(fm)
+                fm?.popBackStackImmediate(fragment?.tag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                supportA.getSupportDelegate().popMultipleNoAnim = false
+            }
+        })
+    }
+
+    private fun removeTopFragment(fm: FragmentManager?) {
+        try { // Safe popBackStack()
+            val top = getBackStackTopFragment(fm)
+            if (top is Fragment && fm != null) {
+                fm.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                        .remove(top)
+                        .commitAllowingStateLoss()
+            }
+        } catch (ignored: Exception) {
+        }
+    }
+
+    /**
+     * Pop the last fragment transition from the manager's fragment pop stack.
+     *
+     * @param targetFragmentTag     Tag
+     * @param includeTargetFragment Whether it includes targetFragment
+     */
+    internal fun popTo(targetFragmentTag: String?,
+                       includeTargetFragment: Boolean,
+                       afterPopTransactionRunnable: Runnable?,
+                       fm: FragmentManager?,
+                       popAnim: Int) {
+        enqueue(fm, object : Action(ACTION_POP_MOCK, fm) {
+            override fun run() {
+                doPopTo(targetFragmentTag, includeTargetFragment, fm, popAnim)
+                afterPopTransactionRunnable?.run()
+            }
+        })
+    }
+
+    /**
+     * Dispatch the start transaction.
+     */
+    internal fun dispatchStartTransaction(fm: FragmentManager?,
+                                          from: ISupportFragment?,
+                                          to: ISupportFragment?,
+                                          requestCode: Int,
+                                          launchMode: Int,
+                                          type: Int) {
+        enqueue(fm, object : Action(if (launchMode == ISupportFragment.SINGLETASK) ACTION_POP_MOCK else ACTION_NORMAL) {
+            override fun run() {
+                doDispatchStartTransaction(fm, from, to, requestCode, launchMode, type)
+            }
+        })
+    }
+
+    private fun doDispatchStartTransaction(fm: FragmentManager?,
+                                           from: ISupportFragment?,
+                                           to: ISupportFragment?,
+                                           requestCode: Int,
+                                           launchMode: Int,
+                                           type: Int) {
+        var fromTemp = from
+        if ((type == TYPE_ADD_RESULT || type == TYPE_ADD_RESULT_WITHOUT_HIDE) && fromTemp != null) {
+            if ((fromTemp as? Fragment)?.isAdded == false) {
+                Log.w(TAG, fromTemp.javaClass.simpleName + " has not been attached yet! startForResult() converted to start()")
+            } else {
+                saveRequestCode(fm, fromTemp as? Fragment, to as? Fragment, requestCode)
+            }
+        }
+
+        fromTemp = getTopFragmentForStart(fromTemp, fm)
+
+        val containerId = getArguments(to as? Fragment).getInt(FRAGMENTATION_ARG_CONTAINER, 0)
+        if (fromTemp == null && containerId == 0) {
+            Log.e(TAG, "There is no Fragment in the FragmentManager, maybe you need to call loadRootFragment()!")
+            return
+        }
+
+        if (fromTemp != null && containerId == 0) {
+            bindContainerId(fromTemp.getSupportDelegate().containerId, to)
+        }
+
+        // process ExtraTransaction
+        var toFragmentTag = to?.javaClass?.name
+        var dontAddToBackStack = false
+        var sharedElementList: ArrayList<SharedElement>? = null
+        to?.getSupportDelegate()?.transactionRecord?.also {
+            if (it.tag != null) {
+                toFragmentTag = it.tag
+            }
+            dontAddToBackStack = it.dontAddToBackStack
+            if (it.sharedElementList != null) {
+                sharedElementList = it.sharedElementList
+            }
+        }
+
+        if (handleLaunchMode(fm, fromTemp, to, toFragmentTag, launchMode)) return
+
+        start(fm, fromTemp, to, toFragmentTag, dontAddToBackStack,
+                sharedElementList, false, type)
+    }
+
     private fun doShowHideFragment(fm: FragmentManager?,
                                    showFragment: ISupportFragment?,
                                    hideFragment: ISupportFragment?) {
@@ -435,7 +377,7 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
 
         val ft = (showFragment as? Fragment)?.let { fm?.beginTransaction()?.show(it) }
         if (hideFragment == null) {
-            val fragmentList = FragmentationMagician.getAddedFragments(fm) ?: return
+            val fragmentList = fm?.fragments ?: return
             for (fragment in fragmentList) {
                 if (fragment != null && fragment !== showFragment) {
                     ft?.hide(fragment)
@@ -445,6 +387,182 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
             (hideFragment as? Fragment)?.let { ft?.hide(it) }
         }
         supportCommit(fm, ft)
+    }
+
+    private fun doPopTo(targetFragmentTag: String?,
+                        includeTargetFragment: Boolean,
+                        fm: FragmentManager?,
+                        popAnim: Int) {
+        handleAfterSaveInStateTransactionException(fm, "popTo()")
+
+        val targetFragment = fm?.findFragmentByTag(targetFragmentTag)
+        if (targetFragment == null) {
+            Log.e(TAG, "Pop failure! Can't find FragmentTag:$targetFragmentTag in the FragmentManager's Stack.")
+            return
+        }
+
+        var flag = 0
+        if (includeTargetFragment) {
+            flag = FragmentManager.POP_BACK_STACK_INCLUSIVE
+        }
+
+        val willPopFragments = SupportHelper
+                .getWillPopFragments(fm, targetFragmentTag, includeTargetFragment)
+        if (willPopFragments.isEmpty()) return
+
+        val top = willPopFragments[0]
+        mockPopToAnim(top, targetFragmentTag, fm, flag, willPopFragments, popAnim)
+    }
+
+    private fun mockPopToAnim(from: Fragment, targetFragmentTag: String?, fm: FragmentManager, flag: Int, willPopFragments: List<Fragment>, popAnim: Int) {
+        if (from !is ISupportFragment) {
+            safePopTo(targetFragmentTag, fm, flag, willPopFragments)
+            return
+        }
+        val container = findContainerById(from, from.getSupportDelegate().containerId) ?: return
+        val fromView = from.view ?: return
+        if (fromView.animation != null) {
+            fromView.clearAnimation()
+        }
+        container.removeViewInLayout(fromView)
+        val mock = addMockView(fromView, container)
+        safePopTo(targetFragmentTag, fm, flag, willPopFragments)
+
+        val animation: Animation? = when (popAnim) {
+            DEFAULT_POPTO_ANIM -> {
+                from.getSupportDelegate().getExitAnim() ?: object : Animation() {}
+            }
+            0 -> {
+                object : Animation() {}
+            }
+            else -> {
+                AnimationUtils.loadAnimation(activity, popAnim)
+            }
+        }
+
+        mock.startAnimation(animation)
+        handler.postDelayed({
+            try {
+                if (mock.animation != null) {
+                    mock.clearAnimation()
+                }
+                mock.removeViewInLayout(fromView)
+                container.removeViewInLayout(mock)
+            } catch (ignored: Exception) {
+            }
+        }, animation?.duration ?: 0)
+    }
+
+    private fun safePopTo(fragmentTag: String?,
+                          fm: FragmentManager?,
+                          flag: Int,
+                          willPopFragments: List<Fragment>) {
+        supportA.getSupportDelegate().popMultipleNoAnim = true
+
+        // 批量删除fragment ，static final int OP_REMOVE = 3;
+        val transaction = fm?.beginTransaction()
+                ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+        for (fragment in willPopFragments) {
+            transaction?.remove(fragment)
+        }
+        transaction?.commitAllowingStateLoss()
+
+        // 弹栈到指定fragment，从数据上来看，和上面的效果完全一样，把栈中所有的backStackRecord 包含多个记录，每个记录包含多个操作 ，
+        // 在每个记录中，对操作索引 按照从大到小的顺序，逐个进行反操作。
+        // 除了第一个记录，其余每个记录都有两个操作，一个是添加OP_ADD = 1;(反操作是remove)  一个是OP_HIDE = 4;（反操作是show）（这是在start中设定的）
+        // 之所以有上面的批量删除，在执行动画的时候，发现f.mView == null  就不去执行show动画。
+        fm?.popBackStackImmediate(fragmentTag, flag)
+        supportA.getSupportDelegate().popMultipleNoAnim = false
+    }
+
+    private fun mockStartWithPopAnim(from: ISupportFragment?,
+                                     to: ISupportFragment?,
+                                     exitAnim: Animation?) {
+        val fromF = from as? Fragment ?: return
+        val container = findContainerById(fromF, from.getSupportDelegate().containerId) ?: return
+
+        val fromView = fromF.view ?: return
+        if (fromView.animation != null) {
+            fromView.clearAnimation()
+        }
+        container.removeViewInLayout(fromView)
+        val mock = addMockView(fromView, container)
+
+        to?.getSupportDelegate()?.enterAnimListener = object : EnterAnimListener {
+            override fun onEnterAnimStart() {
+                mock.startAnimation(exitAnim)
+                handler.postDelayed({
+                    try {
+                        if (mock.animation != null) {
+                            mock.clearAnimation()
+                        }
+                        mock.removeViewInLayout(fromView)
+                        container.removeViewInLayout(mock)
+                    } catch (ignored: Exception) {
+                    }
+                }, exitAnim?.duration ?: 0)
+            }
+        }
+    }
+
+    private fun addMockView(fromView: View, container: ViewGroup): ViewGroup {
+        val mock = object : ViewGroup(activity) {
+            override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {}
+        }
+
+        mock.addView(fromView)
+        container.addView(mock)
+        return mock
+    }
+
+    private fun getTopFragmentForStart(from: ISupportFragment?, fm: FragmentManager?): ISupportFragment? {
+        return if (from == null) {
+            getTopFragment(fm)
+        } else {
+            if (from.getSupportDelegate().containerId == 0) {
+                val fromF = from as? Fragment
+                check(fromF?.tag?.startsWith("android:switcher:") == false) {
+                    "Can't find container, please call loadRootFragment() first!"
+                }
+            }
+            getTopFragment(fm, from.getSupportDelegate().containerId)
+        }
+    }
+
+    /**
+     * Dispatch the pop-event. Priority of the top of the stack of Fragment
+     */
+    fun dispatchBackPressedEvent(activeFragment: ISupportFragment?): Boolean {
+        if (activeFragment != null) {
+            if (activeFragment.onBackPressedSupport()) return true
+
+            val parentFragment = (activeFragment as? Fragment)?.parentFragment
+            return dispatchBackPressedEvent(parentFragment as? ISupportFragment)
+        }
+        return false
+    }
+
+    fun handleResultRecord(from: Fragment?) {
+        try {
+            val args = from?.arguments ?: return
+            val resultRecord: ResultRecord = args.getParcelable(FRAGMENTATION_ARG_RESULT_RECORD)
+                    ?: return
+
+            val targetFragment = from.fragmentManager
+                    ?.getFragment(args, FRAGMENTATION_STATE_SAVE_RESULT) as? ISupportFragment
+            targetFragment?.onFragmentResult(
+                    resultRecord.requestCode, resultRecord.resultCode, resultRecord.resultBundle)
+        } catch (ignored: IllegalStateException) {
+            // Fragment no longer exists
+        }
+    }
+
+    private fun enqueue(fm: FragmentManager?, action: Action) {
+        if (fm == null) {
+            Log.w(TAG, "FragmentManager is null, skip the action!")
+            return
+        }
+        actionQueue.enqueue(action)
     }
 
     private fun bindContainerId(containerId: Int, to: ISupportFragment?) {
@@ -514,140 +632,8 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
         from?.let { fm?.putFragment(bundle, FRAGMENTATION_STATE_SAVE_RESULT, it) }
     }
 
-    private fun doPopTo(targetFragmentTag: String?,
-                        includeTargetFragment: Boolean,
-                        fm: FragmentManager?,
-                        popAnim: Int) {
-        handleAfterSaveInStateTransactionException(fm, "popTo()")
-
-        val targetFragment = fm?.findFragmentByTag(targetFragmentTag)
-        if (targetFragment == null) {
-            Log.e(TAG, "Pop failure! Can't find FragmentTag:$targetFragmentTag in the FragmentManager's Stack.")
-            return
-        }
-
-        var flag = 0
-        if (includeTargetFragment) {
-            flag = FragmentManager.POP_BACK_STACK_INCLUSIVE
-        }
-
-        val willPopFragments = SupportHelper
-                .getWillPopFragments(fm, targetFragmentTag, includeTargetFragment)
-        if (willPopFragments.isEmpty()) return
-
-        val top = willPopFragments[0]
-        mockPopToAnim(top, targetFragmentTag, fm, flag, willPopFragments, popAnim)
-    }
-
-    private fun safePopTo(fragmentTag: String?,
-                          fm: FragmentManager?,
-                          flag: Int,
-                          willPopFragments: List<Fragment>) {
-        supportA.getSupportDelegate().popMultipleNoAnim = true
-
-        val transaction = fm?.beginTransaction()
-                ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-        for (fragment in willPopFragments) {
-            transaction?.remove(fragment)
-        }
-        transaction?.commitAllowingStateLoss()
-
-        FragmentationMagician.popBackStackAllowingStateLoss(fm, fragmentTag, flag)
-        FragmentationMagician.executePendingTransactionsAllowingStateLoss(fm)
-        supportA.getSupportDelegate().popMultipleNoAnim = false
-    }
-
-    private fun mockPopToAnim(from: Fragment,
-                              targetFragmentTag: String?,
-                              fm: FragmentManager?,
-                              flag: Int,
-                              willPopFragments: List<Fragment>,
-                              popAnim: Int) {
-        if (from !is ISupportFragment) {
-            safePopTo(targetFragmentTag, fm, flag, willPopFragments)
-            return
-        }
-
-        val container = findContainerById(from, from.getSupportDelegate().containerId) ?: return
-        val fromView = from.view ?: return
-        if (fromView.animation != null) {
-            fromView.clearAnimation()
-        }
-
-        container.removeViewInLayout(fromView)
-        val mock = addMockView(fromView, container)
-
-        safePopTo(targetFragmentTag, fm, flag, willPopFragments)
-
-        val animation = when (popAnim) {
-            DEFAULT_POPTO_ANIM -> {
-                from.getSupportDelegate().getExitAnim() ?: object : Animation() {}
-            }
-            0 -> {
-                object : Animation() {}
-            }
-            else -> {
-                AnimationUtils.loadAnimation(activity, popAnim)
-            }
-        }
-
-        mock.startAnimation(animation)
-        handler.postDelayed({
-            try {
-                if (mock.animation != null) {
-                    mock.clearAnimation()
-                }
-                mock.removeViewInLayout(fromView)
-                container.removeViewInLayout(mock)
-            } catch (ignored: Exception) {
-            }
-        }, animation?.duration ?: 0)
-    }
-
-    private fun mockStartWithPopAnim(from: ISupportFragment?,
-                                     to: ISupportFragment?,
-                                     exitAnim: Animation?) {
-        val fromF = from as? Fragment ?: return
-        val container = findContainerById(fromF, from.getSupportDelegate().containerId) ?: return
-
-        val fromView = fromF.view ?: return
-        if (fromView.animation != null) {
-            fromView.clearAnimation()
-        }
-
-        container.removeViewInLayout(fromView)
-        val mock = addMockView(fromView, container)
-
-        to?.getSupportDelegate()?.enterAnimListener = object : SupportFragmentDelegate.EnterAnimListener {
-            override fun onEnterAnimStart() {
-                mock.startAnimation(exitAnim)
-                handler.postDelayed({
-                    try {
-                        if (mock.animation != null) {
-                            mock.clearAnimation()
-                        }
-                        mock.removeViewInLayout(fromView)
-                        container.removeViewInLayout(mock)
-                    } catch (ignored: Exception) {
-                    }
-                }, exitAnim?.duration ?: 0)
-            }
-        }
-    }
-
-    private fun addMockView(fromView: View, container: ViewGroup): ViewGroup {
-        val mock = object : ViewGroup(activity) {
-            override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {}
-        }
-
-        mock.addView(fromView)
-        container.addView(mock)
-        return mock
-    }
-
     private fun findContainerById(fragment: Fragment, containerId: Int): ViewGroup? {
         if (fragment.view == null) return null
-
         val parentFragment = fragment.parentFragment
         val container = if (parentFragment != null) {
             if (parentFragment.view != null) {
@@ -658,17 +644,16 @@ class TransactionDelegate internal constructor(private val supportA: ISupportAct
         } else {
             activity.findViewById(containerId)
         }
-
         return if (container is ViewGroup) {
             container
         } else null
     }
 
     private fun handleAfterSaveInStateTransactionException(fm: FragmentManager?, action: String) {
-        val stateSaved = FragmentationMagician.isStateSaved(fm)
-        if (stateSaved) {
+        val stateSaved = fm?.isStateSaved
+        if (stateSaved == true) {
             val e = AfterSaveStateTransactionWarning(action)
-            Fragmentation.getDefault().getExceptionHandler()?.onException(e)
+            getDefault().getExceptionHandler()?.onException(e)
         }
     }
 

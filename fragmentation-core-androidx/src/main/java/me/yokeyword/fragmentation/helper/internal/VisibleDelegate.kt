@@ -1,10 +1,9 @@
 package me.yokeyword.fragmentation.helper.internal
 
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
+import android.os.MessageQueue.IdleHandler
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation.ISupportFragment
 
 /**
@@ -12,16 +11,18 @@ import me.yokeyword.fragmentation.ISupportFragment
  */
 class VisibleDelegate(private val supportF: ISupportFragment) {
     // SupportVisible相关
-    private var isSupportVisible = false
+    private var currentVisible = false
     private var needDispatch = true
-    private var invisibleWhenLeave = false
-    private var isFirstVisible = true
+    private var visibleWhenLeave = true
+
+    //true = 曾经可见，也就是onLazyInitView 执行过一次
+    private var isOnceVisible = false
     private var firstCreateViewCompatReplace = true
     private var abortInitVisible = false
-    private var taskDispatchSupportVisible: Runnable? = null
 
-    private val handler: Handler by lazy { Handler(Looper.getMainLooper()) }
+    private var idleDispatchSupportVisible: IdleHandler? = null
     private var saveInstanceState: Bundle? = null
+
     private var fragment: Fragment
 
     init {
@@ -35,13 +36,13 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
         if (savedInstanceState != null) {
             saveInstanceState = savedInstanceState
             // setUserVisibleHint() may be called before onCreate()
-            invisibleWhenLeave = savedInstanceState.getBoolean(FRAGMENTATION_STATE_SAVE_IS_INVISIBLE_WHEN_LEAVE)
+            visibleWhenLeave = savedInstanceState.getBoolean(FRAGMENTATION_STATE_SAVE_IS_VISIBLE_WHEN_LEAVE)
             firstCreateViewCompatReplace = savedInstanceState.getBoolean(FRAGMENTATION_STATE_SAVE_COMPAT_REPLACE)
         }
     }
 
     fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(FRAGMENTATION_STATE_SAVE_IS_INVISIBLE_WHEN_LEAVE, invisibleWhenLeave)
+        outState.putBoolean(FRAGMENTATION_STATE_SAVE_IS_VISIBLE_WHEN_LEAVE, visibleWhenLeave)
         outState.putBoolean(FRAGMENTATION_STATE_SAVE_COMPAT_REPLACE, firstCreateViewCompatReplace)
     }
 
@@ -57,19 +58,19 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
     }
 
     private fun initVisible() {
-        if (!invisibleWhenLeave && isFragmentVisible(fragment)) {
-            if (fragment.parentFragment == null || isFragmentVisible(fragment.parentFragment!!)) {
+        if (visibleWhenLeave && isFragmentVisible(fragment)) {
+            if (fragment.parentFragment == null || isFragmentVisible(fragment.requireParentFragment())) {
                 needDispatch = false
-                safeDispatchUserVisibleHint(true)
+                enqueueDispatchVisible()
             }
         }
     }
 
     fun onResume() {
-        if (!isFirstVisible) {
-            if (!isSupportVisible && !invisibleWhenLeave && isFragmentVisible(fragment)) {
+        if (isOnceVisible) {
+            if (!currentVisible && visibleWhenLeave && isFragmentVisible(fragment)) {
                 needDispatch = false
-                dispatchSupportVisible(true)
+                enqueueDispatchVisible()
             }
         } else {
             if (abortInitVisible) {
@@ -80,42 +81,50 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
     }
 
     fun onPause() {
-        if (taskDispatchSupportVisible != null) {
-            handler.removeCallbacks(taskDispatchSupportVisible!!)
+        //界面还没有执行到initVisible 发出的任务taskDispatchSupportVisible，界面就已经pause。
+        //为了让下次resume 时候，能正常的执行需要设置mAbortInitVisible ，来确保在resume的时候，可以执行完整initVisible
+
+        //界面还没有执行到initVisible 发出的任务taskDispatchSupportVisible，界面就已经pause。
+        //为了让下次resume 时候，能正常的执行需要设置mAbortInitVisible ，来确保在resume的时候，可以执行完整initVisible
+        if (idleDispatchSupportVisible != null) {
+            Looper.myQueue().removeIdleHandler(idleDispatchSupportVisible!!)
             abortInitVisible = true
             return
         }
 
-        if (isSupportVisible && isFragmentVisible(fragment)) {
+        if (currentVisible && isFragmentVisible(fragment)) {
             needDispatch = false
-            invisibleWhenLeave = false
+            visibleWhenLeave = true
             dispatchSupportVisible(false)
         } else {
-            invisibleWhenLeave = true
+            visibleWhenLeave = false
         }
     }
 
     fun onHiddenChanged(hidden: Boolean) {
         if (!hidden && !fragment.isResumed) {
+            //Activity 不是resumed 状态，不用显示其下的fragment，只需设置标志位，待OnResume时 显示出来
             //if fragment is shown but not resumed, ignore...
             onFragmentShownWhenNotResumed()
             return
         }
         if (hidden) {
-            safeDispatchUserVisibleHint(false)
+            dispatchSupportVisible(false)
         } else {
-            enqueueDispatchVisible()
+            safeDispatchUserVisibleHint(true)
         }
     }
 
     private fun onFragmentShownWhenNotResumed() {
-        invisibleWhenLeave = false
+        //fragment 需要显示，但是Activity状态不是resumed，下次resumed的时候 fragment 需要显示， 所以可以认为离开的时候可见
+        visibleWhenLeave = true
+        abortInitVisible = true
         dispatchChildOnFragmentShownWhenNotResumed()
     }
 
     private fun dispatchChildOnFragmentShownWhenNotResumed() {
         val fragmentManager = fragment.childFragmentManager
-        val childFragments = FragmentationMagician.getAddedFragments(fragmentManager) ?: return
+        val childFragments = fragmentManager.fragments
         for (child in childFragments) {
             if (child is ISupportFragment && isFragmentVisible(child)) {
                 child.getSupportDelegate().visibleDelegate.onFragmentShownWhenNotResumed()
@@ -124,51 +133,52 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
     }
 
     fun onDestroyView() {
-        isFirstVisible = true
+        isOnceVisible = false
     }
 
     fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        if (fragment.isResumed || (!fragment.isAdded && isVisibleToUser)) {
-            if (!isSupportVisible && isVisibleToUser) {
+        if (fragment.isResumed || !fragment.isAdded && isVisibleToUser) {
+            if (!currentVisible && isVisibleToUser) {
                 safeDispatchUserVisibleHint(true)
-            } else if (isSupportVisible && !isVisibleToUser) {
+            } else if (currentVisible && !isVisibleToUser) {
                 dispatchSupportVisible(false)
             }
         }
     }
 
     private fun safeDispatchUserVisibleHint(visible: Boolean) {
-        if (isFirstVisible) {
-            if (!visible) return
+        if (visible) {
             enqueueDispatchVisible()
         } else {
-            dispatchSupportVisible(visible)
+            if (isOnceVisible) {
+                dispatchSupportVisible(false)
+            }
         }
     }
 
     private fun enqueueDispatchVisible() {
-        taskDispatchSupportVisible = Runnable {
-            taskDispatchSupportVisible = null
+        idleDispatchSupportVisible = IdleHandler {
             dispatchSupportVisible(true)
+            idleDispatchSupportVisible = null
+            false
+        }.apply {
+            Looper.myQueue().addIdleHandler(this)
         }
-        taskDispatchSupportVisible?.let(handler::post)
     }
 
     private fun dispatchSupportVisible(visible: Boolean) {
         if (visible && isParentInvisible()) return
-
-        if (isSupportVisible == visible) {
+        if (currentVisible == visible) {
             needDispatch = true
             return
         }
-        isSupportVisible = visible
+        currentVisible = visible
 
         if (visible) {
             if (checkAddState()) return
             supportF.onSupportVisible()
-
-            if (isFirstVisible) {
-                isFirstVisible = false
+            if (!isOnceVisible) {
+                isOnceVisible = true
                 supportF.onLazyInitView(saveInstanceState)
             }
             dispatchChild(true)
@@ -183,9 +193,8 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
             needDispatch = true
         } else {
             if (checkAddState()) return
-
             val fragmentManager = fragment.childFragmentManager
-            val childFragments = FragmentationMagician.getAddedFragments(fragmentManager) ?: return
+            val childFragments = fragmentManager.fragments
             for (child in childFragments) {
                 if (child is ISupportFragment && isFragmentVisible(child)) {
                     child.getSupportDelegate().visibleDelegate.dispatchSupportVisible(visible)
@@ -203,7 +212,7 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
 
     private fun checkAddState(): Boolean {
         if (!fragment.isAdded) {
-            isSupportVisible = !isSupportVisible
+            currentVisible = !currentVisible
             return true
         }
         return false
@@ -215,11 +224,11 @@ class VisibleDelegate(private val supportF: ISupportFragment) {
     }
 
     fun isSupportVisible(): Boolean {
-        return isSupportVisible
+        return currentVisible
     }
 
     companion object {
-        private const val FRAGMENTATION_STATE_SAVE_IS_INVISIBLE_WHEN_LEAVE = "fragmentation_invisible_when_leave"
+        private const val FRAGMENTATION_STATE_SAVE_IS_VISIBLE_WHEN_LEAVE = "fragmentation_invisible_when_leave"
         private const val FRAGMENTATION_STATE_SAVE_COMPAT_REPLACE = "fragmentation_compat_replace"
     }
 }

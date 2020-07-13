@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentationMagician
 import me.yokeyword.fragmentation.Fragmentation
 import me.yokeyword.fragmentation.ISupportFragment
 import me.yokeyword.fragmentation.R
@@ -133,9 +132,8 @@ class DebugStackDelegate(private val activity: FragmentActivity) : SensorEventLi
     }
 
     private fun getFragmentRecords(): List<DebugFragmentRecord>? {
-        val fragmentList = FragmentationMagician
-                .getAddedFragments(activity.supportFragmentManager)
-        if (fragmentList == null || fragmentList.isEmpty()) {
+        val fragmentList = activity.supportFragmentManager.fragments
+        if (fragmentList.isEmpty()) {
             return null
         }
 
@@ -174,8 +172,8 @@ class DebugStackDelegate(private val activity: FragmentActivity) : SensorEventLi
     }
 
     private fun getChildFragmentRecords(parentFragment: Fragment): List<DebugFragmentRecord>? {
-        val fragmentList = FragmentationMagician.getAddedFragments(parentFragment.childFragmentManager)
-        if (fragmentList == null || fragmentList.isEmpty()) {
+        val fragmentList = parentFragment.childFragmentManager.fragments
+        if (fragmentList.isEmpty()) {
             return null
         }
 
@@ -219,8 +217,10 @@ class DebugStackDelegate(private val activity: FragmentActivity) : SensorEventLi
         return nameTemp
     }
 
-    private inner class StackViewTouchListener internal constructor(
-            private val stackView: View, private val clickLimitValue: Int) : View.OnTouchListener {
+    private class StackViewTouchListener(
+            private val stackView: View,
+            private val clickLimitValue: Int
+    ) : View.OnTouchListener {
         private var dx = 0f
         private var dy = 0f
         private var downX = 0f

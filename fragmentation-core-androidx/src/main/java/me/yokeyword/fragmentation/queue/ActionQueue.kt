@@ -28,6 +28,8 @@ class ActionQueue(private val mainHandler: Handler) {
 
     private fun enqueueAction(action: Action) {
         queue.add(action)
+
+        //第一次进来的时候，执行完上局，队列只有一个，一旦进入handleAction，就会一直执行，直到队列为空
         if (queue.size == 1) {
             handleAction()
         }
@@ -37,10 +39,13 @@ class ActionQueue(private val mainHandler: Handler) {
         if (queue.isEmpty()) return
 
         val action = queue.peek()
-        action?.apply {
-            run()
-            executeNextAction(this)
+        if (action == null || action.fragmentManager?.isStateSaved == true) {
+            queue.clear()
+            return
         }
+
+        action.run()
+        executeNextAction(action)
     }
 
     private fun executeNextAction(action: Action) {

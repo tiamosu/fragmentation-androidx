@@ -10,7 +10,9 @@ abstract class Action {
     var action = ACTION_NORMAL
     var duration = 0L
 
-    constructor()
+    constructor(fragmentManager: FragmentManager?) {
+        this.fragmentManager = fragmentManager
+    }
 
     constructor(action: Int) {
         this.action = action

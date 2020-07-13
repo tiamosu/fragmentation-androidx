@@ -5,7 +5,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentationMagician.getAddedFragments
 import java.util.*
 
 /**
@@ -64,7 +63,7 @@ object SupportHelper {
 
     @JvmStatic
     fun getTopFragment(fragmentManager: FragmentManager?, containerId: Int): ISupportFragment? {
-        val fragmentList = getAddedFragments(fragmentManager) ?: return null
+        val fragmentList = fragmentManager?.fragments ?: return null
         for (i in fragmentList.indices.reversed()) {
             val fragment = fragmentList[i]
             if (fragment is ISupportFragment) {
@@ -84,7 +83,7 @@ object SupportHelper {
     @JvmStatic
     fun getPreFragment(fragment: Fragment?): ISupportFragment? {
         val fragmentManager = fragment?.fragmentManager ?: return null
-        val fragmentList = getAddedFragments(fragmentManager) ?: return null
+        val fragmentList = fragmentManager.fragments
         val index = fragmentList.indexOf(fragment)
         for (i in index - 1 downTo 0) {
             val preFragment = fragmentList[i]
@@ -128,7 +127,7 @@ object SupportHelper {
                                                          fragmentManager: FragmentManager?): T? {
         var fragment: Fragment? = null
         if (toFragmentTag == null) {
-            val fragmentList = getAddedFragments(fragmentManager) ?: return null
+            val fragmentList = fragmentManager?.fragments ?: return null
             for (i in fragmentList.indices.reversed()) {
                 val brotherFragment = fragmentList[i]
                 if (brotherFragment is ISupportFragment && brotherFragment.javaClass.name == fragmentClass?.name) {
@@ -143,8 +142,8 @@ object SupportHelper {
     }
 
     private fun getAddedFragment(fragmentManager: FragmentManager, parentFragment: ISupportFragment?): ISupportFragment? {
-        val fragmentList = getAddedFragments(fragmentManager)
-        if (fragmentList == null || fragmentList.isEmpty()) {
+        val fragmentList = fragmentManager.fragments
+        if (fragmentList.isEmpty()) {
             return parentFragment
         }
         for (i in fragmentList.indices.reversed()) {
@@ -189,7 +188,7 @@ object SupportHelper {
      * Get the first Fragment from added list
      */
     fun getAddedFirstFragment(fragmentManager: FragmentManager?): ISupportFragment? {
-        val fragmentList = getAddedFragments(fragmentManager)
+        val fragmentList = fragmentManager?.fragments
         if (fragmentList == null || fragmentList.isEmpty()) {
             return null
         }
@@ -232,7 +231,7 @@ object SupportHelper {
     internal fun getWillPopFragments(fm: FragmentManager?, targetTag: String?, includeTarget: Boolean): List<Fragment> {
         val target = fm?.findFragmentByTag(targetTag)
         val willPopFragments = ArrayList<Fragment>()
-        val fragmentList = getAddedFragments(fm) ?: return willPopFragments
+        val fragmentList = fm?.fragments ?: return willPopFragments
 
         val size = fragmentList.size
         var startIndex = -1
